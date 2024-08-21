@@ -1,13 +1,17 @@
 {
 	"FileVersion": 3,
-	"EngineAssociation": "4.27",
+	"EngineAssociation": "{55C2FB83-4009-6DE9-03D0-26A490F07532}",
 	"Category": "",
 	"Description": "",
 	"Modules": [
 		{
 			"Name": "CTTPractice",
 			"Type": "Runtime",
-			"LoadingPhase": "Default"
+			"LoadingPhase": "Default",
+			"AdditionalDependencies": [
+				"Engine",
+				"UMG"
+			]
 		}
 	]
 }
