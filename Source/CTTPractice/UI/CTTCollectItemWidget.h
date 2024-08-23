@@ -3,8 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
-
 #include "Blueprint/UserWidget.h"
+#include "Blueprint/IUserObjectListEntry.h"
 #include "CTTCollectItemWidget.generated.h"
 
 /**
@@ -12,9 +12,10 @@
  */
 class UImage;
 class UWidgetSwitcher;
+class IUserObjectListEntry;
 
-UCLASS(Abstract)
-class CTTPRACTICE_API UCTTCollectItemWidget : public UUserWidget
+UCLASS()
+class CTTPRACTICE_API UCTTCollectItemWidget : public UUserWidget, public IUserObjectListEntry
 {
 	GENERATED_BODY()
 
@@ -23,6 +24,8 @@ public:
 	void SetToCollect();
 
 protected:
+	virtual void NativeOnListItemObjectSet(UObject* ListItemObject) override;
+
 	UPROPERTY(meta = (BindWidget))
     UWidgetSwitcher* ItemSwitcher = nullptr;
 

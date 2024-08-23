@@ -11,6 +11,7 @@ void UCTTCheatManager::SetPlayerLife(int32 Life)
 	ACTTPracticeGameModeBase* GameMode = Cast<ACTTPracticeGameModeBase>(UGameplayStatics::GetGameMode(this));
 	if (!IsValid(GameMode))
 	{
+		UE_LOG(LogTemp, Warning, TEXT("GameMode is InValid"));
 		return;
 	}
 
@@ -22,19 +23,21 @@ void UCTTCheatManager::SetCoin(int32 Coin)
 	ACTTPracticeGameModeBase* GameMode = Cast<ACTTPracticeGameModeBase>(UGameplayStatics::GetGameMode(this));
 	if (!IsValid(GameMode))
 	{
+		UE_LOG(LogTemp, Warning, TEXT("GameMode is InValid"));
 		return;
 	}
 
 	GameMode->SetCoinCount(Coin);
 }
 
-void UCTTCheatManager::SetCollectItem(int32 Index)
+void UCTTCheatManager::SetCollectItem(int32 Index, bool bEnable)
 {
 	ACTTPracticeGameModeBase* GameMode = Cast<ACTTPracticeGameModeBase>(UGameplayStatics::GetGameMode(this));
 	if (!IsValid(GameMode))
 	{
+		UE_LOG(LogTemp, Warning, TEXT("GameMode is InValid"));
 		return;
 	}
 
-	GameMode->SetCollectItemStatus(Index);
+	GameMode->SetCollectItemStatus(Index, bEnable);
 }

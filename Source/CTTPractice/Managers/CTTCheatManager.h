@@ -22,5 +22,5 @@ class CTTPRACTICE_API UCTTCheatManager : public UCheatManager
 	void SetCoin(int32 Coin);
 
 	UFUNCTION(exec)
-	void SetCollectItem(int32 Index);
+	void SetCollectItem(int32 Index, bool bEnable);
 };

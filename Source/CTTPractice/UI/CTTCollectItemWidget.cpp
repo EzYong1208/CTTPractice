@@ -12,6 +12,7 @@ void UCTTCollectItemWidget::SetToEmpty()
 	if (!IsValid(ItemSwitcher) ||
 		!IsValid(EmptyImage))
 	{
+		UE_LOG(LogTemp, Warning, TEXT("ItemSwitcher or EmptyImage is nullptr"));
 		return;
 	}
 
@@ -23,8 +24,16 @@ void UCTTCollectItemWidget::SetToCollect()
 	if (!IsValid(ItemSwitcher) ||
 		!IsValid(CollectImage))
 	{
+		UE_LOG(LogTemp, Warning, TEXT("ItemSwitcher or CollectImage is nullptr"));
 		return;
 	}
 
 	ItemSwitcher->SetActiveWidget(CollectImage);
+}
+
+void UCTTCollectItemWidget::NativeOnListItemObjectSet(UObject* ListItemObject)
+{
+	IUserObjectListEntry::NativeOnListItemObjectSet(ListItemObject);
+
+
 }

@@ -33,7 +33,7 @@ public:
 	FCTTOnChangePlayerLifeCount& OnChangePlayerLifeCount() { return OnChangePlayerLifeCountDelegate; }
 	void SetCoinCount(int32 InCoinCount);
 	FCTTOnChangeCoinCount& OnChangeCoinCount() { return OnChangeCoinCountDelegate; }
-	void SetCollectItemStatus(int32 InIndex);
+	void SetCollectItemStatus(int32 InIndex, bool bInEnable);
 	FCTTOnChangeCollectItem& OnChangeCollectItem() { return OnChangeCollectItemDelegate; }
 
 protected:

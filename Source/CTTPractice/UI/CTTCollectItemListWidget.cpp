@@ -10,17 +10,25 @@
 
 void UCTTCollectItemListWidget::InitializeCollectItemList(int32 NumberOfItems)
 {
-	if (!CollectItemListView || 
-		!IsValid(CollectItemWidgetClass))
+	if (!CollectItemListView)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("CollectItemListView is nullptr"));
 		return;
 	}
 
 	CollectItemListView->ClearListItems();
 
+	UClass* EntryWidgetClass = UCTTCollectItemWidget::StaticClass();
+
+	if (!IsValid(EntryWidgetClass))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("EntryWidgetClass is nullptr"));
+		return;
+	}
+
 	for (int32 i = 0; i < NumberOfItems; ++i)
 	{
-		UCTTCollectItemWidget* NewItem = CreateWidget<UCTTCollectItemWidget>(this, CollectItemWidgetClass);
+		UCTTCollectItemWidget* NewItem = CreateWidget<UCTTCollectItemWidget>(this, EntryWidgetClass);
 
 		if (IsValid(NewItem))
 		{
@@ -39,11 +47,7 @@ void UCTTCollectItemListWidget::NativeConstruct()
 		OnChangeCollectItemHandle = GameMode->OnChangeCollectItem().AddUObject(this, &UCTTCollectItemListWidget::OnChangeCollectItem);
 	}
 
-	if (!IsValid(CollectItemWidgetClass))
-	{
-		return;
-	}
-	InitializeCollectItemList(5);
+	InitializeCollectItemList(3);
 }
 
 void UCTTCollectItemListWidget::NativeDestruct()
@@ -61,21 +65,41 @@ void UCTTCollectItemListWidget::OnChangeCollectItem(int32 ItemIndex, bool bIsCol
 {
 	if (!CollectItemListView)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("CollectItemListView is nullptr"));
 		return;
 	}
 
-	UCTTCollectItemWidget* TargetItem = Cast<UCTTCollectItemWidget>(CollectItemListView->GetItemAt(ItemIndex));
+	TArray<UUserWidget*> DisplayedWidgets = CollectItemListView->GetDisplayedEntryWidgets();
+
+	if (DisplayedWidgets.Num() <= 0)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("No widgets are currently displayed in the CollectItemListView"));
+		return;
+	}
+
+	if (ItemIndex < 0 ||
+		DisplayedWidgets.Num() - 1 < ItemIndex)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ItemIndex is out of range"));
+		return;
+	}
+
+	UCTTCollectItemWidget* TargetItem = Cast<UCTTCollectItemWidget>(DisplayedWidgets[ItemIndex]);
+
 	if (!IsValid(TargetItem))
 	{
+		UE_LOG(LogTemp, Warning, TEXT("TargetItem is nullptr"));
 		return;
 	}
 
 	if (bIsCollected)
 	{
 		TargetItem->SetToCollect();
+		return;
 	}
 	else
 	{
 		TargetItem->SetToEmpty();
+		return;
 	}
 }

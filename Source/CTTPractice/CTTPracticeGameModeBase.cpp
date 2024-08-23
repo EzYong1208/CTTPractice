@@ -39,11 +39,10 @@ void ACTTPracticeGameModeBase::SetCoinCount(int32 InCoinCount)
 	}
 }
 
-void ACTTPracticeGameModeBase::SetCollectItemStatus(int32 InIndex)
+void ACTTPracticeGameModeBase::SetCollectItemStatus(int32 InIndex, bool bInEnable)
 {
-	CollectItemState = !CollectItemState;
 	if (OnChangeCollectItemDelegate.IsBound())
 	{
-		OnChangeCollectItemDelegate.Broadcast(InIndex, CollectItemState);
+		OnChangeCollectItemDelegate.Broadcast(InIndex, bInEnable);
 	}
 }

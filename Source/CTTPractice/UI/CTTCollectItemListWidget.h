@@ -29,8 +29,5 @@ protected:
 	UPROPERTY(meta = (BindWidget))
 	UListView* CollectItemListView = nullptr;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	TSubclassOf<UCTTCollectItemWidget> CollectItemWidgetClass;
-
 	FDelegateHandle OnChangeCollectItemHandle;
 };
