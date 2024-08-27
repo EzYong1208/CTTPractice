@@ -5,10 +5,9 @@
 #include "Engine/DataTable.h"
 
 // Sets default values
-ACTTKinopioFace::ACTTKinopioFace()
+UCTTKinopioFace::UCTTKinopioFace()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = false;
+	PrimaryComponentTick.bCanEverTick = false;
 
 	// 컴포넌트를 생성하는 용도로 언리얼 엔진은 new가 아니라 CreateDefaultSubobject
 	// 문자열 값은 액터에 속한 컴포넌트를 구별하기 위한 해시값 생성에 사용
@@ -16,21 +15,22 @@ ACTTKinopioFace::ACTTKinopioFace()
 	Face = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("FACE"));
 }
 
-// Called when the game starts or when spawned
-void ACTTKinopioFace::BeginPlay()
+void UCTTKinopioFace::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	UDataTable* DataTable = LoadObject<UDataTable>(nullptr, TEXT("DataTable'/Game/Table/KinopioFaceDataTable.KinopioFaceDataTable'"));
+
+	if (nullptr == DataTable)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Failed to load FaceDataTable"));
+		return;
+	}
+
+	FaceDataTable = DataTable;
 }
 
-// Called every frame
-void ACTTKinopioFace::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-}
-
-void ACTTKinopioFace::SetFaceMesh(FName RowName)
+void UCTTKinopioFace::SetFaceMesh(FName RowName)
 {
 	if (nullptr == FaceDataTable)
 	{
@@ -48,13 +48,35 @@ void ACTTKinopioFace::SetFaceMesh(FName RowName)
 
 	if (ECTTFaceType::None == FaceData->FaceType)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("No face mesh assigned for None type"));
+		UE_LOG(LogTemp, Error, TEXT("No face mesh assigned for None type"));
 		return;
 	}
 
 	if (FaceData->FaceMesh)
 	{
 		Face->SetStaticMesh(FaceData->FaceMesh);
+		AttachFaceMeshToSocket();
 	}
+}
+
+void UCTTKinopioFace::AttachFaceMeshToSocket()
+{
+	AActor* Owner = GetOwner();
+
+	if (nullptr == Owner)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Owner is nullptr"));
+		return;
+	}
+
+	USkeletalMeshComponent* SkeletalMeshComponent = Owner->FindComponentByClass<USkeletalMeshComponent>();
+
+	if (nullptr == SkeletalMeshComponent)
+	{
+		UE_LOG(LogTemp, Error, TEXT("SkeletalMeshComponent is nullptr"));
+		return;
+	}
+	
+	Face->AttachToComponent(SkeletalMeshComponent, FAttachmentTransformRules::SnapToTargetIncludingScale, TEXT("Socket_Head"));
 }
 

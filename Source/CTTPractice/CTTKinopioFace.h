@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Engine/DataTable.h"
-#include "GameFramework/Actor.h"
+#include "Components/ActorComponent.h"
 #include "CTTPractice/CTTEnum.h"
 #include "CTTKinopioFace.generated.h"
 
@@ -20,24 +20,17 @@ struct CTTPRACTICE_API FCTTKinopioFaceData : public FTableRowBase
 	UStaticMesh* FaceMesh;
 };
 
-
-UCLASS(Blueprintable)
-class CTTPRACTICE_API ACTTKinopioFace : public AActor
+UCLASS(Blueprintable, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
+class CTTPRACTICE_API UCTTKinopioFace : public UActorComponent
 {
 	GENERATED_BODY()
 	
-public:	
-	// Sets default values for this actor's properties
-	ACTTKinopioFace();
+public:
+	UCTTKinopioFace();
 
-protected:
-	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
     UFUNCTION(BlueprintCallable)
     void SetFaceMesh(FName RowName);
 
@@ -46,4 +39,7 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
     UDataTable* FaceDataTable;
+
+private:
+	void AttachFaceMeshToSocket();
 };

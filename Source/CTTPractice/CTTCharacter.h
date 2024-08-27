@@ -6,7 +6,7 @@
 #include "GameFramework/Character.h"
 #include "CTTCharacter.generated.h"
 
-class ACTTKinopioFace;
+class UCTTKinopioFace;
 
 UCLASS()
 class CTTPRACTICE_API ACTTCharacter : public ACharacter
@@ -16,8 +16,6 @@ class CTTPRACTICE_API ACTTCharacter : public ACharacter
 public:
 	// Sets default values for this character's properties
 	ACTTCharacter();
-
-	virtual void PostInitializeComponents() override;
 
 protected:
 	// Called when the game starts or when spawned
@@ -31,12 +29,5 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	UPROPERTY(VisibleAnywhere)
-	UStaticMeshComponent* KinopioFace;
-
-protected:
-	UPROPERTY(EditDefaultsOnly)
-    TSubclassOf<ACTTKinopioFace> FaceClass;
-
-    UPROPERTY()
-    ACTTKinopioFace* FaceActor;
+	UCTTKinopioFace* KinopioFaceComponent;
 };
