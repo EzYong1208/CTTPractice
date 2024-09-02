@@ -6,7 +6,7 @@
 #include "GameFramework/Character.h"
 #include "CTTCharacter.generated.h"
 
-class UCTTKinopioFace;
+class UCTTSocketAttachmentComponent;
 
 UCLASS()
 class CTTPRACTICE_API ACTTCharacter : public ACharacter
@@ -29,5 +29,5 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	UPROPERTY(VisibleAnywhere)
-	UCTTKinopioFace* KinopioFaceComponent;
+	UCTTSocketAttachmentComponent* SocketAttachmentComponent;
 };

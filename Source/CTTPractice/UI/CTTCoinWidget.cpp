@@ -52,6 +52,13 @@ void UCTTCoinWidget::OnChangeCoinCount(int32 CoinCount)
 		return;
 	}
 
+	if (CoinCount < 0 ||
+		CoinCount >= 100)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("CoinCount range is 0 ~ 99"));
+		CoinCount = 0;
+	}
+
 	SetNumber(CoinCount);
 
 	if (CoinCount >= 10

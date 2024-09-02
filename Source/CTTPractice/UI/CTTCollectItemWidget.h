@@ -13,6 +13,7 @@
 class UImage;
 class UWidgetSwitcher;
 class IUserObjectListEntry;
+class UCTTCollectItemData;
 
 UCLASS()
 class CTTPRACTICE_API UCTTCollectItemWidget : public UUserWidget, public IUserObjectListEntry
@@ -25,6 +26,9 @@ public:
 
 protected:
 	virtual void NativeOnListItemObjectSet(UObject* ListItemObject) override;
+	virtual void NativeDestruct() override;
+
+	void OnChangeCollectItem(bool bIsCollected);
 
 	UPROPERTY(meta = (BindWidget))
     UWidgetSwitcher* ItemSwitcher = nullptr;
@@ -34,4 +38,6 @@ protected:
 
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidgetOptional))
 	UImage* CollectImage = nullptr;
+
+	UCTTCollectItemData* CollectItemData = nullptr;
 };

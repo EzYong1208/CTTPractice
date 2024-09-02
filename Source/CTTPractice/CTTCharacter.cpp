@@ -2,7 +2,7 @@
 
 
 #include "CTTCharacter.h"
-#include "CTTKinopioFace.h"
+#include "CTTSocketAttachmentComponent.h"
 
 // Sets default values
 ACTTCharacter::ACTTCharacter()
@@ -10,7 +10,7 @@ ACTTCharacter::ACTTCharacter()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	KinopioFaceComponent = CreateDefaultSubobject<UCTTKinopioFace>(TEXT("KinopioFaceComponent"));
+	SocketAttachmentComponent = CreateDefaultSubobject<UCTTSocketAttachmentComponent>(TEXT("SocketAttachmentComponent"));
 }
 
 // Called when the game starts or when spawned
@@ -18,9 +18,9 @@ void ACTTCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (KinopioFaceComponent)
+	if (SocketAttachmentComponent)
 	{
-		KinopioFaceComponent->SetFaceMesh(TEXT("FaceData_Happy"));
+		SocketAttachmentComponent->SetMeshByName(TEXT("FaceData_Happy"));
 	}
 }
 

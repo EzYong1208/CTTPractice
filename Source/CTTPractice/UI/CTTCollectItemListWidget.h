@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "Blueprint/IUserObjectListEntry.h"
 #include "CTTCollectItemListWidget.generated.h"
 
 /**
@@ -18,7 +19,7 @@ class CTTPRACTICE_API UCTTCollectItemListWidget : public UUserWidget
 	GENERATED_BODY()
 
 public:
-	void InitializeCollectItemList(int32 NumberOfItems);
+	void InitializeCollectItemList();
 
 protected:
 	virtual void NativeConstruct() override;

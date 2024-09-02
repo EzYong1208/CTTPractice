@@ -53,8 +53,8 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool CollectItemInitialState = false;
 
-	UPROPERTY(BlueprintReadWrite)
-	bool CollectItemState = false;
+	UPROPERTY()
+	TArray<bool> CollectItemStates;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TSubclassOf<UCTTUICommonResource> UICommonResourceClass;

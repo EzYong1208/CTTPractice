@@ -52,6 +52,13 @@ void UCTTPlayerLifeWidget::OnChangePlayerLifeCount(int32 PlayerLifeCount)
 		return;
 	}
 
+	if (PlayerLifeCount < 0 ||
+		PlayerLifeCount >= 10)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("PlayerLifeCount range is 0 ~ 9"));
+		PlayerLifeCount = 0;
+	}
+
 	UTexture2D* Texture = UICommonResource->GetNumberTexture(ECTTNumberImageType::PlayerLifeNumber, PlayerLifeCount);
 
 	if (IsValid(LifeNumber))

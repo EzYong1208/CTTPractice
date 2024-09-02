@@ -12,7 +12,12 @@ void ACTTPracticeGameModeBase::BeginPlay()
 	// 유저정보 만들기 전까지 임시 [8/17/2024 EzYong-Laptop]
 	PlayerLifeCount = PlayerInitialLifeCount;
 	CoinCount = CoinInitialLifeCount;
-	CollectItemState = CollectItemInitialState;
+
+	CollectItemStates.SetNum(3);
+	for (int32 i = 0; i < CollectItemStates.Num(); ++i)
+	{
+		CollectItemStates[i] = CollectItemInitialState;
+	}
 
 	if (IsValid(UICommonResourceClass))
 	{
@@ -41,8 +46,14 @@ void ACTTPracticeGameModeBase::SetCoinCount(int32 InCoinCount)
 
 void ACTTPracticeGameModeBase::SetCollectItemStatus(int32 InIndex, bool bInEnable)
 {
+	if (!(InIndex >= 0 && InIndex < CollectItemStates.Num()))
+	{
+		return;
+	}
+
+	CollectItemStates[InIndex] = bInEnable;
 	if (OnChangeCollectItemDelegate.IsBound())
 	{
-		OnChangeCollectItemDelegate.Broadcast(InIndex, bInEnable);
+		OnChangeCollectItemDelegate.Broadcast(InIndex, CollectItemStates[InIndex]);
 	}
 }
