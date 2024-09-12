@@ -19,7 +19,7 @@ void UCTTCollectItemListWidget::InitializeCollectItemList()
 
 	CollectItemListView->ClearListItems();
 
-	for (int32 i = 0; i < 3; ++i)
+	for (int32 i = 0; i < ACTTPracticeGameModeBase::COLLECTITEM_NUMBER; ++i)
 	{
 		UCTTCollectItemData* NewItem = NewObject<UCTTCollectItemData>();
 		CollectItemListView->AddItem(NewItem);

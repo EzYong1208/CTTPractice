@@ -17,4 +17,16 @@ class CTTPRACTICE_API UCTTAnimInstance : public UAnimInstance
 {
 	GENERATED_BODY()
 
+public:
+	virtual void NativeInitializeAnimation() override;
+	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
+
+private:
+	void UpdateSocketAttachments();
+
+protected:
+	UPROPERTY(EditAnyWhere)
+	FName CurrentStateName;
+
+	static constexpr int32 ANIMINSTANCE_MACHINEINDEX = 0;
 };

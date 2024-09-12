@@ -3,6 +3,9 @@
 
 #include "CTTCharacter.h"
 #include "CTTSocketAttachmentComponent.h"
+#include "GameFramework/SpringArmComponent.h"
+#include "Camera/CameraComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 // Sets default values
 ACTTCharacter::ACTTCharacter()
@@ -11,6 +14,12 @@ ACTTCharacter::ACTTCharacter()
 	PrimaryActorTick.bCanEverTick = true;
 
 	SocketAttachmentComponent = CreateDefaultSubobject<UCTTSocketAttachmentComponent>(TEXT("SocketAttachmentComponent"));
+
+	SpringArmComponent = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArmComponent"));
+	CameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComponent"));
+
+	SpringArmComponent->SetupAttachment(RootComponent);
+	CameraComponent->SetupAttachment(SpringArmComponent);
 }
 
 // Called when the game starts or when spawned
@@ -18,10 +27,6 @@ void ACTTCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (SocketAttachmentComponent)
-	{
-		SocketAttachmentComponent->SetMeshByName(TEXT("FaceData_Happy"));
-	}
 }
 
 // Called every frame
@@ -36,5 +41,25 @@ void ACTTCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+	PlayerInputComponent->BindAxis(TEXT("MoveUpDown"), this, &ACTTCharacter::MoveUpDown);
+	PlayerInputComponent->BindAxis(TEXT("MoveLeftRight"), this, &ACTTCharacter::MoveLeftRight);
+
+	PlayerInputComponent->BindAxis(TEXT("TurnCamera"), this, &ACTTCharacter::AddControllerYawInput);
+	PlayerInputComponent->BindAxis(TEXT("LookUpCamera"), this, &ACTTCharacter::AddControllerPitchInput);
+}
+
+void ACTTCharacter::MoveUpDown(float InputValue)
+{
+	AddMovementInput(GetActorForwardVector(), InputValue);
+}
+
+void ACTTCharacter::MoveLeftRight(float InputValue)
+{
+	AddMovementInput(GetActorRightVector(), InputValue);
+}
+
+void ACTTCharacter::TurnCamera(float InputValue)
+{
+	AddControllerYawInput(InputValue);
 }
 

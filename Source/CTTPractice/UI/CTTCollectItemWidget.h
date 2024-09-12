@@ -39,5 +39,6 @@ protected:
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidgetOptional))
 	UImage* CollectImage = nullptr;
 
+	UPROPERTY()
 	UCTTCollectItemData* CollectItemData = nullptr;
 };

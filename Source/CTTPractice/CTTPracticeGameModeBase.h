@@ -36,6 +36,10 @@ public:
 	void SetCollectItemStatus(int32 InIndex, bool bInEnable);
 	FCTTOnChangeCollectItem& OnChangeCollectItem() { return OnChangeCollectItemDelegate; }
 
+public:
+	// 임시
+	static constexpr int32 COLLECTITEM_NUMBER = 3;
+
 protected:
 	// 유저정보 만들기 전까지 임시 [8/17/2024 EzYong-Laptop]
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)

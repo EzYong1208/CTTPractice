@@ -8,6 +8,21 @@
 #include "CTTPractice/CTTEnum.h"
 #include "CTTSocketAttachmentComponent.generated.h"
 
+USTRUCT(BlueprintType)
+struct CTTPRACTICE_API FCTTSocketMeshData : public FTableRowBase
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UStaticMesh* FaceMesh;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UStaticMesh* HandLMesh;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UStaticMesh* HandRMesh;
+};
+
 UCLASS(Blueprintable, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class CTTPRACTICE_API UCTTSocketAttachmentComponent : public UActorComponent
 {
@@ -18,16 +33,23 @@ public:
 
 	virtual void BeginPlay() override;
 
-	void AttachMeshToSocket(FName SocketName, UStaticMesh* Mesh);
-
 public:	
     UFUNCTION(BlueprintCallable)
     void SetMeshByName(FName RowName);
 
 	UPROPERTY(VisibleAnywhere)
-	UStaticMeshComponent* AttachMesh;
+	UStaticMeshComponent* FaceMesh;
 
+	UPROPERTY(VisibleAnywhere)
+	UStaticMeshComponent* HandLMesh;
+
+	UPROPERTY(VisibleAnywhere)
+	UStaticMeshComponent* HandRMesh;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
     UDataTable* SocketMeshDataTable;
+
+	const FName SOCKETNAME_FACE = TEXT("Socket_Head");
+	const FName SOCKETNAME_HANDL = TEXT("Socket_HandL");
+	const FName SOCKETNAME_HANDR = TEXT("Socket_HandR");
 };

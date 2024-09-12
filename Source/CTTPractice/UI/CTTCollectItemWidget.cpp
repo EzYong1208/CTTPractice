@@ -44,11 +44,6 @@ void UCTTCollectItemWidget::NativeOnListItemObjectSet(UObject* ListItemObject)
 
 	SetToEmpty();
 
-	if (ItemData->OnChangeCollectItemStateDelegate.IsBound())
-	{
-		ItemData->OnChangeCollectItemStateDelegate.RemoveAll(this);
-	}
-
 	FDelegateHandle Handle = ItemData->OnChangeCollectItemStateDelegate.AddUObject(this, &UCTTCollectItemWidget::OnChangeCollectItem);
 	if (!Handle.IsValid())
 	{
@@ -72,11 +67,19 @@ void UCTTCollectItemWidget::NativeDestruct()
 
 void UCTTCollectItemWidget::OnChangeCollectItem(bool bIsCollected)
 {
-	if (!IsValid(ItemSwitcher) ||
-		!IsValid(CollectImage) ||
-		!IsValid(EmptyImage))
+	if (!IsValid(ItemSwitcher))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("ItemSwitcher or CollectImage or EmptyImage is nullptr"));
+		UE_LOG(LogTemp, Warning, TEXT("ItemSwitcher is nullptr"));
+		return;
+	}
+	if (!IsValid(CollectImage))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("CollectImage is nullptr"));
+		return;
+	}
+	if (!IsValid(EmptyImage))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("EmptyImage is nullptr"));
 		return;
 	}
 

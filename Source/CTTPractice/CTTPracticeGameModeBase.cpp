@@ -13,7 +13,7 @@ void ACTTPracticeGameModeBase::BeginPlay()
 	PlayerLifeCount = PlayerInitialLifeCount;
 	CoinCount = CoinInitialLifeCount;
 
-	CollectItemStates.SetNum(3);
+	CollectItemStates.SetNum(COLLECTITEM_NUMBER);
 	for (int32 i = 0; i < CollectItemStates.Num(); ++i)
 	{
 		CollectItemStates[i] = CollectItemInitialState;

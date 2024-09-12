@@ -7,6 +7,8 @@
 #include "CTTCharacter.generated.h"
 
 class UCTTSocketAttachmentComponent;
+class USpringArmComponent;
+class UCameraComponent;
 
 UCLASS()
 class CTTPRACTICE_API ACTTCharacter : public ACharacter
@@ -30,4 +32,16 @@ public:
 
 	UPROPERTY(VisibleAnywhere)
 	UCTTSocketAttachmentComponent* SocketAttachmentComponent;
+
+	UPROPERTY(VisibleAnywhere)
+	USpringArmComponent* SpringArmComponent;
+
+	UPROPERTY(VisibleAnywhere)
+	UCameraComponent* CameraComponent;
+
+private:
+	void MoveUpDown(float InputValue);
+	void MoveLeftRight(float InputValue);
+	void TurnCamera(float InputValue);
+	
 };
