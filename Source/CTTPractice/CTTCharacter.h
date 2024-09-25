@@ -7,8 +7,9 @@
 #include "CTTCharacter.generated.h"
 
 class UCTTSocketAttachmentComponent;
-class USpringArmComponent;
-class UCameraComponent;
+class UCTTCameraControlComponent;
+//class USpringArmComponent;
+//class UCameraComponent;
 
 UCLASS()
 class CTTPRACTICE_API ACTTCharacter : public ACharacter
@@ -30,18 +31,43 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+public:
 	UPROPERTY(VisibleAnywhere)
 	UCTTSocketAttachmentComponent* SocketAttachmentComponent;
 
 	UPROPERTY(VisibleAnywhere)
-	USpringArmComponent* SpringArmComponent;
+	UCTTCameraControlComponent* CameraControlComponent;
 
-	UPROPERTY(VisibleAnywhere)
-	UCameraComponent* CameraComponent;
+	//UPROPERTY(VisibleAnywhere)
+	//USpringArmComponent* SpringArmComponent;
+
+	//UPROPERTY(VisibleAnywhere)
+	//UCameraComponent* CameraComponent;
+
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	//float RotationSpeed = 0.f;
+
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	//float CameraRotationAngle = 0.f;
+
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	//float MinSpringArmLength = 0.f;
+
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	//float MaxSpringArmLength = 0.f;
+
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	//float CameraMoveDistance = 0.f;
+
+	//float GoalRotationValue = 0.f;
+	//float TargetArmLength = 0.f;
 
 private:
 	void MoveUpDown(float InputValue);
 	void MoveLeftRight(float InputValue);
-	void TurnCamera(float InputValue);
-	
+	//void CameraMovement(float DeltaTime);
+	//void RotateCameraLeft();
+	//void RotateCameraRight();
+	//void MoveCameraCloser();
+	//void MoveCameraAway();
 };

@@ -3,8 +3,7 @@
 
 #include "CTTCharacter.h"
 #include "CTTSocketAttachmentComponent.h"
-#include "GameFramework/SpringArmComponent.h"
-#include "Camera/CameraComponent.h"
+#include "CTTCameraControlComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
 // Sets default values
@@ -14,12 +13,7 @@ ACTTCharacter::ACTTCharacter()
 	PrimaryActorTick.bCanEverTick = true;
 
 	SocketAttachmentComponent = CreateDefaultSubobject<UCTTSocketAttachmentComponent>(TEXT("SocketAttachmentComponent"));
-
-	SpringArmComponent = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArmComponent"));
-	CameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComponent"));
-
-	SpringArmComponent->SetupAttachment(RootComponent);
-	CameraComponent->SetupAttachment(SpringArmComponent);
+	CameraControlComponent = CreateDefaultSubobject<UCTTCameraControlComponent>(TEXT("CameraControlComponent"));
 }
 
 // Called when the game starts or when spawned
@@ -34,6 +28,7 @@ void ACTTCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	CameraControlComponent->CameraMovement(DeltaTime);
 }
 
 // Called to bind functionality to input
@@ -44,8 +39,10 @@ void ACTTCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 	PlayerInputComponent->BindAxis(TEXT("MoveUpDown"), this, &ACTTCharacter::MoveUpDown);
 	PlayerInputComponent->BindAxis(TEXT("MoveLeftRight"), this, &ACTTCharacter::MoveLeftRight);
 
-	PlayerInputComponent->BindAxis(TEXT("TurnCamera"), this, &ACTTCharacter::AddControllerYawInput);
-	PlayerInputComponent->BindAxis(TEXT("LookUpCamera"), this, &ACTTCharacter::AddControllerPitchInput);
+	PlayerInputComponent->BindAction("RotateCameraLeft", IE_Pressed, CameraControlComponent, &UCTTCameraControlComponent::RotateCameraLeft);
+	PlayerInputComponent->BindAction("RotateCameraRight", IE_Pressed, CameraControlComponent, &UCTTCameraControlComponent::RotateCameraRight);
+	PlayerInputComponent->BindAction("MoveCameraCloser", IE_Pressed, CameraControlComponent, &UCTTCameraControlComponent::MoveCameraCloser);
+	PlayerInputComponent->BindAction("MoveCameraAway", IE_Pressed, CameraControlComponent, &UCTTCameraControlComponent::MoveCameraAway);
 }
 
 void ACTTCharacter::MoveUpDown(float InputValue)
@@ -57,9 +54,3 @@ void ACTTCharacter::MoveLeftRight(float InputValue)
 {
 	AddMovementInput(GetActorRightVector(), InputValue);
 }
-
-void ACTTCharacter::TurnCamera(float InputValue)
-{
-	AddControllerYawInput(InputValue);
-}
-
