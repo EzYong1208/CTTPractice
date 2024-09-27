@@ -7,8 +7,7 @@
 #include "CTTCharacter.generated.h"
 
 class UCTTSocketAttachmentComponent;
-class USpringArmComponent;
-class UCameraComponent;
+class UCTTCameraControlComponent;
 
 UCLASS()
 class CTTPRACTICE_API ACTTCharacter : public ACharacter
@@ -35,37 +34,9 @@ public:
 	UCTTSocketAttachmentComponent* SocketAttachmentComponent;
 
 	UPROPERTY(VisibleAnywhere)
-	USpringArmComponent* SpringArmComponent;
-
-	UPROPERTY(VisibleAnywhere)
-	UCameraComponent* CameraComponent;
-
-public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera")
-	float RotationSpeed = 0.f;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera")
-	float CameraRotationAngle = 0.f;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera")
-	float MinSpringArmLength = 0.f;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera")
-	float MaxSpringArmLength = 0.f;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera")
-	float CameraMoveDistance = 0.f;
-
-	float GoalRotationValue = 0.f;
-	float TargetArmLength = 0.f;
+	UCTTCameraControlComponent* CameraControlComponent;
 
 private:
 	void MoveUpDown(float InputValue);
 	void MoveLeftRight(float InputValue);
-
-	void CameraMovement(float DeltaTime);
-	void RotateCameraLeft();
-	void RotateCameraRight();
-	void MoveCameraCloser();
-	void MoveCameraAway();
 };
