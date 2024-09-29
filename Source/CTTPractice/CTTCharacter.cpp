@@ -2,7 +2,6 @@
 
 
 #include "CTTCharacter.h"
-#include "CTTSocketAttachmentComponent.h"
 #include "CTTCameraControlComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
@@ -12,8 +11,6 @@ ACTTCharacter::ACTTCharacter()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	SocketAttachmentComponent = CreateDefaultSubobject<UCTTSocketAttachmentComponent>(TEXT("SocketAttachmentComponent"));
-	CameraControlComponent = CreateDefaultSubobject<UCTTCameraControlComponent>(TEXT("CameraControlComponent"));
 }
 
 // Called when the game starts or when spawned
@@ -28,7 +25,6 @@ void ACTTCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	CameraControlComponent->CameraMovement(DeltaTime);
 }
 
 // Called to bind functionality to input
@@ -39,11 +35,12 @@ void ACTTCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 	PlayerInputComponent->BindAxis(TEXT("MoveUpDown"), this, &ACTTCharacter::MoveUpDown);
 	PlayerInputComponent->BindAxis(TEXT("MoveLeftRight"), this, &ACTTCharacter::MoveLeftRight);
 
-	// 카메라
-	PlayerInputComponent->BindAction("RotateCameraLeft", IE_Pressed, CameraControlComponent, &UCTTCameraControlComponent::RotateCameraLeft);
-	PlayerInputComponent->BindAction("RotateCameraRight", IE_Pressed, CameraControlComponent, &UCTTCameraControlComponent::RotateCameraRight);
-	PlayerInputComponent->BindAction("MoveCameraCloser", IE_Pressed, CameraControlComponent, &UCTTCameraControlComponent::MoveCameraCloser);
-	PlayerInputComponent->BindAction("MoveCameraAway", IE_Pressed, CameraControlComponent, &UCTTCameraControlComponent::MoveCameraAway);
+	// TODO : 카메라 세팅 후 정리하기
+	//// 카메라
+	//PlayerInputComponent->BindAction("RotateCameraLeft", IE_Pressed, CameraControl, &UCTTCameraControlComponent::RotateCameraLeft);
+	//PlayerInputComponent->BindAction("RotateCameraRight", IE_Pressed, CameraControl, &UCTTCameraControlComponent::RotateCameraRight);
+	//PlayerInputComponent->BindAction("MoveCameraCloser", IE_Pressed, CameraControl, &UCTTCameraControlComponent::MoveCameraCloser);
+	//PlayerInputComponent->BindAction("MoveCameraAway", IE_Pressed, CameraControl, &UCTTCameraControlComponent::MoveCameraAway);
 }
 
 void ACTTCharacter::MoveUpDown(float InputValue)

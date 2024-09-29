@@ -6,8 +6,7 @@
 #include "GameFramework/Character.h"
 #include "CTTCharacter.generated.h"
 
-class UCTTSocketAttachmentComponent;
-class UCTTCameraControlComponent;
+//class UCTTCameraControlComponent;
 
 UCLASS()
 class CTTPRACTICE_API ACTTCharacter : public ACharacter
@@ -28,13 +27,6 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
-public:
-	UPROPERTY(VisibleAnywhere)
-	UCTTSocketAttachmentComponent* SocketAttachmentComponent;
-
-	UPROPERTY(VisibleAnywhere)
-	UCTTCameraControlComponent* CameraControlComponent;
 
 private:
 	void MoveUpDown(float InputValue);

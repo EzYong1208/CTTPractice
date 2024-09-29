@@ -6,10 +6,10 @@
 #include "Components/SceneComponent.h"
 #include "CTTCameraControlComponent.generated.h"
 
-class USpringArmComponent;
-class UCameraComponent;
+//class USpringArmComponent;
+//class UCameraComponent;
 
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+UCLASS(Blueprintable, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class CTTPRACTICE_API UCTTCameraControlComponent : public USceneComponent
 {
 	GENERATED_BODY()
@@ -61,12 +61,6 @@ public:
 	float CameraMoveDistance = 0.f;
 
 private:
-	UPROPERTY()
-	USpringArmComponent* SpringArmComponent;
-
-	UPROPERTY()
-	UCameraComponent* CameraComponent;
-
 	FRotator GoalRotation = FRotator(0.f, 0.f, 0.f);
 	float TargetArmLength = 0.f;
 };

@@ -14,13 +14,13 @@ struct CTTPRACTICE_API FCTTSocketMeshData : public FTableRowBase
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UStaticMesh* FaceMesh;
+	FName AnimationName;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UStaticMesh* HandLMesh;
+	FName SocketName;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UStaticMesh* HandRMesh;
+	UStaticMesh* Mesh;
 };
 
 UCLASS(Blueprintable, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
@@ -37,19 +37,6 @@ public:
     UFUNCTION(BlueprintCallable)
     void SetMeshByName(FName RowName);
 
-	UPROPERTY(VisibleAnywhere)
-	UStaticMeshComponent* FaceMesh;
-
-	UPROPERTY(VisibleAnywhere)
-	UStaticMeshComponent* HandLMesh;
-
-	UPROPERTY(VisibleAnywhere)
-	UStaticMeshComponent* HandRMesh;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
     UDataTable* SocketMeshDataTable;
-
-	const FName SOCKETNAME_FACE = TEXT("Socket_Head");
-	const FName SOCKETNAME_HANDL = TEXT("Socket_HandL");
-	const FName SOCKETNAME_HANDR = TEXT("Socket_HandR");
 };
