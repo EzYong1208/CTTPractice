@@ -6,8 +6,6 @@
 #include "GameFramework/Character.h"
 #include "CTTCharacter.generated.h"
 
-//class UCTTCameraControlComponent;
-
 UCLASS()
 class CTTPRACTICE_API ACTTCharacter : public ACharacter
 {
@@ -28,7 +26,16 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+protected:
+	UPROPERTY(EditAnyWhere, BlueprintReadWrite)
+	float Speed = 0.f;
+
+	float VerticalMovementInput = 0.f;
+	float HorizontalMovementInput = 0.f;
+
 private:
 	void MoveUpDown(float InputValue);
 	void MoveLeftRight(float InputValue);
+
+	void UpdateMoveVector(float DeltaTime);
 };

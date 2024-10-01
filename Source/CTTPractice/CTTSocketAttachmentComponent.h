@@ -39,4 +39,7 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
     UDataTable* SocketMeshDataTable;
+
+private:
+	TMap<FName, TMap<FName, UStaticMesh*>> SocketMeshMap;
 };

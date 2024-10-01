@@ -3,6 +3,7 @@
 
 #include "CTTCameraActor.h"
 #include "GameFramework/Character.h"
+#include "GameFramework/SpringArmComponent.h"
 
 ACTTCameraActor::ACTTCameraActor()
 {
@@ -27,26 +28,20 @@ void ACTTCameraActor::Tick(float DeltaTime)
 void ACTTCameraActor::InitializeCameraComponents()
 {
 	// TODO : 정리하기
-	if (OwningCharacter)
+	if (nullptr == OwningCharacter)
 	{
-		FVector Direction = GetActorForwardVector();
-		OwnerLocation = OwningCharacter->GetActorLocation();
-		FVector NewCameraLocation = OwnerLocation - (Direction * CameraDistance);
-
-		bool IsSetLocationSuccess = SetActorLocation(NewCameraLocation);
-		if (!IsSetLocationSuccess)
-		{
-			UE_LOG(LogTemp, Error, TEXT("CameraActor SetLocation failed"));
-		}
+		UE_LOG(LogTemp, Error, TEXT("OwningCharacter is nullptr"));
+		return;
 	}
 
-	bool IsRotateSuccess = SetActorRotation(InitialCameraRotation);
-	if (false == IsRotateSuccess)
+	USpringArmComponent* SpringArmComponent = Cast<USpringArmComponent>(OwningCharacter->GetComponentByClass(USpringArmComponent::StaticClass()));
+	if (nullptr == SpringArmComponent)
 	{
-		UE_LOG(LogTemp, Error, TEXT("CameraActor Rotate failed"));
+		UE_LOG(LogTemp, Error, TEXT("SpringArmComponent is nullptr"));
+		return;
 	}
-	
-	GoalRotation = InitialCameraRotation;
+
+	AttachToComponent(SpringArmComponent, FAttachmentTransformRules::SnapToTargetIncludingScale);
 }
 
 void ACTTCameraActor::CameraMovement(float DeltaTime)

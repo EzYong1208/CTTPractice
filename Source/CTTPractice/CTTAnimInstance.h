@@ -21,12 +21,15 @@ public:
 	virtual void NativeInitializeAnimation() override;
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
 
+public:
+	void SetSpeed(float InSpeed);
+
 private:
 	void UpdateSocketAttachments();
 
-protected:
-	UPROPERTY(EditAnyWhere)
 	FName CurrentStateName;
 
-	static constexpr int32 ANIMINSTANCE_MACHINEINDEX = 0;
+protected:
+	UPROPERTY(EditAnyWhere, BlueprintReadWrite)
+	float Speed = 0.f;
 };

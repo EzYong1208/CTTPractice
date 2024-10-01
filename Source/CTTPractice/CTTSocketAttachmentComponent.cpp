@@ -15,13 +15,28 @@ UCTTSocketAttachmentComponent::UCTTSocketAttachmentComponent()
 void UCTTSocketAttachmentComponent::BeginPlay()
 {
 	Super::BeginPlay();
+
+    if (nullptr == SocketMeshDataTable)
+    {
+        UE_LOG(LogTemp, Error, TEXT("SocketMeshDataTable is nullptr"));
+        return;
+    }
+
+	TArray<FName> RowNames = SocketMeshDataTable->GetRowNames();
+	for (int32 i = 0; i < RowNames.Num(); ++i)
+	{
+		FCTTSocketMeshData* MeshData = SocketMeshDataTable->FindRow<FCTTSocketMeshData>(RowNames[i], TEXT(""));
+		if (MeshData)
+		{
+			SocketMeshMap.FindOrAdd(MeshData->AnimationName).Add(MeshData->SocketName, MeshData->Mesh);
+		}
+	}
 }
 
 void UCTTSocketAttachmentComponent::SetMeshByName(FName RowName)
 {
-	if (nullptr == SocketMeshDataTable)
+	if (0 == SocketMeshMap.Num())
 	{
-		UE_LOG(LogTemp, Error, TEXT("SocketMeshDataTable is nullptr"));
 		return;
 	}
 
@@ -39,49 +54,28 @@ void UCTTSocketAttachmentComponent::SetMeshByName(FName RowName)
 		return;
 	}
 
-    TArray<FCTTSocketMeshData*> MatchingMeshData;
-    TArray<FName> RowNames = SocketMeshDataTable->GetRowNames();
+	TMap<FName, UStaticMesh*> SocketMap = *SocketMeshMap.Find(RowName);
 
-    for (int32 i = 0; i < RowNames.Num(); ++i)
-    {
-        FCTTSocketMeshData* MeshData = SocketMeshDataTable->FindRow<FCTTSocketMeshData>(RowNames[i], TEXT(""));
+	TArray<UStaticMeshComponent*> StaticMeshComponents;
+	Owner->GetComponents<UStaticMeshComponent>(StaticMeshComponents);
 
-        if (nullptr == MeshData || 
-            MeshData->AnimationName != RowName)
-        {
-            continue;
-        }
+	for (int32 i = 0; i < StaticMeshComponents.Num(); ++i)
+	{
+		UStaticMeshComponent* StaticMesh = StaticMeshComponents[i];
+		if (nullptr == StaticMesh)
+		{
+			UE_LOG(LogTemp, Error, TEXT("OwnerStaticMesh is nullptr"));
+			return;
+		}
 
-        MatchingMeshData.Add(MeshData);
-    }
+		auto MeshToAttach = SocketMap.Find(StaticMesh->GetFName());
+		if (nullptr == MeshToAttach)
+		{
+			UE_LOG(LogTemp, Error, TEXT("MeshToAttach is nullptr"));
+			return;
+		}
 
-    TArray<UStaticMeshComponent*> StaticMeshComponents;
-    Owner->GetComponents<UStaticMeshComponent>(StaticMeshComponents);
-
-    for (int32 i = 0; i < MatchingMeshData.Num(); ++i)
-    {
-        FCTTSocketMeshData* MeshData = MatchingMeshData[i];
-
-        if (nullptr == MeshData->Mesh)
-        {
-            continue;
-        }
-
-        for (int32 j = 0; j < StaticMeshComponents.Num(); ++j)
-        {
-            UStaticMeshComponent* StaticMesh = StaticMeshComponents[j];
-
-            if (nullptr == StaticMesh)
-            {
-                continue;
-            }
-
-            if (MeshData->SocketName == StaticMesh->GetFName())
-            {
-                StaticMesh->SetStaticMesh(MeshData->Mesh);
-                StaticMesh->AttachToComponent(SkeletalMeshComponent, FAttachmentTransformRules::SnapToTargetIncludingScale, MeshData->SocketName);
-                break;
-            }
-        }
-    }
+		StaticMesh->SetStaticMesh(*MeshToAttach);
+		StaticMesh->AttachToComponent(SkeletalMeshComponent, FAttachmentTransformRules::SnapToTargetIncludingScale, StaticMesh->GetFName());
+	}
 }
