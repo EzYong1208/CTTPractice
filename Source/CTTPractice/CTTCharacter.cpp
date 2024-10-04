@@ -2,6 +2,7 @@
 
 
 #include "CTTCharacter.h"
+#include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
 // Sets default values
@@ -33,6 +34,7 @@ void ACTTCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 
 	PlayerInputComponent->BindAxis(TEXT("MoveUpDown"), this, &ACTTCharacter::MoveUpDown);
 	PlayerInputComponent->BindAxis(TEXT("MoveLeftRight"), this, &ACTTCharacter::MoveLeftRight);
+	PlayerInputComponent->BindAxis(TEXT("RotateCamera"), this, &ACTTCharacter::RotateCamera);
 
 	// TODO : 카메라 세팅 후 정리하기
 	//// 카메라
@@ -60,14 +62,34 @@ void ACTTCharacter::UpdateMoveVector(float DeltaTime)
 	FVector ForwardVector = GetActorForwardVector() * VerticalMovementInput;
 	FVector RightVector = GetActorRightVector() * HorizontalMovementInput;
 	FVector MovementDirection = ForwardVector + RightVector;
-
+	
 	if (true == MovementDirection.IsZero())
 	{
 		return;
 	}
-
+	
 	MovementDirection.Normalize();
+
+	//float DotProduct = FVector::DotProduct(GetActorForwardVector(), MovementDirection);
+	//float Angle = FMath::Acos(DotProduct);
+	//float MoveAngle = FMath::RadiansToDegrees(Angle);
+	//FRotator NewRotation = MovementDirection.Rotation();
+	//SetActorRotation(NewRotation);
+
 	AddMovementInput(MovementDirection, Speed);
+}
+
+void ACTTCharacter::RotateCamera(float InputValue)
+{
+	if (InputValue != 0.0f)
+	{
+		USpringArmComponent* SpringArmComponent = Cast<USpringArmComponent>(GetComponentByClass(USpringArmComponent::StaticClass()));
+
+		FRotator RotationDelta(0.0f, InputValue * 2.f * GetWorld()->DeltaTimeSeconds * 100.f, 0.0f);
+		FRotator NewRotation = SpringArmComponent->GetComponentRotation() + RotationDelta;
+
+		SpringArmComponent->SetWorldRotation(NewRotation);
+	}
 }
 
 FVector GetDirection(float Angle)

@@ -22,6 +22,16 @@ void UCTTAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	//}
 
     // TODO: 애니메이션 제어가 완료되면 수정
+
+	AActor* OwningActor = GetOwningActor();
+	if (nullptr == OwningActor)
+	{
+		UE_LOG(LogTemp, Error, TEXT("UCTTAnimInstance: OwningActor is nullptr"));
+		return;
+	}
+
+	Speed = OwningActor->GetVelocity().Size();
+	//UE_LOG(LogTemp, Warning, TEXT("Current Speed: %f"), Speed);
 }
 
 void UCTTAnimInstance::SetSpeed(float InSpeed)

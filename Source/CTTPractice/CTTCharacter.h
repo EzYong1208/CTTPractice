@@ -38,4 +38,6 @@ private:
 	void MoveLeftRight(float InputValue);
 
 	void UpdateMoveVector(float DeltaTime);
+
+	void RotateCamera(float InputValue);
 };
