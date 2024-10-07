@@ -3,6 +3,7 @@
 
 #include "CTTCharacter.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Camera/CameraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
 // Sets default values
@@ -56,12 +57,22 @@ void ACTTCharacter::MoveLeftRight(float InputValue)
 
 void ACTTCharacter::UpdateMoveVector(float DeltaTime)
 {
-	//float MoveAngle = VerticalMovementInput 더하기 HorizontalMovementInput;
-	//AddMovementInput(GetDirection(MoveAngle), Speed);
+	UCameraComponent* CameraComponent = Cast<UCameraComponent>(GetComponentByClass(UCameraComponent::StaticClass()));
 
-	FVector ForwardVector = GetActorForwardVector() * VerticalMovementInput;
-	FVector RightVector = GetActorRightVector() * HorizontalMovementInput;
-	FVector MovementDirection = ForwardVector + RightVector;
+	if (CameraComponent == nullptr)
+	{
+		return;
+	}
+
+	FRotator CameraRotation = CameraComponent->GetComponentRotation();
+	FRotator YawRotation(0, CameraRotation.Yaw, 0);
+
+	FVector CameraForward = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
+	FVector CameraRight = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
+
+	FVector ForwardMovement = CameraForward * VerticalMovementInput;
+	FVector RightMovement = CameraRight * HorizontalMovementInput;
+	FVector MovementDirection = ForwardMovement + RightMovement;
 	
 	if (true == MovementDirection.IsZero())
 	{
@@ -70,13 +81,10 @@ void ACTTCharacter::UpdateMoveVector(float DeltaTime)
 	
 	MovementDirection.Normalize();
 
-	//float DotProduct = FVector::DotProduct(GetActorForwardVector(), MovementDirection);
-	//float Angle = FMath::Acos(DotProduct);
-	//float MoveAngle = FMath::RadiansToDegrees(Angle);
-	//FRotator NewRotation = MovementDirection.Rotation();
-	//SetActorRotation(NewRotation);
-
 	AddMovementInput(MovementDirection, Speed);
+
+	FRotator NewRotation = MovementDirection.Rotation();
+	SetActorRotation(FRotator(0.0f, NewRotation.Yaw, 0.0f));
 }
 
 void ACTTCharacter::RotateCamera(float InputValue)
@@ -85,20 +93,9 @@ void ACTTCharacter::RotateCamera(float InputValue)
 	{
 		USpringArmComponent* SpringArmComponent = Cast<USpringArmComponent>(GetComponentByClass(USpringArmComponent::StaticClass()));
 
-		FRotator RotationDelta(0.0f, InputValue * 2.f * GetWorld()->DeltaTimeSeconds * 100.f, 0.0f);
+		FRotator RotationDelta(0.0f, InputValue * 2.f * GetWorld()->DeltaTimeSeconds * CAMERA_ROTATE_SPEED, 0.0f);
 		FRotator NewRotation = SpringArmComponent->GetComponentRotation() + RotationDelta;
 
 		SpringArmComponent->SetWorldRotation(NewRotation);
 	}
-}
-
-FVector GetDirection(float Angle)
-{
-	FVector ResultDirection;
-
-	// 현재 카메라의 Direction을 upvector를 기준으로 Angle 만큼 회전시켜서 ResultDirection을 return
-	// 카메라의 2dDirection 기준으로 내 컨트롤
-	// 컨트롤러의 방향값의 월드에서 벡터값
-
-	return ResultDirection;
 }

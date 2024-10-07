@@ -33,6 +33,8 @@ protected:
 	float VerticalMovementInput = 0.f;
 	float HorizontalMovementInput = 0.f;
 
+	static constexpr float CAMERA_ROTATE_SPEED = 100.f;
+
 private:
 	void MoveUpDown(float InputValue);
 	void MoveLeftRight(float InputValue);
