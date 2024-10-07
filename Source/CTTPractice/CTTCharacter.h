@@ -6,6 +6,8 @@
 #include "GameFramework/Character.h"
 #include "CTTCharacter.generated.h"
 
+class ACTTCameraActor;
+
 UCLASS()
 class CTTPRACTICE_API ACTTCharacter : public ACharacter
 {
@@ -26,6 +28,11 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+public:
+	// TODO : 좀더 고민하기
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera")
+    TWeakObjectPtr<ACTTCameraActor> CameraActor;
+
 protected:
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite)
 	float Speed = 0.f;
@@ -42,4 +49,6 @@ private:
 	void UpdateMoveVector(float DeltaTime);
 
 	void RotateCamera(float InputValue);
+	void MoveCameraCloser();
+	void MoveCameraAway();
 };

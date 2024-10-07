@@ -4,6 +4,7 @@
 #include "CTTCharacter.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
+#include "CTTCameraActor.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
 // Sets default values
@@ -37,12 +38,8 @@ void ACTTCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 	PlayerInputComponent->BindAxis(TEXT("MoveLeftRight"), this, &ACTTCharacter::MoveLeftRight);
 	PlayerInputComponent->BindAxis(TEXT("RotateCamera"), this, &ACTTCharacter::RotateCamera);
 
-	// TODO : 카메라 세팅 후 정리하기
-	//// 카메라
-	//PlayerInputComponent->BindAction("RotateCameraLeft", IE_Pressed, CameraControl, &UCTTCameraControlComponent::RotateCameraLeft);
-	//PlayerInputComponent->BindAction("RotateCameraRight", IE_Pressed, CameraControl, &UCTTCameraControlComponent::RotateCameraRight);
-	//PlayerInputComponent->BindAction("MoveCameraCloser", IE_Pressed, CameraControl, &UCTTCameraControlComponent::MoveCameraCloser);
-	//PlayerInputComponent->BindAction("MoveCameraAway", IE_Pressed, CameraControl, &UCTTCameraControlComponent::MoveCameraAway);
+	PlayerInputComponent->BindAction("MoveCameraCloser", IE_Pressed, this, &ACTTCharacter::MoveCameraCloser);
+	PlayerInputComponent->BindAction("MoveCameraAway", IE_Pressed, this, &ACTTCharacter::MoveCameraAway);
 }
 
 void ACTTCharacter::MoveUpDown(float InputValue)
@@ -57,14 +54,13 @@ void ACTTCharacter::MoveLeftRight(float InputValue)
 
 void ACTTCharacter::UpdateMoveVector(float DeltaTime)
 {
-	UCameraComponent* CameraComponent = Cast<UCameraComponent>(GetComponentByClass(UCameraComponent::StaticClass()));
-
-	if (CameraComponent == nullptr)
+	if (false == CameraActor.IsValid())
 	{
+		UE_LOG(LogTemp, Error, TEXT("CameraActor is not Valid"));
 		return;
 	}
 
-	FRotator CameraRotation = CameraComponent->GetComponentRotation();
+	FRotator CameraRotation = CameraActor->GetActorRotation();
 	FRotator YawRotation(0, CameraRotation.Yaw, 0);
 
 	FVector CameraForward = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
@@ -89,13 +85,31 @@ void ACTTCharacter::UpdateMoveVector(float DeltaTime)
 
 void ACTTCharacter::RotateCamera(float InputValue)
 {
-	if (InputValue != 0.0f)
+	if (InputValue != 0.0f && 
+		true == CameraActor.IsValid())
 	{
-		USpringArmComponent* SpringArmComponent = Cast<USpringArmComponent>(GetComponentByClass(USpringArmComponent::StaticClass()));
-
-		FRotator RotationDelta(0.0f, InputValue * 2.f * GetWorld()->DeltaTimeSeconds * CAMERA_ROTATE_SPEED, 0.0f);
-		FRotator NewRotation = SpringArmComponent->GetComponentRotation() + RotationDelta;
-
-		SpringArmComponent->SetWorldRotation(NewRotation);
+		CameraActor->RotateCamera(InputValue);
 	}
+}
+
+void ACTTCharacter::MoveCameraCloser()
+{
+	if (false == CameraActor.IsValid())
+	{
+		UE_LOG(LogTemp, Error, TEXT("CameraActor is not Valid"));
+		return;
+	}
+
+	CameraActor->MoveCameraCloser();
+}
+
+void ACTTCharacter::MoveCameraAway()
+{
+	if (false == CameraActor.IsValid())
+	{
+		UE_LOG(LogTemp, Error, TEXT("CameraActor is not Valid"));
+		return;
+	}
+
+	CameraActor->MoveCameraAway();
 }
