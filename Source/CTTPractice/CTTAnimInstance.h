@@ -11,6 +11,7 @@
  */
 
 class UCTTSocketAttachmentComponent;
+class ACTTCharacter;
 
 UCLASS()
 class CTTPRACTICE_API UCTTAnimInstance : public UAnimInstance
@@ -21,9 +22,6 @@ public:
 	virtual void NativeInitializeAnimation() override;
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
 
-public:
-	void SetSpeed(float InSpeed);
-
 private:
 	void UpdateSocketAttachments();
 
@@ -32,4 +30,11 @@ private:
 protected:
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite)
 	float Speed = 0.f;
+
+	UPROPERTY(EditAnyWhere, BlueprintReadWrite)
+	bool bCanAttack = false;
+
+private:
+	UFUNCTION()
+	void AnimNotify_AttackEnd();
 };

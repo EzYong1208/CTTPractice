@@ -29,6 +29,12 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 public:
+	float GetCharacterSpeed() const { return Speed; }
+	bool CheckCharacterAttack() const { return bCanAttack; }
+
+	void SetCharacterAttack(bool InbCanAttack);
+
+public:
 	// TODO : 좀더 고민하기
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera")
     TWeakObjectPtr<ACTTCameraActor> CameraActor;
@@ -36,6 +42,9 @@ public:
 protected:
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite)
 	float Speed = 0.f;
+
+	UPROPERTY(EditAnyWhere, BlueprintReadWrite)
+	bool bCanAttack = true;
 
 	float VerticalMovementInput = 0.f;
 	float HorizontalMovementInput = 0.f;
@@ -51,4 +60,6 @@ private:
 	void RotateCamera(float InputValue);
 	void MoveCameraCloser();
 	void MoveCameraAway();
+
+	void Attack();
 };

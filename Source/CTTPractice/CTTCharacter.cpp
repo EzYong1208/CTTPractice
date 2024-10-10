@@ -40,6 +40,13 @@ void ACTTCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 
 	PlayerInputComponent->BindAction("MoveCameraCloser", IE_Pressed, this, &ACTTCharacter::MoveCameraCloser);
 	PlayerInputComponent->BindAction("MoveCameraAway", IE_Pressed, this, &ACTTCharacter::MoveCameraAway);
+
+	PlayerInputComponent->BindAction("Attack", IE_Pressed, this, &ACTTCharacter::Attack);
+}
+
+void ACTTCharacter::SetCharacterAttack(bool InbCanAttack)
+{
+	bCanAttack = InbCanAttack;
 }
 
 void ACTTCharacter::MoveUpDown(float InputValue)
@@ -69,14 +76,15 @@ void ACTTCharacter::UpdateMoveVector(float DeltaTime)
 	FVector ForwardMovement = CameraForward * VerticalMovementInput;
 	FVector RightMovement = CameraRight * HorizontalMovementInput;
 	FVector MovementDirection = ForwardMovement + RightMovement;
-	
+
+	MovementDirection.Normalize();
+	Speed = MovementDirection.Size();
+
 	if (true == MovementDirection.IsZero())
 	{
 		return;
 	}
 	
-	MovementDirection.Normalize();
-
 	AddMovementInput(MovementDirection, Speed);
 
 	FRotator NewRotation = MovementDirection.Rotation();
@@ -112,4 +120,17 @@ void ACTTCharacter::MoveCameraAway()
 	}
 
 	CameraActor->MoveCameraAway();
+}
+
+void ACTTCharacter::Attack()
+{
+	//UE_LOG(LogTemp, Error, TEXT("Attack"));
+
+	if (false == bCanAttack)
+	{
+		UE_LOG(LogTemp, Error, TEXT("bCanAttack is false"));
+		return;
+	}
+
+	bCanAttack = false;
 }
