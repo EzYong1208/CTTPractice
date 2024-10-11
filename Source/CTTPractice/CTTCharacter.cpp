@@ -2,9 +2,8 @@
 
 
 #include "CTTCharacter.h"
-#include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
-#include "CTTCameraActor.h"
+#include "CTTCameraControlComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
 // Sets default values
@@ -36,12 +35,19 @@ void ACTTCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 
 	PlayerInputComponent->BindAxis(TEXT("MoveUpDown"), this, &ACTTCharacter::MoveUpDown);
 	PlayerInputComponent->BindAxis(TEXT("MoveLeftRight"), this, &ACTTCharacter::MoveLeftRight);
-	PlayerInputComponent->BindAxis(TEXT("RotateCamera"), this, &ACTTCharacter::RotateCamera);
-
-	PlayerInputComponent->BindAction("MoveCameraCloser", IE_Pressed, this, &ACTTCharacter::MoveCameraCloser);
-	PlayerInputComponent->BindAction("MoveCameraAway", IE_Pressed, this, &ACTTCharacter::MoveCameraAway);
 
 	PlayerInputComponent->BindAction("Attack", IE_Pressed, this, &ACTTCharacter::Attack);
+
+
+	UCTTCameraControlComponent* CameraControlComponent = FindComponentByClass<UCTTCameraControlComponent>();
+	if (nullptr == CameraControlComponent)
+	{
+		UE_LOG(LogTemp, Error, TEXT("CameraControlComponent is nullptr"));
+		return;
+	}
+	PlayerInputComponent->BindAxis(TEXT("RotateCamera"), CameraControlComponent, &UCTTCameraControlComponent::RotateCamera);
+	PlayerInputComponent->BindAction("MoveCameraCloser", IE_Pressed, CameraControlComponent, &UCTTCameraControlComponent::MoveCameraCloser);
+	PlayerInputComponent->BindAction("MoveCameraAway", IE_Pressed, CameraControlComponent, &UCTTCameraControlComponent::MoveCameraAway);
 }
 
 void ACTTCharacter::SetCharacterAttack(bool InbCanAttack)
@@ -61,13 +67,14 @@ void ACTTCharacter::MoveLeftRight(float InputValue)
 
 void ACTTCharacter::UpdateMoveVector(float DeltaTime)
 {
-	if (false == CameraActor.IsValid())
+	UCameraComponent* CameraComponent = Cast<UCameraComponent>(GetComponentByClass(UCameraComponent::StaticClass()));
+	if (nullptr == CameraComponent)
 	{
-		UE_LOG(LogTemp, Error, TEXT("CameraActor is not Valid"));
+		UE_LOG(LogTemp, Error, TEXT("CameraComponent is nullptr"));
 		return;
 	}
 
-	FRotator CameraRotation = CameraActor->GetActorRotation();
+	FRotator CameraRotation = CameraComponent->GetComponentRotation();
 	FRotator YawRotation(0, CameraRotation.Yaw, 0);
 
 	FVector CameraForward = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
@@ -91,41 +98,8 @@ void ACTTCharacter::UpdateMoveVector(float DeltaTime)
 	SetActorRotation(FRotator(0.0f, NewRotation.Yaw, 0.0f));
 }
 
-void ACTTCharacter::RotateCamera(float InputValue)
-{
-	if (InputValue != 0.0f && 
-		true == CameraActor.IsValid())
-	{
-		CameraActor->RotateCamera(InputValue);
-	}
-}
-
-void ACTTCharacter::MoveCameraCloser()
-{
-	if (false == CameraActor.IsValid())
-	{
-		UE_LOG(LogTemp, Error, TEXT("CameraActor is not Valid"));
-		return;
-	}
-
-	CameraActor->MoveCameraCloser();
-}
-
-void ACTTCharacter::MoveCameraAway()
-{
-	if (false == CameraActor.IsValid())
-	{
-		UE_LOG(LogTemp, Error, TEXT("CameraActor is not Valid"));
-		return;
-	}
-
-	CameraActor->MoveCameraAway();
-}
-
 void ACTTCharacter::Attack()
 {
-	//UE_LOG(LogTemp, Error, TEXT("Attack"));
-
 	if (false == bCanAttack)
 	{
 		UE_LOG(LogTemp, Error, TEXT("bCanAttack is false"));

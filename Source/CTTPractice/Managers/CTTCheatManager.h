@@ -23,4 +23,7 @@ class CTTPRACTICE_API UCTTCheatManager : public UCheatManager
 
 	UFUNCTION(exec)
 	void SetCollectItem(int32 Index, bool bEnable);
+
+	UFUNCTION(exec)
+	void SpawnItem(FName ItemName);
 };

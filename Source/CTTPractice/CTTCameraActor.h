@@ -27,37 +27,6 @@ protected:
 public:
 	virtual void Tick(float DeltaTime);
 
-public:
-	void InitializeCameraComponents();
-
-	void CameraMovement(float DeltaTime);
-	void RotateCamera(float InputValue);
-	void MoveCameraCloser();
-	void MoveCameraAway();
-	
-public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera")
-	float InitialSpringArmLength = 0.f;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera")
-	float RotationSpeed = 0.f;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera")
-	float CameraZoomSpeed = 0.f;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera")
-	float MinSpringArmLength = 0.f;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera")
-	float MaxSpringArmLength = 0.f;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera")
-	float CameraMoveDistance = 0.f;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TWeakObjectPtr<ACharacter> OwningCharacter;
-
-private:
-	FVector OwnerLocation = FVector(0.f, 0.f, 0.f);
-	float TargetArmLength = 0.f;
+	UPROPERTY(EditAnyWhere, BlueprintReadWrite)
+	float Speed = 0.f;
 };

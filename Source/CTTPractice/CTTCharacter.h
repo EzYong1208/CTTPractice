@@ -34,11 +34,6 @@ public:
 
 	void SetCharacterAttack(bool InbCanAttack);
 
-public:
-	// TODO : 좀더 고민하기
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera")
-    TWeakObjectPtr<ACTTCameraActor> CameraActor;
-
 protected:
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite)
 	float Speed = 0.f;
@@ -46,20 +41,15 @@ protected:
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite)
 	bool bCanAttack = true;
 
-	float VerticalMovementInput = 0.f;
-	float HorizontalMovementInput = 0.f;
-
-	static constexpr float CAMERA_ROTATE_SPEED = 100.f;
-
 private:
 	void MoveUpDown(float InputValue);
 	void MoveLeftRight(float InputValue);
 
 	void UpdateMoveVector(float DeltaTime);
 
-	void RotateCamera(float InputValue);
-	void MoveCameraCloser();
-	void MoveCameraAway();
-
 	void Attack();
+
+private:
+	float VerticalMovementInput = 0.f;
+	float HorizontalMovementInput = 0.f;
 };

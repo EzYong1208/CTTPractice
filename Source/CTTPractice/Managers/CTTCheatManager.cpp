@@ -4,6 +4,8 @@
 #include "CTTCheatManager.h"
 #include "CTTPractice/CTTPracticeGameModeBase.h"
 #include "Kismet/GameplayStatics.h"
+#include "CTTPractice/CTTItem.h"
+#include "Engine/World.h"
 
 
 void UCTTCheatManager::SetPlayerLife(int32 Life)
@@ -40,4 +42,9 @@ void UCTTCheatManager::SetCollectItem(int32 Index, bool bEnable)
 	}
 
 	GameMode->SetCollectItemStatus(Index, bEnable);
+}
+
+void UCTTCheatManager::SpawnItem(FName ItemName)
+{
+
 }
