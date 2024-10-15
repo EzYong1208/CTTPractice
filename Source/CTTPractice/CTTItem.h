@@ -9,6 +9,7 @@
 
 class USkeletalMesh;
 class UStaticMesh;
+class USphereComponent;
 
 USTRUCT(BlueprintType)
 struct CTTPRACTICE_API FCTTItemData : public FTableRowBase
@@ -16,10 +17,22 @@ struct CTTPRACTICE_API FCTTItemData : public FTableRowBase
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UStaticMesh* StaticMesh;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	USkeletalMesh* SkeletalMesh;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UStaticMesh* StaticMesh;
+    TSubclassOf<UAnimInstance> AnimBlueprintClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float SphereRadius;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FVector MeshLocation;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FVector Scale = FVector(1.f, 1.f, 1.f);
 };
 
 UCLASS()
@@ -41,4 +54,8 @@ public:
 
 public:
 	void InitializeItem(const FCTTItemData& ItemData);
+
+private:
+	UPROPERTY()
+	USphereComponent* CollisionSphereComponent;
 };
