@@ -3,7 +3,7 @@
 
 #include "CTTPracticeGameModeBase.h"
 #include "CTTPractice/UI/CTTUICommonResource.h"
-
+#include "CTTPractice/CTTItem.h"
 
 void ACTTPracticeGameModeBase::BeginPlay()
 {
@@ -24,6 +24,17 @@ void ACTTPracticeGameModeBase::BeginPlay()
 		UICommonResource = NewObject<UCTTUICommonResource>(this, UICommonResourceClass);
 	}
 
+
+	// TODO : 아이템 스폰
+	TArray<FName> RowNames = ItemSpawnDataTable->GetRowNames();
+	for (const FName& RowName : RowNames)
+	{
+		FCTTItemSpawnData* SpawnData = ItemSpawnDataTable->FindRow<FCTTItemSpawnData>(RowName, TEXT(""));
+		if (SpawnData)
+		{
+			SpawnItem(*SpawnData);
+		}
+	}
 }
 
 void ACTTPracticeGameModeBase::SetPlayerLifeCount(int32 InPlayerLifeCount)
@@ -56,4 +67,24 @@ void ACTTPracticeGameModeBase::SetCollectItemStatus(int32 InIndex, bool bInEnabl
 	{
 		OnChangeCollectItemDelegate.Broadcast(InIndex, CollectItemStates[InIndex]);
 	}
+}
+
+void ACTTPracticeGameModeBase::SpawnItem(const FCTTItemSpawnData& SpawnData)
+{
+	FCTTItemData* ItemData = ItemDataTable->FindRow<FCTTItemData>(SpawnData.ItemName, TEXT(""));
+	if (ItemData == nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ItemData for '%s' is nullptr"), *SpawnData.ItemName.ToString());
+		return;
+	}
+
+	FRotator SpawnRotation = FRotator::MakeFromEuler(SpawnData.Rotation);
+	ACTTItem* NewItem = GetWorld()->SpawnActor<ACTTItem>(ACTTItem::StaticClass(), SpawnData.Position, SpawnRotation);
+	if (!IsValid(NewItem))
+	{
+		UE_LOG(LogTemp, Error, TEXT("Failed to spawn ACTTItem"));
+		return;
+	}
+
+	NewItem->InitializeItem(*ItemData);
 }

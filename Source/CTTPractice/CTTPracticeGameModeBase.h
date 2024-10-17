@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
 #include "Templates/SubclassOf.h"
+#include "CTTPractice/CTTStruct.h"
 #include "CTTPracticeGameModeBase.generated.h"
 
 /**
@@ -69,4 +70,13 @@ protected:
 	FCTTOnChangePlayerLifeCount OnChangePlayerLifeCountDelegate;
 	FCTTOnChangeCoinCount OnChangeCoinCountDelegate;
 	FCTTOnChangeCollectItem OnChangeCollectItemDelegate;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    UDataTable* ItemSpawnDataTable;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    UDataTable* ItemDataTable;
+
+private:
+	void SpawnItem(const FCTTItemSpawnData& SpawnData);
 };

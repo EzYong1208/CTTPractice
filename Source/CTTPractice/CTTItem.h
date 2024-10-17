@@ -3,37 +3,13 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Engine/DataTable.h"
+#include "CTTPractice/CTTStruct.h"
 #include "GameFramework/Actor.h"
 #include "CTTItem.generated.h"
 
 class USkeletalMesh;
 class UStaticMesh;
 class USphereComponent;
-
-USTRUCT(BlueprintType)
-struct CTTPRACTICE_API FCTTItemData : public FTableRowBase
-{
-	GENERATED_BODY()
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UStaticMesh* StaticMesh;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	USkeletalMesh* SkeletalMesh;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    TSubclassOf<UAnimInstance> AnimBlueprintClass;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float SphereRadius;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FVector MeshLocation;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FVector Scale = FVector(1.f, 1.f, 1.f);
-};
 
 UCLASS()
 class CTTPRACTICE_API ACTTItem : public AActor

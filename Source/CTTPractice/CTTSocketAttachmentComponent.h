@@ -3,25 +3,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Engine/DataTable.h"
+#include "CTTPractice/CTTStruct.h"
 #include "Components/ActorComponent.h"
-#include "CTTPractice/CTTEnum.h"
 #include "CTTSocketAttachmentComponent.generated.h"
-
-USTRUCT(BlueprintType)
-struct CTTPRACTICE_API FCTTSocketMeshData : public FTableRowBase
-{
-	GENERATED_BODY()
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FName AnimationName;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FName SocketName;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UStaticMesh* Mesh;
-};
 
 UCLASS(Blueprintable, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class CTTPRACTICE_API UCTTSocketAttachmentComponent : public UActorComponent
