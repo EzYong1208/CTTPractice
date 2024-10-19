@@ -2,8 +2,10 @@
 
 
 #include "CTTCharacter.h"
+#include "CTTItem.h"
 #include "Camera/CameraComponent.h"
 #include "CTTCameraControlComponent.h"
+#include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
 // Sets default values
@@ -18,6 +20,7 @@ ACTTCharacter::ACTTCharacter()
 void ACTTCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+
 }
 
 // Called every frame
@@ -48,6 +51,30 @@ void ACTTCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 	PlayerInputComponent->BindAxis(TEXT("RotateCamera"), CameraControlComponent, &UCTTCameraControlComponent::RotateCamera);
 	PlayerInputComponent->BindAction("MoveCameraCloser", IE_Pressed, CameraControlComponent, &UCTTCameraControlComponent::MoveCameraCloser);
 	PlayerInputComponent->BindAction("MoveCameraAway", IE_Pressed, CameraControlComponent, &UCTTCameraControlComponent::MoveCameraAway);
+}
+
+void ACTTCharacter::NotifyActorBeginOverlap(AActor* OtherActor)
+{
+	Super::NotifyActorBeginOverlap(OtherActor);
+
+	ACTTItem* Item = Cast<ACTTItem>(OtherActor);
+	if (Item)
+	{
+		OverlappingItem = Item;
+		UE_LOG(LogTemp, Error, TEXT("NotifyActorBeginOverlap"));
+	}
+}
+
+void ACTTCharacter::NotifyActorEndOverlap(AActor* OtherActor)
+{
+	Super::NotifyActorEndOverlap(OtherActor);
+
+	ACTTItem* Item = Cast<ACTTItem>(OtherActor);
+	if (Item && OverlappingItem == Item)
+	{
+		OverlappingItem = nullptr;
+		UE_LOG(LogTemp, Error, TEXT("NotifyActorEndOverlap"));
+	}
 }
 
 void ACTTCharacter::SetCharacterAttack(bool InbCanAttack)
@@ -104,6 +131,11 @@ void ACTTCharacter::Attack()
 	{
 		UE_LOG(LogTemp, Error, TEXT("bCanAttack is false"));
 		return;
+	}
+
+	if (OverlappingItem)
+	{
+		OverlappingItem->DoAction();
 	}
 
 	bCanAttack = false;

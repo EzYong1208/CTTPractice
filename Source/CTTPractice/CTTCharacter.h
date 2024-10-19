@@ -7,6 +7,7 @@
 #include "CTTCharacter.generated.h"
 
 class ACTTCameraActor;
+class ACTTItem;
 
 UCLASS()
 class CTTPRACTICE_API ACTTCharacter : public ACharacter
@@ -27,6 +28,10 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	virtual void NotifyActorBeginOverlap(AActor* OtherActor) override;
+	virtual void NotifyActorEndOverlap(AActor* OtherActor) override;
+
 
 public:
 	float GetCharacterSpeed() const { return Speed; }
@@ -52,4 +57,7 @@ private:
 private:
 	float VerticalMovementInput = 0.f;
 	float HorizontalMovementInput = 0.f;
+
+	UPROPERTY()
+	ACTTItem* OverlappingItem = nullptr;
 };

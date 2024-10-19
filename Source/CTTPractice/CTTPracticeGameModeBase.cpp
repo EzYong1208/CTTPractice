@@ -71,20 +71,22 @@ void ACTTPracticeGameModeBase::SetCollectItemStatus(int32 InIndex, bool bInEnabl
 
 void ACTTPracticeGameModeBase::SpawnItem(const FCTTItemSpawnData& SpawnData)
 {
-	FCTTItemData* ItemData = ItemDataTable->FindRow<FCTTItemData>(SpawnData.ItemName, TEXT(""));
-	if (ItemData == nullptr)
+	TArray<FName> RowNames = ItemDataTable->GetRowNames();
+	for (const FName& RowName : RowNames)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("ItemData for '%s' is nullptr"), *SpawnData.ItemName.ToString());
-		return;
-	}
+		FCTTItemData* ItemData = ItemDataTable->FindRow<FCTTItemData>(RowName, TEXT(""));
+		if (SpawnData.ItemName == ItemData->ItemName)
+		{
+			FRotator SpawnRotation = FRotator::MakeFromEuler(SpawnData.Rotation);
+			ACTTItem* NewItem = GetWorld()->SpawnActor<ACTTItem>(ACTTItem::StaticClass(), SpawnData.Position, SpawnRotation);
+			if (!IsValid(NewItem))
+			{
+				UE_LOG(LogTemp, Error, TEXT("Failed to spawn ACTTItem"));
+				return;
+			}
 
-	FRotator SpawnRotation = FRotator::MakeFromEuler(SpawnData.Rotation);
-	ACTTItem* NewItem = GetWorld()->SpawnActor<ACTTItem>(ACTTItem::StaticClass(), SpawnData.Position, SpawnRotation);
-	if (!IsValid(NewItem))
-	{
-		UE_LOG(LogTemp, Error, TEXT("Failed to spawn ACTTItem"));
-		return;
+			NewItem->InitializeItem(*ItemData);
+			break;
+		}
 	}
-
-	NewItem->InitializeItem(*ItemData);
 }

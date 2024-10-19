@@ -23,6 +23,7 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+	virtual void PostInitializeComponents() override;
 
 public:	
 	// Called every frame
@@ -30,8 +31,17 @@ public:
 
 public:
 	void InitializeItem(const FCTTItemData& ItemData);
+	FName GetItemName() const { return ItemName; }
+	bool CheckItemDead() const { return bIsDead; }
+	void DoAction();
+
+public:
+	UPROPERTY(EditAnyWhere, BlueprintReadWrite)
+	bool bIsDead = false;
 
 private:
 	UPROPERTY()
 	USphereComponent* CollisionSphereComponent;
+
+	FName ItemName;
 };

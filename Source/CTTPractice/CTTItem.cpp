@@ -21,6 +21,12 @@ void ACTTItem::BeginPlay()
 	
 }
 
+void ACTTItem::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+
+}
+
 // Called every frame
 void ACTTItem::Tick(float DeltaTime)
 {
@@ -71,4 +77,11 @@ void ACTTItem::InitializeItem(const FCTTItemData& ItemData)
 	}
 
 	CollisionSphereComponent->SetSphereRadius(ItemData.SphereRadius);
+	ItemName = ItemData.ItemName;
+}
+
+void ACTTItem::DoAction()
+{
+	UE_LOG(LogTemp, Error, TEXT("ACTTItem DoAction"));
+	bIsDead = true;
 }
