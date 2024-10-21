@@ -34,10 +34,14 @@ public:
 	FName GetItemName() const { return ItemName; }
 	bool CheckItemDead() const { return bIsDead; }
 	void DoAction();
+	void HandleDeath();
 
 public:
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite)
 	bool bIsDead = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    UDataTable* ItemSpawnOffsetDataTable;
 
 private:
 	UPROPERTY()

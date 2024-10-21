@@ -26,10 +26,10 @@ void ACTTPracticeGameModeBase::BeginPlay()
 
 
 	// TODO : 아이템 스폰
-	TArray<FName> RowNames = ItemSpawnDataTable->GetRowNames();
+	TArray<FName> RowNames = WorldItemSetupDataTable->GetRowNames();
 	for (const FName& RowName : RowNames)
 	{
-		FCTTItemSpawnData* SpawnData = ItemSpawnDataTable->FindRow<FCTTItemSpawnData>(RowName, TEXT(""));
+		FCTTWorldItemSetupData* SpawnData = WorldItemSetupDataTable->FindRow<FCTTWorldItemSetupData>(RowName, TEXT(""));
 		if (SpawnData)
 		{
 			SpawnItem(*SpawnData);
@@ -69,7 +69,7 @@ void ACTTPracticeGameModeBase::SetCollectItemStatus(int32 InIndex, bool bInEnabl
 	}
 }
 
-void ACTTPracticeGameModeBase::SpawnItem(const FCTTItemSpawnData& SpawnData)
+void ACTTPracticeGameModeBase::SpawnItem(const FCTTWorldItemSetupData& SpawnData)
 {
 	TArray<FName> RowNames = ItemDataTable->GetRowNames();
 	for (const FName& RowName : RowNames)
@@ -89,4 +89,26 @@ void ACTTPracticeGameModeBase::SpawnItem(const FCTTItemSpawnData& SpawnData)
 			break;
 		}
 	}
+}
+
+FCTTItemSpawnOffsetData* ACTTPracticeGameModeBase::GetItemSpawnOffsetData(const FName& ItemName) const
+{
+	if (!IsValid(ItemSpawnOffsetDataTable))
+	{
+		UE_LOG(LogTemp, Error, TEXT("ItemSpawnOffsetDataTable is InValid"));
+		return nullptr;
+	}
+
+	TArray<FName> RowNames = ItemSpawnOffsetDataTable->GetRowNames();
+	for (const FName& RowName : RowNames)
+	{
+		FCTTItemSpawnOffsetData* SpawnOffsetData = ItemSpawnOffsetDataTable->FindRow<FCTTItemSpawnOffsetData>(RowName, TEXT(""));
+		if (ItemName == SpawnOffsetData->ItemName)
+		{
+			return SpawnOffsetData;
+		}
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("There is no item to spawn"));
+	return nullptr;
 }

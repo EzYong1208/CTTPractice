@@ -14,13 +14,13 @@ void UCTTItemAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 {
 	Super::NativeUpdateAnimation(DeltaSeconds);
 
-    ACTTItem* OwningCharacter = Cast<ACTTItem>(GetOwningActor());
-    if (nullptr == OwningCharacter)
-    {
-        return;
-    }
+	ACTTItem* OwnerItem = Cast<ACTTItem>(GetOwningActor());
+	if (nullptr == OwnerItem)
+	{
+		return;
+	}
 
-    bIsDead = OwningCharacter->CheckItemDead();
+    bIsDead = OwnerItem->CheckItemDead();
 }
 
 void UCTTItemAnimInstance::AnimNotify_DieEnd()
@@ -33,7 +33,5 @@ void UCTTItemAnimInstance::AnimNotify_DieEnd()
         return;
     }
 
-    // TODO : 아이템 스폰하는 기능 추가? 여기서? 좀 더 고민
-
-    OwnerItem->Destroy();
+    OwnerItem->HandleDeath();
 }

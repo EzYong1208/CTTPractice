@@ -37,6 +37,9 @@ public:
 	void SetCollectItemStatus(int32 InIndex, bool bInEnable);
 	FCTTOnChangeCollectItem& OnChangeCollectItem() { return OnChangeCollectItemDelegate; }
 
+	void SpawnItem(const FCTTWorldItemSetupData& SpawnData);
+	FCTTItemSpawnOffsetData* GetItemSpawnOffsetData(const FName& ItemName) const;
+
 public:
 	// юс╫ц
 	static constexpr int32 COLLECTITEM_NUMBER = 3;
@@ -72,11 +75,11 @@ protected:
 	FCTTOnChangeCollectItem OnChangeCollectItemDelegate;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    UDataTable* ItemSpawnDataTable;
+    UDataTable* WorldItemSetupDataTable;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     UDataTable* ItemDataTable;
 
-private:
-	void SpawnItem(const FCTTItemSpawnData& SpawnData);
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    UDataTable* ItemSpawnOffsetDataTable;
 };

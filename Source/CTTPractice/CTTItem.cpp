@@ -3,6 +3,8 @@
 
 #include "CTTItem.h"
 #include "Components/SphereComponent.h"
+#include "CTTPractice/CTTPracticeGameModeBase.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 ACTTItem::ACTTItem()
@@ -84,4 +86,28 @@ void ACTTItem::DoAction()
 {
 	UE_LOG(LogTemp, Error, TEXT("ACTTItem DoAction"));
 	bIsDead = true;
+}
+
+void ACTTItem::HandleDeath()
+{
+	ACTTPracticeGameModeBase* GameMode = Cast<ACTTPracticeGameModeBase>(UGameplayStatics::GetGameMode(this));
+	if (false == IsValid(GameMode))
+	{
+		UE_LOG(LogTemp, Error, TEXT("GameMode is InValid"));
+		return;
+	}
+
+	FCTTItemSpawnOffsetData* SpawnOffsetData = GameMode->GetItemSpawnOffsetData(ItemName);
+	if (nullptr != SpawnOffsetData)
+	{
+		FCTTWorldItemSetupData SpawnData;
+		SpawnData.ItemName = SpawnOffsetData->SpawnItemName;
+		SpawnData.Position = GetActorLocation() + SpawnOffsetData->SpawnPositionOffset;
+		SpawnData.Rotation = GetActorRotation().Euler() + SpawnOffsetData->SpawnRotationOffset;
+
+
+		GameMode->SpawnItem(SpawnData);
+	}
+
+	Destroy();
 }

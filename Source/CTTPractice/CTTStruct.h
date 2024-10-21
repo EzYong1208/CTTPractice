@@ -54,7 +54,7 @@ struct CTTPRACTICE_API FCTTItemData : public FTableRowBase
 };
 
 USTRUCT(BlueprintType)
-struct CTTPRACTICE_API FCTTItemSpawnData : public FTableRowBase
+struct CTTPRACTICE_API FCTTWorldItemSetupData : public FTableRowBase
 {
 	GENERATED_BODY()
 
@@ -66,4 +66,22 @@ struct CTTPRACTICE_API FCTTItemSpawnData : public FTableRowBase
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FVector Rotation;
+};
+
+USTRUCT(BlueprintType)
+struct CTTPRACTICE_API FCTTItemSpawnOffsetData : public FTableRowBase
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FName ItemName;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FName SpawnItemName;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FVector SpawnPositionOffset;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FVector SpawnRotationOffset;
 };
