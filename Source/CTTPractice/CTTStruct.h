@@ -85,3 +85,18 @@ struct CTTPRACTICE_API FCTTItemSpawnOffsetData : public FTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FVector SpawnRotationOffset;
 };
+
+USTRUCT(BlueprintType)
+struct CTTPRACTICE_API FCTTSwitchMovementData : public FTableRowBase
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FName TriggerItemName;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FName ActorName;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FVector TargetLocation;
+};

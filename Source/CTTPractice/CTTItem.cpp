@@ -34,6 +34,13 @@ void ACTTItem::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	ACTTPracticeGameModeBase* GameMode = Cast<ACTTPracticeGameModeBase>(UGameplayStatics::GetGameMode(this));
+	if (false == IsValid(GameMode))
+	{
+		UE_LOG(LogTemp, Error, TEXT("GameMode is InValid"));
+		return;
+	}
+	GameMode->MoveActorZAxis(ItemName, DeltaTime);
 }
 
 void ACTTItem::InitializeItem(const FCTTItemData& ItemData)

@@ -40,6 +40,8 @@ public:
 	void SpawnItem(const FCTTWorldItemSetupData& SpawnData);
 	FCTTItemSpawnOffsetData* GetItemSpawnOffsetData(const FName& ItemName) const;
 
+	void MoveActorZAxis(const FName& SwitchName, float DeltaTime);
+
 public:
 	// юс╫ц
 	static constexpr int32 COLLECTITEM_NUMBER = 3;
@@ -82,4 +84,13 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
     UDataTable* ItemSpawnOffsetDataTable;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    UDataTable* SwitchMovementDataTable;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float SwitchMovementSpeed = 0.f;
+
+private:
+	TMap<FName, TMap<FName, FVector>> SwitchMovementDataMap;
 };

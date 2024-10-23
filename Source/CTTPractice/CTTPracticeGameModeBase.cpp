@@ -4,6 +4,7 @@
 #include "CTTPracticeGameModeBase.h"
 #include "CTTPractice/UI/CTTUICommonResource.h"
 #include "CTTPractice/CTTItem.h"
+#include "EngineUtils.h" 
 
 void ACTTPracticeGameModeBase::BeginPlay()
 {
@@ -26,13 +27,23 @@ void ACTTPracticeGameModeBase::BeginPlay()
 
 
 	// TODO : 아이템 스폰
-	TArray<FName> RowNames = WorldItemSetupDataTable->GetRowNames();
-	for (const FName& RowName : RowNames)
+	TArray<FName> ItemNames = WorldItemSetupDataTable->GetRowNames();
+	for (const FName& RowName : ItemNames)
 	{
 		FCTTWorldItemSetupData* SpawnData = WorldItemSetupDataTable->FindRow<FCTTWorldItemSetupData>(RowName, TEXT(""));
 		if (SpawnData)
 		{
 			SpawnItem(*SpawnData);
+		}
+	}
+
+	TArray<FName> SwitchNames = SwitchMovementDataTable->GetRowNames();
+	for (int32 i = 0; i < SwitchNames.Num(); ++i)
+	{
+		FCTTSwitchMovementData* SwitchMovementData = SwitchMovementDataTable->FindRow<FCTTSwitchMovementData>(SwitchNames[i], TEXT(""));
+		if (SwitchMovementData)
+		{
+			SwitchMovementDataMap.FindOrAdd(SwitchMovementData->TriggerItemName).Add(SwitchMovementData->ActorName, SwitchMovementData->TargetLocation);
 		}
 	}
 }
@@ -111,4 +122,50 @@ FCTTItemSpawnOffsetData* ACTTPracticeGameModeBase::GetItemSpawnOffsetData(const 
 
 	UE_LOG(LogTemp, Warning, TEXT("There is no item to spawn"));
 	return nullptr;
+}
+
+void ACTTPracticeGameModeBase::MoveActorZAxis(const FName& SwitchName, float DeltaTime)
+{
+	TMap<FName, FVector>* MovementDataMapPtr = SwitchMovementDataMap.Find(SwitchName);
+	if (!MovementDataMapPtr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("No movement data found for SwitchName: %s"), *SwitchName.ToString());
+		return;
+	}
+
+	TMap<FName, FVector>& ActorLocationMap = *MovementDataMapPtr;
+
+	for (const auto& ActorEntry : ActorLocationMap)
+	{
+		const FName& ActorName = ActorEntry.Key;
+		FVector TargetLocation = ActorEntry.Value;
+
+		AActor* TargetActor = nullptr;
+		for (TActorIterator<AActor> Iter(GetWorld()); Iter; ++Iter)
+		{
+			FName WorldActorName;
+			WorldActorName = Iter->GetFName();
+
+			if (Iter->GetFName() == ActorName)
+			{
+				TargetActor = *Iter;
+				break;
+			}
+		}
+
+		FVector CurrentLocation = TargetActor->GetActorLocation();
+
+		if (CurrentLocation.Z >= TargetLocation.Z)
+		{
+			continue;
+		}
+
+		CurrentLocation.Z += SwitchMovementSpeed * DeltaTime;
+		if (CurrentLocation.Z > TargetLocation.Z)
+		{
+			CurrentLocation.Z = TargetLocation.Z;
+		}
+
+		TargetActor->SetActorLocation(CurrentLocation);
+	}
 }
