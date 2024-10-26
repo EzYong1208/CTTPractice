@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Engine/DataTable.h"
+#include "CTTPractice/CTTEnum.h"
 #include "CTTStruct.generated.h"
 
 /**
@@ -35,22 +36,25 @@ struct CTTPRACTICE_API FCTTItemData : public FTableRowBase
 	FName ItemName;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UStaticMesh* StaticMesh;
+	UStaticMesh* StaticMesh = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	USkeletalMesh* SkeletalMesh;
+	USkeletalMesh* SkeletalMesh = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
     TSubclassOf<UAnimInstance> AnimBlueprintClass;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float SphereRadius;
+	float SphereRadius = 0.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FVector MeshLocation;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FVector Scale = FVector(1.f, 1.f, 1.f);
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	ECTTItemCollisionType CollisionType;
 };
 
 USTRUCT(BlueprintType)

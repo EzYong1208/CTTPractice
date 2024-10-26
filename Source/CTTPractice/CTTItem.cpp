@@ -84,9 +84,20 @@ void ACTTItem::InitializeItem(const FCTTItemData& ItemData)
 		MeshComponent->SetRelativeLocation(ItemData.MeshLocation);
 		MeshComponent->SetWorldScale3D(ItemData.Scale);
 	}
+	bool check = false;
+	if (TEXT("BlockBrick") == ItemData.ItemName)
+	{
+		check = true;
+		int32 i = 0;
+	}
 
 	CollisionSphereComponent->SetSphereRadius(ItemData.SphereRadius);
+	FName CollisionTypeName; 
+	CollisionTypeName = ChangeItemCollisionTypeEnumToFName(ItemData.CollisionType);
+	CollisionSphereComponent->SetCollisionProfileName(CollisionTypeName);
+
 	ItemName = ItemData.ItemName;
+	CollisionType = ItemData.CollisionType;
 }
 
 void ACTTItem::DoAction()
@@ -117,4 +128,39 @@ void ACTTItem::HandleDeath()
 	}
 
 	Destroy();
+}
+
+FName ACTTItem::ChangeItemCollisionTypeEnumToFName(ECTTItemCollisionType CollisionTypeEnum) const
+{
+	FName CollisionTypeName;
+
+	switch (CollisionTypeEnum)
+	{
+	case ECTTItemCollisionType::Ignore:
+		CollisionTypeName = TEXT("Ignore");
+		UE_LOG(LogTemp, Warning, TEXT("CollisionTypeName is Ignore"));
+		break;
+
+	case ECTTItemCollisionType::Block:
+		CollisionTypeName = TEXT("Block");
+		UE_LOG(LogTemp, Warning, TEXT("CollisionTypeName is Block"));
+		break;
+
+	case ECTTItemCollisionType::Interactable:
+		CollisionTypeName = TEXT("Interactable");
+		UE_LOG(LogTemp, Warning, TEXT("CollisionTypeName is Interactable"));
+		break;
+
+	case ECTTItemCollisionType::Collectible:
+		CollisionTypeName = TEXT("Collectible");
+		UE_LOG(LogTemp, Warning, TEXT("CollisionTypeName is Collectible"));
+		break;
+
+	case ECTTItemCollisionType::Ladder:
+		CollisionTypeName = TEXT("Ladder");
+		UE_LOG(LogTemp, Warning, TEXT("CollisionTypeName is Ladder"));
+		break;
+	}
+
+	return CollisionTypeName;
 }

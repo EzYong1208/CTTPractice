@@ -129,7 +129,6 @@ void ACTTPracticeGameModeBase::MoveActorZAxis(const FName& SwitchName, float Del
 	TMap<FName, FVector>* MovementDataMapPtr = SwitchMovementDataMap.Find(SwitchName);
 	if (!MovementDataMapPtr)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("No movement data found for SwitchName: %s"), *SwitchName.ToString());
 		return;
 	}
 
@@ -153,6 +152,10 @@ void ACTTPracticeGameModeBase::MoveActorZAxis(const FName& SwitchName, float Del
 			}
 		}
 
+		if (nullptr == TargetActor)
+		{
+			break;
+		}
 		FVector CurrentLocation = TargetActor->GetActorLocation();
 
 		if (CurrentLocation.Z >= TargetLocation.Z)

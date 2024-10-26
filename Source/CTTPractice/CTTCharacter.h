@@ -36,6 +36,7 @@ public:
 public:
 	float GetCharacterSpeed() const { return Speed; }
 	bool CheckCharacterAttack() const { return bCanAttack; }
+	bool CheckCharacterInLadder() const { return bIsInLadder; }
 
 	void SetCharacterAttack(bool InbCanAttack);
 
@@ -45,6 +46,9 @@ protected:
 
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite)
 	bool bCanAttack = true;
+
+	UPROPERTY(EditAnyWhere, BlueprintReadWrite)
+	bool bIsInLadder = true;
 
 private:
 	void MoveUpDown(float InputValue);

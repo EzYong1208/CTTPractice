@@ -4,6 +4,7 @@
 #include "CTTAnimInstance.h"
 #include "CTTCharacter.h"
 #include "CTTSocketAttachmentComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 void UCTTAnimInstance::NativeInitializeAnimation()
 {
@@ -32,6 +33,7 @@ void UCTTAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 
     Speed = OwningCharacter->GetCharacterSpeed();
     bCanAttack = OwningCharacter->CheckCharacterAttack();
+    bIsInAir = OwningCharacter->GetCharacterMovement()->IsFalling();
 }
 
 void UCTTAnimInstance::UpdateSocketAttachments()

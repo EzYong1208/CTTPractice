@@ -33,6 +33,7 @@ public:
 	void InitializeItem(const FCTTItemData& ItemData);
 	FName GetItemName() const { return ItemName; }
 	bool CheckItemDead() const { return bIsDead; }
+	ECTTItemCollisionType GetCollisionType() const { return CollisionType; }
 	void DoAction();
 	void HandleDeath();
 
@@ -44,8 +45,12 @@ public:
     UDataTable* ItemSpawnOffsetDataTable;
 
 private:
+	FName ChangeItemCollisionTypeEnumToFName(ECTTItemCollisionType CollisionTypeEnum) const;
+
+private:
 	UPROPERTY()
 	USphereComponent* CollisionSphereComponent;
 
 	FName ItemName;
+	ECTTItemCollisionType CollisionType;
 };

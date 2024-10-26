@@ -17,3 +17,14 @@ enum class ECTTNumberImageType : uint8
 	PlayerLifeNumber,
 	CoinNumber,
 };
+
+UENUM()
+enum class ECTTItemCollisionType : uint8
+{
+	None,
+	Ignore,
+	Block,
+	Interactable,
+	Collectible,
+	Ladder,
+};

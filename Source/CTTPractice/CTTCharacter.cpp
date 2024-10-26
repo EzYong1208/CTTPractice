@@ -58,10 +58,27 @@ void ACTTCharacter::NotifyActorBeginOverlap(AActor* OtherActor)
 	Super::NotifyActorBeginOverlap(OtherActor);
 
 	ACTTItem* Item = Cast<ACTTItem>(OtherActor);
-	if (Item)
+	if (nullptr == Item)
 	{
-		OverlappingItem = Item;
-		UE_LOG(LogTemp, Error, TEXT("NotifyActorBeginOverlap"));
+		return;
+	}
+	
+	OverlappingItem = Item;
+	ECTTItemCollisionType CollisionType = Item->GetCollisionType();
+	switch (CollisionType)
+	{
+	case ECTTItemCollisionType::Interactable:
+		UE_LOG(LogTemp, Warning, TEXT("Interactable Item - Can Overlap"));
+		break;
+
+	case ECTTItemCollisionType::Collectible:
+		UE_LOG(LogTemp, Warning, TEXT("Collectible Item - Can Overlap"));
+		break;
+
+	case ECTTItemCollisionType::Ladder:
+		bIsInLadder = true;
+		UE_LOG(LogTemp, Warning, TEXT("Ladder Item - Character on Ladder"));
+		break;
 	}
 }
 

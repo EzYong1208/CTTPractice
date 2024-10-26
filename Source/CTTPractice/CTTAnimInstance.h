@@ -33,6 +33,9 @@ protected:
 
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite)
 	bool bCanAttack = false;
+	
+	UPROPERTY(EditAnyWhere, BlueprintReadWrite)
+	bool bIsInAir = false;
 
 private:
 	UFUNCTION()
