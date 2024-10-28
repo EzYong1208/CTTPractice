@@ -4,6 +4,7 @@
 #include "CTTPracticeGameModeBase.h"
 #include "CTTPractice/UI/CTTUICommonResource.h"
 #include "CTTPractice/CTTItem.h"
+#include "CTTPractice/CTTCharacter.h"
 #include "EngineUtils.h" 
 
 void ACTTPracticeGameModeBase::BeginPlay()
@@ -97,6 +98,20 @@ void ACTTPracticeGameModeBase::SpawnItem(const FCTTWorldItemSetupData& SpawnData
 			}
 
 			NewItem->InitializeItem(*ItemData);
+
+			if (ItemData->bIsWeapon)
+			{
+				APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
+				if (true == IsValid(PlayerController))
+				{
+					ACTTCharacter* Character = Cast<ACTTCharacter>(PlayerController->GetCharacter());
+					if (IsValid(Character))
+					{
+						NewItem->AttachToComponent(Character->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, SOCKETNAME_WEAPON);
+					}
+				}
+			}
+
 			break;
 		}
 	}

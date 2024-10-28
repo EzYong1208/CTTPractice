@@ -55,6 +55,9 @@ struct CTTPRACTICE_API FCTTItemData : public FTableRowBase
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	ECTTItemCollisionType CollisionType;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bIsWeapon = false;
 };
 
 USTRUCT(BlueprintType)

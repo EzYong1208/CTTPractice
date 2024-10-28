@@ -93,4 +93,5 @@ protected:
 
 private:
 	TMap<FName, TMap<FName, FVector>> SwitchMovementDataMap;
+	const FName SOCKETNAME_WEAPON = TEXT("Socket_Weapon");
 };

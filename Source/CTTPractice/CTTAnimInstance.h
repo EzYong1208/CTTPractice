@@ -37,6 +37,9 @@ protected:
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite)
 	bool bIsInAir = false;
 
+	UPROPERTY(EditAnyWhere, BlueprintReadWrite)
+	bool bIsInLadder = false;
+
 private:
 	UFUNCTION()
 	void AnimNotify_AttackEnd();

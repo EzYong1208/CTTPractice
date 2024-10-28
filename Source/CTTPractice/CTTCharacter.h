@@ -48,7 +48,7 @@ protected:
 	bool bCanAttack = true;
 
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite)
-	bool bIsInLadder = true;
+	bool bIsInLadder = false;
 
 private:
 	void MoveUpDown(float InputValue);

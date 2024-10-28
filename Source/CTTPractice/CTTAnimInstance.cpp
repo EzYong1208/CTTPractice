@@ -34,6 +34,7 @@ void UCTTAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
     Speed = OwningCharacter->GetCharacterSpeed();
     bCanAttack = OwningCharacter->CheckCharacterAttack();
     bIsInAir = OwningCharacter->GetCharacterMovement()->IsFalling();
+    bIsInLadder = OwningCharacter->CheckCharacterInLadder();
 }
 
 void UCTTAnimInstance::UpdateSocketAttachments()
