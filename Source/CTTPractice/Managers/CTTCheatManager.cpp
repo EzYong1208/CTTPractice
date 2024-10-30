@@ -2,43 +2,43 @@
 
 
 #include "CTTCheatManager.h"
-#include "CTTPractice/CTTPracticeGameModeBase.h"
+#include "CTTPractice/CTTGameInstance.h"
 #include "Kismet/GameplayStatics.h"
 #include "Engine/World.h"
 
 
 void UCTTCheatManager::SetPlayerLife(int32 Life)
 {
-	ACTTPracticeGameModeBase* GameMode = Cast<ACTTPracticeGameModeBase>(UGameplayStatics::GetGameMode(this));
-	if (!IsValid(GameMode))
+	UCTTGameInstance* GameInstance = Cast<UCTTGameInstance>(UGameplayStatics::GetGameInstance(this));
+	if (!IsValid(GameInstance))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("GameMode is InValid"));
+		UE_LOG(LogTemp, Warning, TEXT("GameInstance is InValid"));
 		return;
 	}
 
-	GameMode->SetPlayerLifeCount(Life);
+	GameInstance->SetPlayerLifeCount(Life);
 }
 
 void UCTTCheatManager::SetCoin(int32 Coin)
 {
-	ACTTPracticeGameModeBase* GameMode = Cast<ACTTPracticeGameModeBase>(UGameplayStatics::GetGameMode(this));
-	if (!IsValid(GameMode))
+	UCTTGameInstance* GameInstance = Cast<UCTTGameInstance>(UGameplayStatics::GetGameInstance(this));
+	if (!IsValid(GameInstance))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("GameMode is InValid"));
+		UE_LOG(LogTemp, Warning, TEXT("GameInstance is InValid"));
 		return;
 	}
 
-	GameMode->SetCoinCount(Coin);
+	GameInstance->SetCoinCount(Coin);
 }
 
 void UCTTCheatManager::SetCollectItem(int32 Index, bool bEnable)
 {
-	ACTTPracticeGameModeBase* GameMode = Cast<ACTTPracticeGameModeBase>(UGameplayStatics::GetGameMode(this));
-	if (!IsValid(GameMode))
+	UCTTGameInstance* GameInstance = Cast<UCTTGameInstance>(UGameplayStatics::GetGameInstance(this));
+	if (!IsValid(GameInstance))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("GameMode is InValid"));
+		UE_LOG(LogTemp, Warning, TEXT("GameInstance is InValid"));
 		return;
 	}
 
-	GameMode->SetCollectItemStatus(Index, bEnable);
+	GameInstance->SetCollectItemStatus(Index, bEnable);
 }

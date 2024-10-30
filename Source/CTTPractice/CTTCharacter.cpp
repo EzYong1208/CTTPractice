@@ -68,16 +68,14 @@ void ACTTCharacter::NotifyActorBeginOverlap(AActor* OtherActor)
 	switch (CollisionType)
 	{
 	case ECTTItemCollisionType::Interactable:
-		UE_LOG(LogTemp, Warning, TEXT("Interactable Item - Can Overlap"));
 		break;
 
 	case ECTTItemCollisionType::Collectible:
-		UE_LOG(LogTemp, Warning, TEXT("Collectible Item - Can Overlap"));
+		OverlappingItem->CollectAction();
 		break;
 
 	case ECTTItemCollisionType::Ladder:
 		bIsInLadder = true;
-		UE_LOG(LogTemp, Warning, TEXT("Ladder Item - Character on Ladder"));
 		break;
 	}
 }

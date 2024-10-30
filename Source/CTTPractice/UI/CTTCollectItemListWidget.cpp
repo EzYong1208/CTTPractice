@@ -6,6 +6,7 @@
 #include "CTTCollectItemData.h"
 #include "Components/ListView.h"
 #include "CTTPractice/CTTPracticeGameModeBase.h"
+#include "CTTPractice/CTTGameInstance.h"
 #include "Kismet/GameplayStatics.h"
 
 
@@ -19,7 +20,9 @@ void UCTTCollectItemListWidget::InitializeCollectItemList()
 
 	CollectItemListView->ClearListItems();
 
-	for (int32 i = 0; i < ACTTPracticeGameModeBase::COLLECTITEM_NUMBER; ++i)
+	ACTTPracticeGameModeBase* GameMode = Cast<ACTTPracticeGameModeBase>(UGameplayStatics::GetGameMode(this));
+	int32 CollectItemNumber = GameMode->GetCollectItemNumber();
+	for (int32 i = 0; i < CollectItemNumber; ++i)
 	{
 		UCTTCollectItemData* NewItem = NewObject<UCTTCollectItemData>();
 		CollectItemListView->AddItem(NewItem);
@@ -32,10 +35,11 @@ void UCTTCollectItemListWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	ACTTPracticeGameModeBase* GameMode = Cast<ACTTPracticeGameModeBase>(UGameplayStatics::GetGameMode(this));
-	if (IsValid(GameMode))
+	UCTTGameInstance* GameInstance = Cast<UCTTGameInstance>(UGameplayStatics::GetGameInstance(this));
+	if (IsValid(GameInstance))
 	{
-		OnChangeCollectItemHandle = GameMode->OnChangeCollectItem().AddUObject(this, &UCTTCollectItemListWidget::OnChangeCollectItem);
+		// OnChangeCollectItemDelegate 델리게이트에 함수를 바인딩
+		OnChangeCollectItemHandle = GameInstance->OnChangeCollectItem().AddUObject(this, &UCTTCollectItemListWidget::OnChangeCollectItem);
 	}
 
 	InitializeCollectItemList();
@@ -43,10 +47,10 @@ void UCTTCollectItemListWidget::NativeConstruct()
 
 void UCTTCollectItemListWidget::NativeDestruct()
 {
-	ACTTPracticeGameModeBase* GameMode = Cast<ACTTPracticeGameModeBase>(UGameplayStatics::GetGameMode(this));
-	if (IsValid(GameMode) && OnChangeCollectItemHandle.IsValid())
+	UCTTGameInstance* GameInstance = Cast<UCTTGameInstance>(UGameplayStatics::GetGameInstance(this));
+	if (IsValid(GameInstance) && OnChangeCollectItemHandle.IsValid())
 	{
-		GameMode->OnChangeCollectItem().Remove(OnChangeCollectItemHandle);
+		GameInstance->OnChangeCollectItem().Remove(OnChangeCollectItemHandle);
 	}
 
 	Super::NativeDestruct();

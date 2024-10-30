@@ -130,6 +130,13 @@ void ACTTItem::HandleDeath()
 	Destroy();
 }
 
+void ACTTItem::CollectAction()
+{
+	// TODO : 아이템의 이름? 특성에 따라 GameInstance의 데이터 + 하고 Destroy() 하게 만들기
+
+
+}
+
 FName ACTTItem::ChangeItemCollisionTypeEnumToFName(ECTTItemCollisionType CollisionTypeEnum) const
 {
 	FName CollisionTypeName;

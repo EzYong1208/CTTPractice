@@ -5,27 +5,26 @@
 #include "CTTPractice/UI/CTTUICommonResource.h"
 #include "CTTPractice/CTTItem.h"
 #include "CTTPractice/CTTCharacter.h"
+#include "CTTPractice/CTTGameInstance.h"
 #include "EngineUtils.h" 
+#include "Kismet/GameplayStatics.h"
 
 void ACTTPracticeGameModeBase::BeginPlay()
 {
 	Super::BeginPlay();
-
-	// 유저정보 만들기 전까지 임시 [8/17/2024 EzYong-Laptop]
-	PlayerLifeCount = PlayerInitialLifeCount;
-	CoinCount = CoinInitialLifeCount;
-
-	CollectItemStates.SetNum(COLLECTITEM_NUMBER);
-	for (int32 i = 0; i < CollectItemStates.Num(); ++i)
-	{
-		CollectItemStates[i] = CollectItemInitialState;
-	}
 
 	if (IsValid(UICommonResourceClass))
 	{
 		UICommonResource = NewObject<UCTTUICommonResource>(this, UICommonResourceClass);
 	}
 
+	UCTTGameInstance* GameInstance = Cast<UCTTGameInstance>(UGameplayStatics::GetGameInstance(this));
+	if (GameInstance)
+	{
+		GameInstance->SetPlayerLifeCount(PlayerInitialLifeCount);
+		GameInstance->SetCoinCount(CoinInitialLifeCount);
+		GameInstance->InitializeCollectItem(CollectItemNumber, CollectItemInitialState);
+	}
 
 	// TODO : 아이템 스폰
 	TArray<FName> ItemNames = WorldItemSetupDataTable->GetRowNames();
@@ -46,38 +45,6 @@ void ACTTPracticeGameModeBase::BeginPlay()
 		{
 			SwitchMovementDataMap.FindOrAdd(SwitchMovementData->TriggerItemName).Add(SwitchMovementData->ActorName, SwitchMovementData->TargetLocation);
 		}
-	}
-}
-
-void ACTTPracticeGameModeBase::SetPlayerLifeCount(int32 InPlayerLifeCount)
-{
-	PlayerLifeCount = InPlayerLifeCount;
-	if (OnChangePlayerLifeCountDelegate.IsBound())
-	{
-		OnChangePlayerLifeCountDelegate.Broadcast(PlayerLifeCount);
-	}
-}
-
-void ACTTPracticeGameModeBase::SetCoinCount(int32 InCoinCount)
-{
-	CoinCount = InCoinCount;
-	if (OnChangeCoinCountDelegate.IsBound())
-	{
-		OnChangeCoinCountDelegate.Broadcast(CoinCount);
-	}
-}
-
-void ACTTPracticeGameModeBase::SetCollectItemStatus(int32 InIndex, bool bInEnable)
-{
-	if (!(InIndex >= 0 && InIndex < CollectItemStates.Num()))
-	{
-		return;
-	}
-
-	CollectItemStates[InIndex] = bInEnable;
-	if (OnChangeCollectItemDelegate.IsBound())
-	{
-		OnChangeCollectItemDelegate.Broadcast(InIndex, CollectItemStates[InIndex]);
 	}
 }
 

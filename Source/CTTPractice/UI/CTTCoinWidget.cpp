@@ -6,6 +6,7 @@
 #include "Components/ScaleBox.h"
 #include "CTTPractice/CTTEnum.h"
 #include "CTTPractice/CTTPracticeGameModeBase.h"
+#include "CTTPractice/CTTGameInstance.h"
 #include "CTTPractice/UI/CTTUICommonResource.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -14,20 +15,20 @@ void UCTTCoinWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	ACTTPracticeGameModeBase* GameMode = Cast<ACTTPracticeGameModeBase>(UGameplayStatics::GetGameMode(this));
-	if (IsValid(GameMode))
+	UCTTGameInstance* GameInstance = Cast<UCTTGameInstance>(UGameplayStatics::GetGameInstance(this));
+	if (IsValid(GameInstance))
 	{
-		// OnChangePlayerLifeCountDelegate 델리게이트에 함수를 바인딩
-		OnChangeCoinCountHandle = GameMode->OnChangeCoinCount().AddUObject(this, &UCTTCoinWidget::OnChangeCoinCount);
+		// OnChangeCoinCountDelegate 델리게이트에 함수를 바인딩
+		OnChangeCoinCountHandle = GameInstance->OnChangeCoinCount().AddUObject(this, &UCTTCoinWidget::OnChangeCoinCount);
 	}
 }
 
 void UCTTCoinWidget::NativeDestruct()
 {
-	ACTTPracticeGameModeBase* GameMode = Cast<ACTTPracticeGameModeBase>(UGameplayStatics::GetGameMode(this));
-	if (IsValid(GameMode) && OnChangeCoinCountHandle.IsValid())
+	UCTTGameInstance* GameInstance = Cast<UCTTGameInstance>(UGameplayStatics::GetGameInstance(this));
+	if (IsValid(GameInstance) && OnChangeCoinCountHandle.IsValid())
 	{
-		GameMode->OnChangePlayerLifeCount().Remove(OnChangeCoinCountHandle);
+		GameInstance->OnChangeCoinCount().Remove(OnChangeCoinCountHandle);
 	}
 
 	Super::NativeDestruct();

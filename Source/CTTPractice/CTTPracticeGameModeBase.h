@@ -11,11 +11,6 @@
 /**
  * 
  */
-
-DECLARE_MULTICAST_DELEGATE_OneParam(FCTTOnChangePlayerLifeCount, int32);
-DECLARE_MULTICAST_DELEGATE_OneParam(FCTTOnChangeCoinCount, int32);
-DECLARE_MULTICAST_DELEGATE_TwoParams(FCTTOnChangeCollectItem, int32, bool);
-
 class UCTTUICommonResource;
 
 UCLASS()
@@ -26,39 +21,22 @@ public:
 	virtual void BeginPlay() override;
 
 	const UCTTUICommonResource* GetUICommonResource() const { return UICommonResource; }
-
-	int32 GetPlayerLifeCount() const { return PlayerLifeCount; }
-	int32 GetCoinCount() const { return CoinCount; }
-
-	void SetPlayerLifeCount(int32 InPlayerLifeCount);
-	FCTTOnChangePlayerLifeCount& OnChangePlayerLifeCount() { return OnChangePlayerLifeCountDelegate; }
-	void SetCoinCount(int32 InCoinCount);
-	FCTTOnChangeCoinCount& OnChangeCoinCount() { return OnChangeCoinCountDelegate; }
-	void SetCollectItemStatus(int32 InIndex, bool bInEnable);
-	FCTTOnChangeCollectItem& OnChangeCollectItem() { return OnChangeCollectItemDelegate; }
+	int32 GetCollectItemNumber() const { return CollectItemNumber; }
 
 	void SpawnItem(const FCTTWorldItemSetupData& SpawnData);
 	FCTTItemSpawnOffsetData* GetItemSpawnOffsetData(const FName& ItemName) const;
 
 	void MoveActorZAxis(const FName& SwitchName, float DeltaTime);
 
-public:
-	// 임시
-	static constexpr int32 COLLECTITEM_NUMBER = 3;
-
 protected:
-	// 유저정보 만들기 전까지 임시 [8/17/2024 EzYong-Laptop]
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 PlayerInitialLifeCount = 0;
-
-	UPROPERTY(BlueprintReadWrite)
-	int32 PlayerLifeCount = 0;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 CoinInitialLifeCount = 0;
 
-	UPROPERTY(BlueprintReadWrite)
-	int32 CoinCount = 0;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 CollectItemNumber = 0;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool CollectItemInitialState = false;
@@ -71,10 +49,6 @@ protected:
 
 	UPROPERTY()
 	UCTTUICommonResource* UICommonResource = nullptr;
-
-	FCTTOnChangePlayerLifeCount OnChangePlayerLifeCountDelegate;
-	FCTTOnChangeCoinCount OnChangeCoinCountDelegate;
-	FCTTOnChangeCollectItem OnChangeCollectItemDelegate;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
     UDataTable* WorldItemSetupDataTable;

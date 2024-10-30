@@ -5,6 +5,7 @@
 #include "Components/Image.h"
 #include "CTTPractice/CTTEnum.h"
 #include "CTTPractice/CTTPracticeGameModeBase.h"
+#include "CTTPractice/CTTGameInstance.h"
 #include "CTTPractice/UI/CTTUICommonResource.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -13,21 +14,21 @@ void UCTTPlayerLifeWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	ACTTPracticeGameModeBase* GameMode = Cast<ACTTPracticeGameModeBase>(UGameplayStatics::GetGameMode(this));
-	if (IsValid(GameMode))
+	UCTTGameInstance* GameInstance = Cast<UCTTGameInstance>(UGameplayStatics::GetGameInstance(this));
+	if (IsValid(GameInstance))
 	{
 		// OnChangePlayerLifeCountDelegate 델리게이트에 함수를 바인딩
-		OnChangePlayerLifeCountHandle = GameMode->OnChangePlayerLifeCount().AddUObject(this, &UCTTPlayerLifeWidget::OnChangePlayerLifeCount);
+		OnChangePlayerLifeCountHandle = GameInstance->OnChangePlayerLifeCount().AddUObject(this, &UCTTPlayerLifeWidget::OnChangePlayerLifeCount);
 	}
 }
 
 
 void UCTTPlayerLifeWidget::NativeDestruct()
 {
-	ACTTPracticeGameModeBase* GameMode = Cast<ACTTPracticeGameModeBase>(UGameplayStatics::GetGameMode(this));
-	if (IsValid(GameMode) && OnChangePlayerLifeCountHandle.IsValid())
+	UCTTGameInstance* GameInstance = Cast<UCTTGameInstance>(UGameplayStatics::GetGameInstance(this));
+	if (IsValid(GameInstance) && OnChangePlayerLifeCountHandle.IsValid())
 	{
-		GameMode->OnChangePlayerLifeCount().Remove(OnChangePlayerLifeCountHandle);
+		GameInstance->OnChangePlayerLifeCount().Remove(OnChangePlayerLifeCountHandle);
 	}
 
 	Super::NativeDestruct();

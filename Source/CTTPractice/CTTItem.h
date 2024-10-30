@@ -36,6 +36,7 @@ public:
 	ECTTItemCollisionType GetCollisionType() const { return CollisionType; }
 	void DoAction();
 	void HandleDeath();
+	void CollectAction();
 
 public:
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite)
