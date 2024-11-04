@@ -30,10 +30,13 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 public:
-	void InitializeItem(const FCTTItemData& ItemData);
+	void InitializeItem(const FCTTItemData& ItemData, int32 CollectIndex);
+
 	FName GetItemName() const { return ItemName; }
 	bool CheckItemDead() const { return bIsDead; }
 	ECTTItemCollisionType GetCollisionType() const { return CollisionType; }
+	int32 GetCollectItemIndex() const { return CollectItemIndex; }
+
 	void DoAction();
 	void HandleDeath();
 	void CollectAction();
@@ -53,5 +56,9 @@ private:
 	USphereComponent* CollisionSphereComponent;
 
 	FName ItemName;
+	int32 CollectItemIndex = 0;
 	ECTTItemCollisionType CollisionType;
+	FCTTCollectData CollectData;
+
+	static constexpr int32 NON_COLLECTIBLE_ITEM_INDEX = -1;
 };

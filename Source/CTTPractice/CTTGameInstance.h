@@ -27,6 +27,7 @@ public:
 
 	int32 GetPlayerLifeCount() const { return PlayerLifeCount; }
 	int32 GetCoinCount() const { return CoinCount; }
+	int32 GetNextCollectItemStatusIndex() { return CurrentCollectItemStatusIndex++; };
 
 	void SetPlayerLifeCount(int32 InPlayerLifeCount);
 	void SetCoinCount(int32 InCoinCount);
@@ -42,6 +43,9 @@ protected:
 
 	UPROPERTY(BlueprintReadWrite)
 	int32 CoinCount = 0;
+
+	UPROPERTY()
+	int32 CurrentCollectItemStatusIndex = 0;
 
 	UPROPERTY()
 	TArray<bool> CollectItemStates;

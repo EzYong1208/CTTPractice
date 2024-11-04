@@ -51,6 +51,7 @@ void ACTTPracticeGameModeBase::BeginPlay()
 void ACTTPracticeGameModeBase::SpawnItem(const FCTTWorldItemSetupData& SpawnData)
 {
 	TArray<FName> RowNames = ItemDataTable->GetRowNames();
+	int32 CollectIndex = 0;
 	for (const FName& RowName : RowNames)
 	{
 		FCTTItemData* ItemData = ItemDataTable->FindRow<FCTTItemData>(RowName, TEXT(""));
@@ -64,7 +65,13 @@ void ACTTPracticeGameModeBase::SpawnItem(const FCTTWorldItemSetupData& SpawnData
 				return;
 			}
 
-			NewItem->InitializeItem(*ItemData);
+			UCTTGameInstance* GameInstance = Cast<UCTTGameInstance>(GetGameInstance());
+			if (GameInstance)
+			{
+				CollectIndex = GameInstance->GetNextCollectItemStatusIndex();
+			}
+
+			NewItem->InitializeItem(*ItemData, CollectIndex);
 
 			if (ItemData->bIsWeapon)
 			{

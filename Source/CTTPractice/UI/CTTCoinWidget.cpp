@@ -53,11 +53,24 @@ void UCTTCoinWidget::OnChangeCoinCount(int32 CoinCount)
 		return;
 	}
 
-	if (CoinCount < 0 ||
-		CoinCount >= 100)
+	if (CoinCount < 0)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("CoinCount range is 0 ~ 99"));
 		CoinCount = 0;
+	}
+
+	if (CoinCount >= 100)
+	{
+		UCTTGameInstance* GameInstance = Cast<UCTTGameInstance>(GetGameInstance());
+		if (!IsValid(GameInstance))
+		{
+			return;
+		}
+
+		int32 LivesToAdd = CoinCount / 100;
+		GameInstance->SetPlayerLifeCount(GameInstance->GetPlayerLifeCount() + LivesToAdd);
+
+		CoinCount = CoinCount % 100;
 	}
 
 	SetNumber(CoinCount);

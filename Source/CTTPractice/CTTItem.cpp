@@ -4,6 +4,7 @@
 #include "CTTItem.h"
 #include "Components/SphereComponent.h"
 #include "CTTPractice/CTTPracticeGameModeBase.h"
+#include "CTTPractice/CTTGameInstance.h"
 #include "Kismet/GameplayStatics.h"
 
 // Sets default values
@@ -43,7 +44,7 @@ void ACTTItem::Tick(float DeltaTime)
 	GameMode->MoveActorZAxis(ItemName, DeltaTime);
 }
 
-void ACTTItem::InitializeItem(const FCTTItemData& ItemData)
+void ACTTItem::InitializeItem(const FCTTItemData& ItemData, int32 CollectIndex)
 {
 	UMeshComponent* MeshComponent = nullptr;
 
@@ -84,12 +85,6 @@ void ACTTItem::InitializeItem(const FCTTItemData& ItemData)
 		MeshComponent->SetRelativeLocation(ItemData.MeshLocation);
 		MeshComponent->SetWorldScale3D(ItemData.Scale);
 	}
-	bool check = false;
-	if (TEXT("BlockBrick") == ItemData.ItemName)
-	{
-		check = true;
-		int32 i = 0;
-	}
 
 	CollisionSphereComponent->SetSphereRadius(ItemData.SphereRadius);
 	FName CollisionTypeName; 
@@ -98,6 +93,17 @@ void ACTTItem::InitializeItem(const FCTTItemData& ItemData)
 
 	ItemName = ItemData.ItemName;
 	CollisionType = ItemData.CollisionType;
+	CollectData = ItemData.CollectData;
+
+	if (ECTTItemCollisionType::Collectible == ItemData.CollisionType &&
+		ECTTCollectType::CollectItem == CollectData.ActionType)
+	{
+		CollectItemIndex = CollectIndex;
+	}
+	else
+	{
+		CollectItemIndex = NON_COLLECTIBLE_ITEM_INDEX;
+	}
 }
 
 void ACTTItem::DoAction()
@@ -132,9 +138,36 @@ void ACTTItem::HandleDeath()
 
 void ACTTItem::CollectAction()
 {
-	// TODO : 아이템의 이름? 특성에 따라 GameInstance의 데이터 + 하고 Destroy() 하게 만들기
+	if (bIsDead)
+	{
+		return;
+	}
 
+	UCTTGameInstance* GameInstance = Cast<UCTTGameInstance>(GetGameInstance());
+	if (!IsValid(GameInstance))
+	{
+		return;
+	}
 
+	switch (CollectData.ActionType)
+	{
+	case ECTTCollectType::Coin:
+		GameInstance->SetCoinCount(GameInstance->GetCoinCount() + CollectData.IncreaseAmount);
+		break;
+
+	case ECTTCollectType::Life:
+		GameInstance->SetPlayerLifeCount(GameInstance->GetPlayerLifeCount() + CollectData.IncreaseAmount);
+		break;
+
+	case ECTTCollectType::CollectItem:
+		if (CollectItemIndex >= 0)
+		{
+			GameInstance->SetCollectItemStatus(CollectItemIndex, true);
+		}
+		break;
+	}
+
+	Destroy();
 }
 
 FName ACTTItem::ChangeItemCollisionTypeEnumToFName(ECTTItemCollisionType CollisionTypeEnum) const

@@ -16,6 +16,7 @@ enum class ECTTNumberImageType : uint8
 	None,
 	PlayerLifeNumber,
 	CoinNumber,
+	MAX
 };
 
 UENUM()
@@ -27,4 +28,16 @@ enum class ECTTItemCollisionType : uint8
 	Interactable,
 	Collectible,
 	Ladder,
+	MAX
+};
+
+UENUM()
+enum class ECTTCollectType : uint8
+{
+    None,
+    Coin,
+    Life,
+    CollectItem,
+	Weapon,
+	MAX
 };

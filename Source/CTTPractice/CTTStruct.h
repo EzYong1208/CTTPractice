@@ -26,6 +26,17 @@ struct CTTPRACTICE_API FCTTSocketMeshData : public FTableRowBase
 	UStaticMesh* Mesh;
 };
 
+USTRUCT(BlueprintType)
+struct CTTPRACTICE_API FCTTCollectData
+{
+    GENERATED_BODY()
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	ECTTCollectType ActionType = ECTTCollectType::None;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 IncreaseAmount = 0;
+};
 
 USTRUCT(BlueprintType)
 struct CTTPRACTICE_API FCTTItemData : public FTableRowBase
@@ -58,6 +69,9 @@ struct CTTPRACTICE_API FCTTItemData : public FTableRowBase
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bIsWeapon = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FCTTCollectData CollectData;
 };
 
 USTRUCT(BlueprintType)
