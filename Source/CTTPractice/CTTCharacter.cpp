@@ -4,9 +4,10 @@
 #include "CTTCharacter.h"
 #include "CTTItem.h"
 #include "Camera/CameraComponent.h"
-#include "CTTCameraControlComponent.h"
+#include "CTTFollowCamera.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 ACTTCharacter::ACTTCharacter()
@@ -21,6 +22,19 @@ void ACTTCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
+	TArray<AActor*> FoundCameras;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACTTFollowCamera::StaticClass(), FoundCameras);
+
+	if (FoundCameras.Num() > 0)
+	{
+		FollowCamera = Cast<ACTTFollowCamera>(FoundCameras[0]);
+		if (nullptr == FollowCamera)
+		{
+			UE_LOG(LogTemp, Error, TEXT("FollowCamera is nullptr"));
+			return;
+		}
+		FollowCamera->SetTargetCharacter(this);
+	}
 }
 
 // Called every frame
@@ -41,16 +55,9 @@ void ACTTCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 
 	PlayerInputComponent->BindAction("Attack", IE_Pressed, this, &ACTTCharacter::Attack);
 
-
-	UCTTCameraControlComponent* CameraControlComponent = FindComponentByClass<UCTTCameraControlComponent>();
-	if (nullptr == CameraControlComponent)
-	{
-		UE_LOG(LogTemp, Error, TEXT("CameraControlComponent is nullptr"));
-		return;
-	}
-	PlayerInputComponent->BindAxis(TEXT("RotateCamera"), CameraControlComponent, &UCTTCameraControlComponent::RotateCamera);
-	PlayerInputComponent->BindAction("MoveCameraCloser", IE_Pressed, CameraControlComponent, &UCTTCameraControlComponent::MoveCameraCloser);
-	PlayerInputComponent->BindAction("MoveCameraAway", IE_Pressed, CameraControlComponent, &UCTTCameraControlComponent::MoveCameraAway);
+	PlayerInputComponent->BindAxis(TEXT("RotateCamera"), this, &ACTTCharacter::RotateCamera);
+	PlayerInputComponent->BindAction("MoveCameraCloser", IE_Pressed, this, &ACTTCharacter::MoveCameraCloser);
+	PlayerInputComponent->BindAction("MoveCameraAway", IE_Pressed, this, &ACTTCharacter::MoveCameraAway);
 }
 
 void ACTTCharacter::NotifyActorBeginOverlap(AActor* OtherActor)
@@ -109,7 +116,7 @@ void ACTTCharacter::MoveLeftRight(float InputValue)
 
 void ACTTCharacter::UpdateMoveVector(float DeltaTime)
 {
-	UCameraComponent* CameraComponent = Cast<UCameraComponent>(GetComponentByClass(UCameraComponent::StaticClass()));
+	TWeakObjectPtr<UCameraComponent> CameraComponent = FollowCamera->GetCameraComponent();
 	if (nullptr == CameraComponent)
 	{
 		UE_LOG(LogTemp, Error, TEXT("CameraComponent is nullptr"));
@@ -138,6 +145,36 @@ void ACTTCharacter::UpdateMoveVector(float DeltaTime)
 
 	FRotator NewRotation = MovementDirection.Rotation();
 	SetActorRotation(FRotator(0.0f, NewRotation.Yaw, 0.0f));
+}
+
+void ACTTCharacter::RotateCamera(float InputValue)
+{
+	if (false == FollowCamera.IsValid())
+	{
+		UE_LOG(LogTemp, Error, TEXT("FollowCamera is not valid"));
+		return;
+	}
+	FollowCamera->RotateCamera(InputValue);
+}
+
+void ACTTCharacter::MoveCameraCloser()
+{
+	if (false == FollowCamera.IsValid())
+	{
+		UE_LOG(LogTemp, Error, TEXT("FollowCamera is not valid"));
+		return;
+	}
+	FollowCamera->MoveCameraCloser();
+}
+
+void ACTTCharacter::MoveCameraAway()
+{
+	if (false == FollowCamera.IsValid())
+	{
+		UE_LOG(LogTemp, Error, TEXT("FollowCamera is not valid"));
+		return;
+	}
+	FollowCamera->MoveCameraAway();
 }
 
 void ACTTCharacter::Attack()

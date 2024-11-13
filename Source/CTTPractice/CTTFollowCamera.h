@@ -3,39 +3,52 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Components/SceneComponent.h"
-#include "CTTCameraControlComponent.generated.h"
+#include "GameFramework/Actor.h"
+#include "CTTFollowCamera.generated.h"
 
 class USpringArmComponent;
+class UCameraComponent;
+class ACTTCharacter;
 
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class CTTPRACTICE_API UCTTCameraControlComponent : public USceneComponent
+UCLASS()
+class CTTPRACTICE_API ACTTFollowCamera : public AActor
 {
 	GENERATED_BODY()
-
+	
 public:	
-	// Sets default values for this component's properties
-	UCTTCameraControlComponent();
+	// Sets default values for this actor's properties
+	ACTTFollowCamera();
 
 protected:
-	// Called when the game starts
+	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 public:	
 	// Called every frame
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+	virtual void Tick(float DeltaTime) override;
 
 public:
 	void InitializeCameraComponents();
 
 	void CameraMovement(float DeltaTime);
+	void UpdateCameraLocation(float DeltaTime);
+
 	void RotateCamera(float InputValue);
 	void MoveCameraCloser();
 	void MoveCameraAway();
 
-	public:
+	void SetTargetCharacter(ACTTCharacter* NewTarget);
+
+public:
+	TWeakObjectPtr<USpringArmComponent> GetSpringArmComponent() const { return SpringArmComponent; }
+	TWeakObjectPtr<UCameraComponent> GetCameraComponent() const { return CameraComponent; }
+
+public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera")
 	float InitialSpringArmLength = 0.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera")
+	FRotator InitialSpringArmRotation = FRotator(0.f, 0.f, 0.f);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera")
 	float RotationSpeed = 0.f;
@@ -53,10 +66,15 @@ public:
 	float CameraMoveDistance = 0.f;
 
 private:
-	TWeakObjectPtr<USpringArmComponent> GetSpringArmComponent() const;
-
-private:
 	FVector OwnerLocation = FVector(0.f, 0.f, 0.f);
 	float TargetArmLength = 0.f;
-		
+
+	UPROPERTY()
+    TWeakObjectPtr<USpringArmComponent> SpringArmComponent;
+
+	UPROPERTY()
+    TWeakObjectPtr<UCameraComponent> CameraComponent;
+
+	UPROPERTY()
+	TWeakObjectPtr<ACTTCharacter> TargetCharacter;
 };

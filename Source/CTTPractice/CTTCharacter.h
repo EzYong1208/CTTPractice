@@ -6,7 +6,7 @@
 #include "GameFramework/Character.h"
 #include "CTTCharacter.generated.h"
 
-class ACTTCameraActor;
+class ACTTFollowCamera;
 class ACTTItem;
 
 UCLASS()
@@ -53,8 +53,11 @@ protected:
 private:
 	void MoveUpDown(float InputValue);
 	void MoveLeftRight(float InputValue);
-
 	void UpdateMoveVector(float DeltaTime);
+
+	void RotateCamera(float InputValue);
+	void MoveCameraCloser();
+	void MoveCameraAway();
 
 	void Attack();
 
@@ -64,4 +67,7 @@ private:
 
 	UPROPERTY()
 	ACTTItem* OverlappingItem = nullptr;
+
+	UPROPERTY()
+	TWeakObjectPtr<ACTTFollowCamera> FollowCamera;
 };
