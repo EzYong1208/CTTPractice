@@ -3,6 +3,7 @@
 
 #include "CTTCheatManager.h"
 #include "CTTPractice/CTTGameInstance.h"
+#include "CTTPractice/CTTCameraManager.h"
 #include "Kismet/GameplayStatics.h"
 #include "Engine/World.h"
 
@@ -41,4 +42,28 @@ void UCTTCheatManager::SetCollectItem(int32 Index, bool bEnable)
 	}
 
 	GameInstance->SetCollectItemStatus(Index, bEnable);
+}
+
+void UCTTCheatManager::SwitchToCameraByID(int32 CameraID)
+{
+	UCTTCameraManager* CameraManager = GetWorld()->GetSubsystem<UCTTCameraManager>();
+	if (nullptr == CameraManager)
+	{
+		UE_LOG(LogTemp, Error, TEXT("CameraManager is nullptr"));
+		return;
+	}
+
+	CameraManager->SwitchToCameraByID(CameraID);
+}
+
+void UCTTCheatManager::SwitchToFollowCamera()
+{
+	UCTTCameraManager* CameraManager = GetWorld()->GetSubsystem<UCTTCameraManager>();
+	if (nullptr == CameraManager)
+	{
+		UE_LOG(LogTemp, Error, TEXT("CameraManager is nullptr"));
+		return;
+	}
+
+	CameraManager->SwitchToFollowCamera();
 }

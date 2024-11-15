@@ -5,6 +5,7 @@
 #include "CTTCharacter.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 ACTTFollowCamera::ACTTFollowCamera()
@@ -20,6 +21,18 @@ void ACTTFollowCamera::BeginPlay()
 	Super::BeginPlay();
 
 	InitializeCameraComponents();
+
+	if (nullptr == TargetCharacterClass)
+	{
+		UE_LOG(LogTemp, Error, TEXT("TargetCharacterClass is nullptr"));
+		return;
+	}
+	
+	TargetCharacterInstance = Cast<ACTTCharacter>(UGameplayStatics::GetActorOfClass(GetWorld(), TargetCharacterClass));
+	if (false == TargetCharacterInstance.IsValid())
+	{
+		UE_LOG(LogTemp, Error, TEXT("TargetCharacterInstance is not valid"));
+	}
 }
 
 // Called every frame
@@ -50,13 +63,13 @@ void ACTTFollowCamera::CameraMovement(float DeltaTime)
 
 void ACTTFollowCamera::UpdateCameraLocation(float DeltaTime)
 {
-	if (false == TargetCharacter.IsValid())
+	if (false == TargetCharacterInstance.IsValid())
 	{
-		UE_LOG(LogTemp, Error, TEXT("TargetCharacter is not valid"));
+		UE_LOG(LogTemp, Error, TEXT("TargetCharacterInstance is not valid"));
 		return;
 	}
 
-	FVector CharacterLocation = TargetCharacter->GetActorLocation();
+	FVector CharacterLocation = TargetCharacterInstance->GetActorLocation();
 	FRotator SpringArmRotation = SpringArmComponent->GetComponentRotation();
 	FVector CameraLocation = CharacterLocation - SpringArmRotation.Vector() * SpringArmComponent->TargetArmLength;
 
@@ -79,9 +92,4 @@ void ACTTFollowCamera::MoveCameraCloser()
 void ACTTFollowCamera::MoveCameraAway()
 {
 	TargetArmLength = FMath::Clamp(SpringArmComponent->TargetArmLength + CameraMoveDistance, MinSpringArmLength, MaxSpringArmLength);
-}
-
-void ACTTFollowCamera::SetTargetCharacter(ACTTCharacter* NewTarget)
-{
-	TargetCharacter = NewTarget;
 }

@@ -12,6 +12,7 @@
  * 
  */
 class UCTTUICommonResource;
+class UCTTDataTableManager;
 
 UCLASS()
 class CTTPRACTICE_API ACTTPracticeGameModeBase : public AGameModeBase
@@ -27,6 +28,8 @@ public:
 	FCTTItemSpawnOffsetData* GetItemSpawnOffsetData(const FName& ItemName) const;
 
 	void MoveActorZAxis(const FName& SwitchName, float DeltaTime);
+
+	UDataTable* GetStaticCameraDataTable() const { return StaticCameraDataTable; }
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -64,6 +67,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	float SwitchMovementSpeed = 0.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    UDataTable* StaticCameraDataTable;
 
 private:
 	TMap<FName, TMap<FName, FVector>> SwitchMovementDataMap;

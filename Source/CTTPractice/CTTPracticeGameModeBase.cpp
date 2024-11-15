@@ -6,6 +6,7 @@
 #include "CTTPractice/CTTItem.h"
 #include "CTTPractice/CTTCharacter.h"
 #include "CTTPractice/CTTGameInstance.h"
+#include "CTTCameraManager.h"
 #include "EngineUtils.h" 
 #include "Kismet/GameplayStatics.h"
 
@@ -46,6 +47,14 @@ void ACTTPracticeGameModeBase::BeginPlay()
 			SwitchMovementDataMap.FindOrAdd(SwitchMovementData->TriggerItemName).Add(SwitchMovementData->ActorName, SwitchMovementData->TargetLocation);
 		}
 	}
+
+	UCTTCameraManager* CameraManager = GetWorld()->GetSubsystem<UCTTCameraManager>();
+	if (nullptr == CameraManager)
+	{
+		UE_LOG(LogTemp, Error, TEXT("CameraManager is nullptr"));
+		return;
+	}
+	CameraManager->InitializeCameras();
 }
 
 void ACTTPracticeGameModeBase::SpawnItem(const FCTTWorldItemSetupData& SpawnData)

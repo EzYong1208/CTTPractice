@@ -37,8 +37,6 @@ public:
 	void MoveCameraCloser();
 	void MoveCameraAway();
 
-	void SetTargetCharacter(ACTTCharacter* NewTarget);
-
 public:
 	TWeakObjectPtr<USpringArmComponent> GetSpringArmComponent() const { return SpringArmComponent; }
 	TWeakObjectPtr<UCameraComponent> GetCameraComponent() const { return CameraComponent; }
@@ -65,6 +63,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera")
 	float CameraMoveDistance = 0.f;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<ACTTCharacter> TargetCharacterClass;
+
 private:
 	FVector OwnerLocation = FVector(0.f, 0.f, 0.f);
 	float TargetArmLength = 0.f;
@@ -76,5 +77,5 @@ private:
     TWeakObjectPtr<UCameraComponent> CameraComponent;
 
 	UPROPERTY()
-	TWeakObjectPtr<ACTTCharacter> TargetCharacter;
+	TWeakObjectPtr<ACTTCharacter> TargetCharacterInstance;
 };
