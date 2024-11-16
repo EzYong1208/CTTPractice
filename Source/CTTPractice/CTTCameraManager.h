@@ -39,4 +39,6 @@ private:
 
 	UPROPERTY()
 	TWeakObjectPtr<ACTTFollowCamera> FollowCamera;
+
+	static constexpr float CAMERA_BLEND_TIME = 1.f;
 };

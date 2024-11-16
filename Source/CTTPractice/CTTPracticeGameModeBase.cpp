@@ -5,6 +5,7 @@
 #include "CTTPractice/UI/CTTUICommonResource.h"
 #include "CTTPractice/CTTItem.h"
 #include "CTTPractice/CTTCharacter.h"
+#include "CTTPractice/CTTProjectile.h"
 #include "CTTPractice/CTTGameInstance.h"
 #include "CTTCameraManager.h"
 #include "EngineUtils.h" 
@@ -169,4 +170,31 @@ void ACTTPracticeGameModeBase::MoveActorZAxis(const FName& SwitchName, float Del
 
 		TargetActor->SetActorLocation(CurrentLocation);
 	}
+}
+
+TWeakObjectPtr<ACTTProjectile> ACTTPracticeGameModeBase::SpawnProjectile(ACharacter* Character, FName SpawnProjectileName)
+{
+	TArray<FName> RowNames = ProjectileDataTable->GetRowNames();
+	int32 CollectIndex = 0;
+	for (const FName& RowName : RowNames)
+	{
+		FCTTProjectileData* ProjectileData = ProjectileDataTable->FindRow<FCTTProjectileData>(RowName, TEXT(""));
+		if (SpawnProjectileName == ProjectileData->Name)
+		{
+			FRotator SpawnRotation = FRotator::MakeFromEuler(FVector(0.f, 0.f, 0.f));
+			ACTTProjectile* NewProjectile = GetWorld()->SpawnActor<ACTTProjectile>(ACTTProjectile::StaticClass(), Character->GetActorLocation() + ProjectileData->PositionOffset, SpawnRotation);
+			if (false == IsValid(NewProjectile))
+			{
+				UE_LOG(LogTemp, Error, TEXT("Failed to spawn NewProjectile"));
+				return nullptr;
+			}
+
+			NewProjectile->InitializeProjectile(*ProjectileData);
+			NewProjectile->FollowCharacter(Character);
+
+			return TWeakObjectPtr<ACTTProjectile>(NewProjectile);
+		}
+	}
+
+	return nullptr;
 }

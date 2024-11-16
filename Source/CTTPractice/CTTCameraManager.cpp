@@ -36,6 +36,15 @@ void UCTTCameraManager::InitializeCameras()
 		}
 	}
 
+	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+	if (nullptr == PlayerController)
+	{
+		UE_LOG(LogTemp, Error, TEXT("PlayerController is nullptr"));
+		return;
+	}
+
+	PlayerController->SetViewTargetWithBlend(Cast<AActor>(FollowCamera.Get()), 0.f);
+
 	ACTTPracticeGameModeBase* GameMode = Cast<ACTTPracticeGameModeBase>(UGameplayStatics::GetGameMode(this));
 	if (false == IsValid(GameMode))
 	{
@@ -103,7 +112,7 @@ void UCTTCameraManager::SetViewTargetToCamera(AActor* CameraActor)
 		return;
 	}
 
-	PlayerController->SetViewTargetWithBlend(CameraActor, 1.0f);
+	PlayerController->SetViewTargetWithBlend(CameraActor, CAMERA_BLEND_TIME);
 }
 
 TWeakObjectPtr<ACTTStaticCamera> UCTTCameraManager::FindStaticCameraByID(int32 CameraID) const

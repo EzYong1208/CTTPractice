@@ -12,7 +12,7 @@
  * 
  */
 class UCTTUICommonResource;
-class UCTTDataTableManager;
+class ACTTProjectile;
 
 UCLASS()
 class CTTPRACTICE_API ACTTPracticeGameModeBase : public AGameModeBase
@@ -30,6 +30,8 @@ public:
 	void MoveActorZAxis(const FName& SwitchName, float DeltaTime);
 
 	UDataTable* GetStaticCameraDataTable() const { return StaticCameraDataTable; }
+
+	TWeakObjectPtr<ACTTProjectile> SpawnProjectile(ACharacter* Character, FName SpawnProjectileName);
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -53,23 +55,26 @@ protected:
 	UPROPERTY()
 	UCTTUICommonResource* UICommonResource = nullptr;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DataTable")
     UDataTable* WorldItemSetupDataTable;
 
-    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DataTable")
     UDataTable* ItemDataTable;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DataTable")
     UDataTable* ItemSpawnOffsetDataTable;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DataTable")
     UDataTable* SwitchMovementDataTable;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	float SwitchMovementSpeed = 0.f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DataTable")
     UDataTable* StaticCameraDataTable;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DataTable")
+    UDataTable* ProjectileDataTable;
 
 private:
 	TMap<FName, TMap<FName, FVector>> SwitchMovementDataMap;

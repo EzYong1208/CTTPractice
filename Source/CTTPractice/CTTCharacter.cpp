@@ -6,8 +6,10 @@
 #include "Camera/CameraComponent.h"
 #include "CTTCameraManager.h"
 #include "CTTFollowCamera.h"
+#include "CTTProjectile.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "CTTPractice/CTTPracticeGameModeBase.h"
 #include "Kismet/GameplayStatics.h"
 
 // Sets default values
@@ -42,6 +44,9 @@ void ACTTCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 	PlayerInputComponent->BindAxis(TEXT("MoveLeftRight"), this, &ACTTCharacter::MoveLeftRight);
 
 	PlayerInputComponent->BindAction("Attack", IE_Pressed, this, &ACTTCharacter::Attack);
+
+	// TODO : 투사체 함수 수정할 것
+	PlayerInputComponent->BindAction("Test", IE_Pressed, this, &ACTTCharacter::Test);
 
 	PlayerInputComponent->BindAxis(TEXT("RotateCamera"), this, &ACTTCharacter::RotateCamera);
 	PlayerInputComponent->BindAction("MoveCameraCloser", IE_Pressed, this, &ACTTCharacter::MoveCameraCloser);
@@ -220,4 +225,33 @@ void ACTTCharacter::Attack()
 	}
 
 	bCanAttack = false;
+}
+
+void ACTTCharacter::Test()
+{
+	if (false == bIsHolding)
+	{
+		ACTTPracticeGameModeBase* GameMode = Cast<ACTTPracticeGameModeBase>(UGameplayStatics::GetGameMode(this));
+		if (false == IsValid(GameMode))
+		{
+			UE_LOG(LogTemp, Error, TEXT("GameMode is InValid"));
+			return;
+		}
+
+		FName TestName = TEXT("Radish");
+		SpawnedProjectile = GameMode->SpawnProjectile(this, TestName);
+		bIsHolding = true;
+	}
+	else
+	{
+		if (false == SpawnedProjectile.IsValid())
+		{
+			UE_LOG(LogTemp, Error, TEXT("SpawnedProjectile is InValid"));
+			return;
+		}
+
+		SpawnedProjectile->StopFollowingCharacter();
+		bIsHolding = false;
+		SpawnedProjectile = nullptr;
+	}
 }

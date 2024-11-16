@@ -7,6 +7,7 @@
 #include "CTTCharacter.generated.h"
 
 class ACTTItem;
+class ACTTProjectile;
 
 UCLASS()
 class CTTPRACTICE_API ACTTCharacter : public ACharacter
@@ -59,10 +60,15 @@ private:
 	void MoveCameraAway();
 
 	void Attack();
+	void Test();
 
 private:
 	float VerticalMovementInput = 0.f;
 	float HorizontalMovementInput = 0.f;
+	// TODO : 테스트용, 수정 필요
+	bool bIsHolding = false;
+	UPROPERTY()
+	TWeakObjectPtr<ACTTProjectile> SpawnedProjectile;
 
 	UPROPERTY()
 	ACTTItem* OverlappingItem = nullptr;

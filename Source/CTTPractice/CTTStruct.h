@@ -136,3 +136,33 @@ struct CTTPRACTICE_API FCTTStaticCameraData : public FTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FRotator Rotation = FRotator(0.f, 0.f, 0.f);
 };
+
+USTRUCT(BlueprintType)
+struct CTTPRACTICE_API FCTTProjectileData : public FTableRowBase
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FName Name;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	USkeletalMesh* SkeletalMesh = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    TSubclassOf<UAnimInstance> AnimBlueprintClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FVector MeshLocation;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FVector PositionOffset;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FVector RotationOffset;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float SphereRadius = 0.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float MaxDistance = 0.f;
+};
