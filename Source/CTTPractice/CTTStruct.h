@@ -123,21 +123,6 @@ struct CTTPRACTICE_API FCTTSwitchMovementData : public FTableRowBase
 };
 
 USTRUCT(BlueprintType)
-struct CTTPRACTICE_API FCTTStaticCameraData : public FTableRowBase
-{
-	GENERATED_BODY()
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int32 CameraID = 0;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FVector Location = FVector(0.f, 0.f, 0.f);
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FRotator Rotation = FRotator(0.f, 0.f, 0.f);
-};
-
-USTRUCT(BlueprintType)
 struct CTTPRACTICE_API FCTTProjectileData : public FTableRowBase
 {
 	GENERATED_BODY()
@@ -163,6 +148,4 @@ struct CTTPRACTICE_API FCTTProjectileData : public FTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float SphereRadius = 0.f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float MaxDistance = 0.f;
 };

@@ -41,3 +41,13 @@ enum class ECTTCollectType : uint8
 	Weapon,
 	MAX
 };
+
+UENUM()
+enum class ECTTProjectileState : uint8
+{
+    None,
+	FollowingCharacter,
+	IndependentMovement,
+	Destroy,
+	MAX
+};

@@ -25,8 +25,8 @@ class CTTPRACTICE_API UCTTCheatManager : public UCheatManager
 	void SetCollectItem(int32 Index, bool bEnable);
 
 	UFUNCTION(exec)
-	void SwitchToCameraByID(int32 CameraID);
+	void SwitchToFollowCamera();
 
 	UFUNCTION(exec)
-	void SwitchToFollowCamera();
+	void SwitchToNPCCameraByName(FName CameraName);
 };

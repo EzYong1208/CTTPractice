@@ -14,6 +14,8 @@ DECLARE_MULTICAST_DELEGATE_OneParam(FCTTOnChangePlayerLifeCount, int32);
 DECLARE_MULTICAST_DELEGATE_OneParam(FCTTOnChangeCoinCount, int32);
 DECLARE_MULTICAST_DELEGATE_TwoParams(FCTTOnChangeCollectItem, int32, bool);
 
+class UCTTCameraManager;
+
 UCLASS()
 class CTTPRACTICE_API UCTTGameInstance : public UGameInstance
 {
@@ -37,6 +39,15 @@ public:
 	FCTTOnChangeCoinCount& OnChangeCoinCount() { return OnChangeCoinCountDelegate; }
 	FCTTOnChangeCollectItem& OnChangeCollectItem() { return OnChangeCollectItemDelegate; }
 
+public:
+	void InitializeManagers();
+
+	UCTTCameraManager* GetCameraManager() const { return CameraManagerInstance; }
+	
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<UCTTCameraManager> CameraManagerClass;
+
 protected:
 	UPROPERTY(BlueprintReadWrite)
 	int32 PlayerLifeCount = 0;
@@ -53,4 +64,8 @@ protected:
 	FCTTOnChangePlayerLifeCount OnChangePlayerLifeCountDelegate;
 	FCTTOnChangeCoinCount OnChangeCoinCountDelegate;
 	FCTTOnChangeCollectItem OnChangeCollectItemDelegate;
+
+private:
+	UPROPERTY()
+	UCTTCameraManager* CameraManagerInstance = nullptr;
 };

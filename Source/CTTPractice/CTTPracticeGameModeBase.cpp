@@ -23,6 +23,8 @@ void ACTTPracticeGameModeBase::BeginPlay()
 	UCTTGameInstance* GameInstance = Cast<UCTTGameInstance>(UGameplayStatics::GetGameInstance(this));
 	if (GameInstance)
 	{
+		GameInstance->InitializeManagers();
+
 		GameInstance->SetPlayerLifeCount(PlayerInitialLifeCount);
 		GameInstance->SetCoinCount(CoinInitialLifeCount);
 		GameInstance->InitializeCollectItem(CollectItemNumber, CollectItemInitialState);
@@ -49,13 +51,7 @@ void ACTTPracticeGameModeBase::BeginPlay()
 		}
 	}
 
-	UCTTCameraManager* CameraManager = GetWorld()->GetSubsystem<UCTTCameraManager>();
-	if (nullptr == CameraManager)
-	{
-		UE_LOG(LogTemp, Error, TEXT("CameraManager is nullptr"));
-		return;
-	}
-	CameraManager->InitializeCameras();
+
 }
 
 void ACTTPracticeGameModeBase::SpawnItem(const FCTTWorldItemSetupData& SpawnData)
@@ -174,6 +170,7 @@ void ACTTPracticeGameModeBase::MoveActorZAxis(const FName& SwitchName, float Del
 
 TWeakObjectPtr<ACTTProjectile> ACTTPracticeGameModeBase::SpawnProjectile(ACharacter* Character, FName SpawnProjectileName)
 {
+	// TODO : 수정필요
 	TArray<FName> RowNames = ProjectileDataTable->GetRowNames();
 	int32 CollectIndex = 0;
 	for (const FName& RowName : RowNames)

@@ -44,21 +44,16 @@ void UCTTCheatManager::SetCollectItem(int32 Index, bool bEnable)
 	GameInstance->SetCollectItemStatus(Index, bEnable);
 }
 
-void UCTTCheatManager::SwitchToCameraByID(int32 CameraID)
+void UCTTCheatManager::SwitchToFollowCamera()
 {
-	UCTTCameraManager* CameraManager = GetWorld()->GetSubsystem<UCTTCameraManager>();
-	if (nullptr == CameraManager)
+	UCTTGameInstance* GameInstance = Cast<UCTTGameInstance>(UGameplayStatics::GetGameInstance(this));
+	if (nullptr == GameInstance)
 	{
-		UE_LOG(LogTemp, Error, TEXT("CameraManager is nullptr"));
+		UE_LOG(LogTemp, Error, TEXT("GameInstance is nullptr"));
 		return;
 	}
 
-	CameraManager->SwitchToCameraByID(CameraID);
-}
-
-void UCTTCheatManager::SwitchToFollowCamera()
-{
-	UCTTCameraManager* CameraManager = GetWorld()->GetSubsystem<UCTTCameraManager>();
+	UCTTCameraManager* CameraManager = GameInstance->GetCameraManager();
 	if (nullptr == CameraManager)
 	{
 		UE_LOG(LogTemp, Error, TEXT("CameraManager is nullptr"));
@@ -66,4 +61,23 @@ void UCTTCheatManager::SwitchToFollowCamera()
 	}
 
 	CameraManager->SwitchToFollowCamera();
+}
+
+void UCTTCheatManager::SwitchToNPCCameraByName(FName CameraName)
+{
+	UCTTGameInstance* GameInstance = Cast<UCTTGameInstance>(UGameplayStatics::GetGameInstance(this));
+	if (nullptr == GameInstance)
+	{
+		UE_LOG(LogTemp, Error, TEXT("GameInstance is nullptr"));
+		return;
+	}
+	
+	UCTTCameraManager* CameraManager = GameInstance->GetCameraManager();
+	if (nullptr == CameraManager)
+	{
+		UE_LOG(LogTemp, Error, TEXT("CameraManager is nullptr"));
+		return;
+	}
+
+	CameraManager->SwitchToNPCCameraByName(CameraName);
 }

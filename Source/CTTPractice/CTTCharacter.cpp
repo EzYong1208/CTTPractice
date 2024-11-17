@@ -3,9 +3,10 @@
 
 #include "CTTCharacter.h"
 #include "CTTItem.h"
-#include "Camera/CameraComponent.h"
 #include "CTTCameraManager.h"
-#include "CTTFollowCamera.h"
+#include "CTTPractice/CTTGameInstance.h"
+#include "Camera/CameraComponent.h"
+#include "CTTCharacterFollowCamera.h"
 #include "CTTProjectile.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -109,24 +110,31 @@ void ACTTCharacter::MoveLeftRight(float InputValue)
 
 void ACTTCharacter::UpdateMoveVector(float DeltaTime)
 {
-	UCTTCameraManager* CameraManager = GetWorld()->GetSubsystem<UCTTCameraManager>();
+	UCTTGameInstance* GameInstance = Cast<UCTTGameInstance>(UGameplayStatics::GetGameInstance(this));
+	if (nullptr == GameInstance)
+	{
+		UE_LOG(LogTemp, Error, TEXT("GameInstance is nullptr"));
+		return;
+	}
+
+	UCTTCameraManager* CameraManager = GameInstance->GetCameraManager();
 	if (nullptr == CameraManager)
 	{
 		UE_LOG(LogTemp, Error, TEXT("CameraManager is nullptr"));
 		return;
 	}
 
-	TWeakObjectPtr<ACTTFollowCamera> FollowCamera = CameraManager->GetFollowCamera();
-	if (false == FollowCamera.IsValid())
+	ACTTCharacterFollowCamera* FollowCamera = CameraManager->GetFollowCamera();
+	if (nullptr == FollowCamera)
 	{
-		UE_LOG(LogTemp, Error, TEXT("FollowCamera is not valid"));
+		UE_LOG(LogTemp, Error, TEXT("FollowCamera is nullptr"));
 		return;
 	}
 
-	TWeakObjectPtr<UCameraComponent> CameraComponent = FollowCamera->GetCameraComponent();
-	if (false == CameraComponent.IsValid())
+	UCameraComponent* CameraComponent = FollowCamera->GetCameraComponent();
+	if (nullptr == CameraComponent)
 	{
-		UE_LOG(LogTemp, Error, TEXT("CameraComponent is not valid"));
+		UE_LOG(LogTemp, Error, TEXT("CameraComponent is nullptr"));
 		return;
 	}
 
@@ -156,17 +164,24 @@ void ACTTCharacter::UpdateMoveVector(float DeltaTime)
 
 void ACTTCharacter::RotateCamera(float InputValue)
 {
-	UCTTCameraManager* CameraManager = GetWorld()->GetSubsystem<UCTTCameraManager>();
+	UCTTGameInstance* GameInstance = Cast<UCTTGameInstance>(UGameplayStatics::GetGameInstance(this));
+	if (nullptr == GameInstance)
+	{
+		UE_LOG(LogTemp, Error, TEXT("GameInstance is nullptr"));
+		return;
+	}
+
+	UCTTCameraManager* CameraManager = GameInstance->GetCameraManager();
 	if (nullptr == CameraManager)
 	{
 		UE_LOG(LogTemp, Error, TEXT("CameraManager is nullptr"));
 		return;
 	}
 
-	TWeakObjectPtr<ACTTFollowCamera> FollowCamera = CameraManager->GetFollowCamera();
-	if (false == FollowCamera.IsValid())
+	ACTTCharacterFollowCamera* FollowCamera = CameraManager->GetFollowCamera();
+	if (nullptr == FollowCamera)
 	{
-		UE_LOG(LogTemp, Error, TEXT("FollowCamera is not valid"));
+		UE_LOG(LogTemp, Error, TEXT("FollowCamera is nullptr"));
 		return;
 	}
 
@@ -175,17 +190,24 @@ void ACTTCharacter::RotateCamera(float InputValue)
 
 void ACTTCharacter::MoveCameraCloser()
 {
-	UCTTCameraManager* CameraManager = GetWorld()->GetSubsystem<UCTTCameraManager>();
+	UCTTGameInstance* GameInstance = Cast<UCTTGameInstance>(UGameplayStatics::GetGameInstance(this));
+	if (nullptr == GameInstance)
+	{
+		UE_LOG(LogTemp, Error, TEXT("GameInstance is nullptr"));
+		return;
+	}
+
+	UCTTCameraManager* CameraManager = GameInstance->GetCameraManager();
 	if (nullptr == CameraManager)
 	{
 		UE_LOG(LogTemp, Error, TEXT("CameraManager is nullptr"));
 		return;
 	}
 
-	TWeakObjectPtr<ACTTFollowCamera> FollowCamera = CameraManager->GetFollowCamera();
-	if (false == FollowCamera.IsValid())
+	ACTTCharacterFollowCamera* FollowCamera = CameraManager->GetFollowCamera();
+	if (nullptr == FollowCamera)
 	{
-		UE_LOG(LogTemp, Error, TEXT("FollowCamera is not valid"));
+		UE_LOG(LogTemp, Error, TEXT("FollowCamera is nullptr"));
 		return;
 	}
 
@@ -194,17 +216,24 @@ void ACTTCharacter::MoveCameraCloser()
 
 void ACTTCharacter::MoveCameraAway()
 {
-	UCTTCameraManager* CameraManager = GetWorld()->GetSubsystem<UCTTCameraManager>();
+	UCTTGameInstance* GameInstance = Cast<UCTTGameInstance>(UGameplayStatics::GetGameInstance(this));
+	if (nullptr == GameInstance)
+	{
+		UE_LOG(LogTemp, Error, TEXT("GameInstance is nullptr"));
+		return;
+	}
+
+	UCTTCameraManager* CameraManager = GameInstance->GetCameraManager();
 	if (nullptr == CameraManager)
 	{
 		UE_LOG(LogTemp, Error, TEXT("CameraManager is nullptr"));
 		return;
 	}
 
-	TWeakObjectPtr<ACTTFollowCamera> FollowCamera = CameraManager->GetFollowCamera();
-	if (false == FollowCamera.IsValid())
+	ACTTCharacterFollowCamera* FollowCamera = CameraManager->GetFollowCamera();
+	if (nullptr == FollowCamera)
 	{
-		UE_LOG(LogTemp, Error, TEXT("FollowCamera is not valid"));
+		UE_LOG(LogTemp, Error, TEXT("FollowCamera is nullptr"));
 		return;
 	}
 

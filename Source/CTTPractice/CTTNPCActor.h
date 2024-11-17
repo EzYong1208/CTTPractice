@@ -4,39 +4,38 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "Camera/CameraComponent.h"
-#include "CTTPractice/CTTStruct.h"
-#include "CTTStaticCamera.generated.h"
+#include "CTTNPCActor.generated.h"
 
-/**
- * 
- */
+class ACTTNPCFollowCamera;
+
 UCLASS()
-class CTTPRACTICE_API ACTTStaticCamera : public AActor
+class CTTPRACTICE_API ACTTNPCActor : public AActor
 {
 	GENERATED_BODY()
 	
-public:
+public:	
 	// Sets default values for this actor's properties
-	ACTTStaticCamera();
+	ACTTNPCActor();
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:
+public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 public:
-	void SetCameraID(int32 InCamerID);
-	void ActivateCamera();
+	FName GetNPCName() const { return NPCName; }
 
-	int32 GetCameraID() const { return CameraID; }
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<ACTTNPCFollowCamera> NPCFollowCameraClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FName NPCName;
 
 private:
-	int32 CameraID = 0;
-
 	UPROPERTY()
-    UCameraComponent* CameraComponent;
+	ACTTNPCFollowCamera* NPCFollowCamera = nullptr;
 };

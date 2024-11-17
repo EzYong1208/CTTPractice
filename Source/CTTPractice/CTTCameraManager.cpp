@@ -2,38 +2,25 @@
 
 
 #include "CTTCameraManager.h"
-#include "CTTFollowCamera.h"
-#include "CTTStaticCamera.h"
+#include "CTTCharacterFollowCamera.h"
+#include "CTTNPCFollowCamera.h"
+#include "CTTNPCActor.h"
 #include "CTTPracticeGameModeBase.h"
 #include "Kismet/GameplayStatics.h"
 
-void UCTTCameraManager::Initialize(FSubsystemCollectionBase& Collection)
-{
-	Super::Initialize(Collection);
-
-}
-
-void UCTTCameraManager::Deinitialize()
-{
-	Super::Deinitialize();
-
-	StaticCameraMap.Empty();
-	FollowCamera = nullptr;
-}
-
 void UCTTCameraManager::InitializeCameras()
 {
-	TArray<AActor*> FoundCameras;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACTTFollowCamera::StaticClass(), FoundCameras);
-
-	if (FoundCameras.Num() > 0)
+	if (false == IsValid(CharacterFollowCameraClass))
 	{
-		FollowCamera = Cast<ACTTFollowCamera>(FoundCameras[0]);
-		if (nullptr == FollowCamera)
-		{
-			UE_LOG(LogTemp, Error, TEXT("FollowCamera is nullptr"));
-			return;
-		}
+		UE_LOG(LogTemp, Error, TEXT("CharacterFollowCameraClass is invalid"));
+		return;
+	}
+
+	CharacterFollowCamera = GetWorld()->SpawnActor<ACTTCharacterFollowCamera>(CharacterFollowCameraClass, FVector::ZeroVector, FRotator::ZeroRotator/*, SpawnParams*/);
+	if (!IsValid(CharacterFollowCamera))
+	{
+		UE_LOG(LogTemp, Error, TEXT("Failed to spawn CharacterFollowCamera"));
+		return;
 	}
 
 	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
@@ -43,58 +30,46 @@ void UCTTCameraManager::InitializeCameras()
 		return;
 	}
 
-	PlayerController->SetViewTargetWithBlend(Cast<AActor>(FollowCamera.Get()), 0.f);
+	PlayerController->SetViewTargetWithBlend(Cast<AActor>(CharacterFollowCamera), 0.f);
 
-	ACTTPracticeGameModeBase* GameMode = Cast<ACTTPracticeGameModeBase>(UGameplayStatics::GetGameMode(this));
-	if (false == IsValid(GameMode))
-	{
-		UE_LOG(LogTemp, Error, TEXT("GameMode is InValid"));
-		return;
-	}
-
-	UDataTable* StaticCameraDataTable = GameMode->GetStaticCameraDataTable();
-	if (nullptr == StaticCameraDataTable)
-	{
-		UE_LOG(LogTemp, Error, TEXT("DataTableManager is nullptr"));
-		return;
-	}
-
-	FCTTStaticCameraData* StaticCameraData = nullptr;
-	const int32 RowCount = StaticCameraDataTable->GetRowMap().Num();
-
-	TArray<FName> RowNames = StaticCameraDataTable->GetRowNames();
-	for (const FName& RowName : RowNames)
-	{
-		StaticCameraData = StaticCameraDataTable->FindRow<FCTTStaticCameraData>(RowName, TEXT(""));
-
-		ACTTStaticCamera* NewCamera = GetWorld()->SpawnActor<ACTTStaticCamera>(StaticCameraData->Location, StaticCameraData->Rotation);
-		if (!IsValid(NewCamera))
-		{
-			UE_LOG(LogTemp, Error, TEXT("Failed to spawn ACTTStaticCamera"));
-			return;
-		}
-
-		StaticCameraMap.Add(StaticCameraData->CameraID, NewCamera);
-		NewCamera->SetCameraID(StaticCameraData->CameraID);
-	}
-}
-
-void UCTTCameraManager::SwitchToCameraByID(int32 CameraID)
-{
-	TWeakObjectPtr<ACTTStaticCamera> StaticCamera = FindStaticCameraByID(CameraID);
-
-	if (false == StaticCamera.IsValid())
-	{
-		UE_LOG(LogTemp, Error, TEXT("StaticCamera is nullptr"));
-		return;
-	}
-
-	SetViewTargetToCamera(Cast<AActor>(StaticCamera.Get()));	
+	SpawnNPCFollowCameras();
 }
 
 void UCTTCameraManager::SwitchToFollowCamera()
 {
-	SetViewTargetToCamera(Cast<AActor>(FollowCamera.Get()));
+	SetViewTargetToCamera(Cast<AActor>(CharacterFollowCamera));
+}
+
+void UCTTCameraManager::SwitchToNPCCameraByName(FName CameraName)
+{
+	TWeakObjectPtr<ACTTNPCFollowCamera> NPCCamera = FindNPCFollowCameraByName(CameraName);
+
+	if (false == NPCCamera.IsValid())
+	{
+		UE_LOG(LogTemp, Error, TEXT("NPCCamera is invalid"));
+		return;
+	}
+
+	SetViewTargetToCamera(Cast<AActor>(NPCCamera.Get()));
+}
+
+TWeakObjectPtr<ACTTNPCFollowCamera> UCTTCameraManager::FindNPCFollowCameraByName(FName CameraName) const
+{
+	const TWeakObjectPtr<ACTTNPCFollowCamera>* CameraPtr = NPCFollowCameraMap.Find(CameraName);
+
+	if (nullptr == CameraPtr)
+	{
+		UE_LOG(LogTemp, Error, TEXT("NPCCamera Name: %s is nullptr"), *CameraName.ToString());
+		return nullptr;
+	}
+
+	if (false == CameraPtr->IsValid())
+	{
+		UE_LOG(LogTemp, Error, TEXT("NPCCamera Name: %s not found"), *CameraName.ToString());
+		return nullptr;
+	}
+
+	return CameraPtr->Get();
 }
 
 void UCTTCameraManager::SetViewTargetToCamera(AActor* CameraActor)
@@ -115,21 +90,29 @@ void UCTTCameraManager::SetViewTargetToCamera(AActor* CameraActor)
 	PlayerController->SetViewTargetWithBlend(CameraActor, CAMERA_BLEND_TIME);
 }
 
-TWeakObjectPtr<ACTTStaticCamera> UCTTCameraManager::FindStaticCameraByID(int32 CameraID) const
+void UCTTCameraManager::SpawnNPCFollowCameras()
 {
-	const TWeakObjectPtr<ACTTStaticCamera>* CameraPtr = StaticCameraMap.Find(CameraID);
+	TArray<AActor*> FoundActors;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACTTNPCActor::StaticClass(), FoundActors);
 
-	if (!CameraPtr)
+	for (AActor* Actor : FoundActors)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("StaticCamera with ID %d not found"), CameraID);
-		return nullptr;
-	}
+		ACTTNPCActor* NPCActor = Cast<ACTTNPCActor>(Actor);
+		if (NPCActor != nullptr)
+		{
+			TSubclassOf<ACTTNPCFollowCamera> NPCFollowCameraClass = NPCActor->NPCFollowCameraClass;
+			if (NPCFollowCameraClass != nullptr)
+			{
+				FActorSpawnParameters SpawnParams;
+				ACTTNPCFollowCamera* SpawnedCamera = GetWorld()->SpawnActor<ACTTNPCFollowCamera>(NPCFollowCameraClass, NPCActor->GetActorLocation(), NPCActor->GetActorRotation(), SpawnParams);
 
-	if (false == CameraPtr->IsValid())
-	{
-		UE_LOG(LogTemp, Warning, TEXT("StaticCamera with ID %d is invalid"), CameraID);
-		return nullptr;
-	}
+				if (SpawnedCamera != nullptr)
+				{
+					SpawnedCamera->SetTarget(NPCActor);
 
-	return CameraPtr->Get();
+					NPCFollowCameraMap.Add(NPCActor->GetNPCName(), SpawnedCamera);
+				}
+			}
+		}
+	}
 }

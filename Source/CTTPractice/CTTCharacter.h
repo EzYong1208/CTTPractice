@@ -50,6 +50,9 @@ protected:
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite)
 	bool bIsInLadder = false;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<ACTTProjectile> ProjectileClass;
+
 private:
 	void MoveUpDown(float InputValue);
 	void MoveLeftRight(float InputValue);
@@ -65,9 +68,9 @@ private:
 private:
 	float VerticalMovementInput = 0.f;
 	float HorizontalMovementInput = 0.f;
+
 	// TODO : 테스트용, 수정 필요
 	bool bIsHolding = false;
-	UPROPERTY()
 	TWeakObjectPtr<ACTTProjectile> SpawnedProjectile;
 
 	UPROPERTY()

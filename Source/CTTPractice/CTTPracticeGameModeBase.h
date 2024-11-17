@@ -29,7 +29,7 @@ public:
 
 	void MoveActorZAxis(const FName& SwitchName, float DeltaTime);
 
-	UDataTable* GetStaticCameraDataTable() const { return StaticCameraDataTable; }
+	//UDataTable* GetStaticCameraDataTable() const { return StaticCameraDataTable; }
 
 	TWeakObjectPtr<ACTTProjectile> SpawnProjectile(ACharacter* Character, FName SpawnProjectileName);
 
@@ -69,9 +69,6 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	float SwitchMovementSpeed = 0.f;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DataTable")
-    UDataTable* StaticCameraDataTable;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DataTable")
     UDataTable* ProjectileDataTable;

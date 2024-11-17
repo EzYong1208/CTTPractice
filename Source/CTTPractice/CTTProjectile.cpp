@@ -29,21 +29,23 @@ void ACTTProjectile::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (true == bIsFollowingCharacter &&
-		true == AttachedCharacter.IsValid())
+	switch (CurrentState)
 	{
-		const FVector HeadLocation = AttachedCharacter->GetActorLocation() + PositionOffset;
-		SetActorLocation(HeadLocation);
+	case ECTTProjectileState::FollowingCharacter:
+		HandleStateFollowingCharacter(DeltaTime);
+		break;
 
-		const FRotator CharacterRotation = AttachedCharacter->GetActorRotation();
-		SetActorRotation(CharacterRotation);
-	}
-	else
-	{
-		UpdateProjectileMovement(DeltaTime);
-	}
+	case ECTTProjectileState::IndependentMovement:
+		HandleStateIndependentMovement(DeltaTime);
+		break;
 
-	UE_LOG(LogTemp, Log, TEXT("Current Location: %s"), *GetActorLocation().ToString());
+	case ECTTProjectileState::Destroy:
+		HandleStateDestroy(DeltaTime);
+		break;
+
+	default:
+		break;
+	}
 }
 
 void ACTTProjectile::UpdateProjectileMovement(float DeltaTime)
@@ -81,7 +83,6 @@ void ACTTProjectile::InitializeProjectile(const FCTTProjectileData& ProjectileDa
 	Name = ProjectileData.Name;
 	PositionOffset = ProjectileData.PositionOffset;
 	RotationOffset = FRotator::MakeFromEuler(ProjectileData.RotationOffset);
-	MaxDistance = ProjectileData.MaxDistance;
 }
 
 void ACTTProjectile::FollowCharacter(ACharacter* Character)
@@ -90,12 +91,83 @@ void ACTTProjectile::FollowCharacter(ACharacter* Character)
 	{
 		return;
 	}
-	
+
 	AttachedCharacter = Cast<ACTTCharacter>(Character);
-	bIsFollowingCharacter = true;
+	ChangeState(ECTTProjectileState::FollowingCharacter);
 }
 
 void ACTTProjectile::StopFollowingCharacter()
 {
-	bIsFollowingCharacter = false;
+	ChangeState(ECTTProjectileState::IndependentMovement);
+
+	Test();
+}
+
+void ACTTProjectile::ChangeState(ECTTProjectileState NewState)
+{
+	if (NewState == CurrentState)
+	{
+		return;
+	}
+
+	CurrentState = NewState;
+
+	switch (CurrentState)
+	{
+	case ECTTProjectileState::FollowingCharacter:
+		bIsFollowingCharacter = true;
+		break;
+
+	case ECTTProjectileState::IndependentMovement:
+		bIsFollowingCharacter = false;
+		break;
+
+	case ECTTProjectileState::Destroy:
+		break;
+
+	default:
+		break;
+	}
+}
+
+void ACTTProjectile::Test()
+{
+	FVector ForwardDirection = GetActorForwardVector();
+	Velocity = ForwardDirection * InitialForwardSpeed + FVector(0.0f, 0.0f, InitialVerticalVelocity);
+	GroundZ = AttachedCharacter->GetActorLocation().Z;
+}
+
+void ACTTProjectile::HandleStateFollowingCharacter(float DeltaTime)
+{
+	if (false == AttachedCharacter.IsValid())
+	{
+		return;
+	}
+
+	const FVector HeadLocation = AttachedCharacter->GetActorLocation() + PositionOffset;
+	SetActorLocation(HeadLocation);
+
+	const FRotator CharacterRotation = AttachedCharacter->GetActorRotation();
+	SetActorRotation(CharacterRotation);
+}
+
+void ACTTProjectile::HandleStateIndependentMovement(float DeltaTime)
+{
+	CurrentTime += DeltaTime;
+
+	FVector Gravity(0, 0, PROJECTILE_GRAVITY * DeltaTime);
+	Velocity += Gravity;
+	FVector NewLocation = GetActorLocation() + Velocity * DeltaTime;
+
+	SetActorLocation(NewLocation);
+
+	if (GetActorLocation().Z <= GroundZ)
+	{
+		ChangeState(ECTTProjectileState::Destroy);
+	}
+}
+
+void ACTTProjectile::HandleStateDestroy(float DeltaTime)
+{
+	Destroy();
 }

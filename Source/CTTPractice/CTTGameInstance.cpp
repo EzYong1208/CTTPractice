@@ -2,6 +2,7 @@
 
 
 #include "CTTGameInstance.h"
+#include "CTTCameraManager.h"
 
 void UCTTGameInstance::Init()
 {
@@ -38,6 +39,15 @@ void UCTTGameInstance::SetCollectItemStatus(int32 InIndex, bool bInEnable)
 	if (OnChangeCollectItemDelegate.IsBound())
 	{
 		OnChangeCollectItemDelegate.Broadcast(InIndex, CollectItemStates[InIndex]);
+	}
+}
+
+void UCTTGameInstance::InitializeManagers()
+{
+	if (IsValid(CameraManagerClass))
+	{
+		CameraManagerInstance = NewObject<UCTTCameraManager>(this, CameraManagerClass);
+		CameraManagerInstance->InitializeCameras();
 	}
 }
 

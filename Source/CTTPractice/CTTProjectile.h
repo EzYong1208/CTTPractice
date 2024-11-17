@@ -34,18 +34,38 @@ public:
 	void FollowCharacter(ACharacter* Character);
 	void StopFollowingCharacter();
 
+	void ChangeState(ECTTProjectileState NewState);
+	void Test();
+
+private:
+	void HandleStateFollowingCharacter(float DeltaTime);
+	void HandleStateIndependentMovement(float DeltaTime);
+	void HandleStateDestroy(float DeltaTime);
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float InitialForwardSpeed = 0.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float InitialVerticalVelocity = 0.f;
+
 private:
 	FName Name;
 	FVector PositionOffset;
 	FRotator RotationOffset;
 	float SphereRadius = 0.f;
-	float MaxDistance = 0.f;
 	bool bIsFollowingCharacter = true;
+
+	float CurrentTime = 0.0f;
+	FVector Velocity;
+	float GroundZ = 0.0f;
+
+	static constexpr float PROJECTILE_GRAVITY = -980.f;
 
 private:
 	UPROPERTY()
 	USphereComponent* CollisionSphereComponent;
 
-	UPROPERTY()
 	TWeakObjectPtr<ACTTCharacter> AttachedCharacter;
+	ECTTProjectileState CurrentState = ECTTProjectileState::FollowingCharacter;
 };

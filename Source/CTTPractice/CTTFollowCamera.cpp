@@ -13,6 +13,11 @@ ACTTFollowCamera::ACTTFollowCamera()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	SpringArmComponent = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArmComponent"));
+	SpringArmComponent->SetupAttachment(RootComponent);
+
+	CameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComponent"));
+	CameraComponent->SetupAttachment(SpringArmComponent);
 }
 
 // Called when the game starts or when spawned
@@ -22,17 +27,6 @@ void ACTTFollowCamera::BeginPlay()
 
 	InitializeCameraComponents();
 
-	if (nullptr == TargetCharacterClass)
-	{
-		UE_LOG(LogTemp, Error, TEXT("TargetCharacterClass is nullptr"));
-		return;
-	}
-	
-	TargetCharacterInstance = Cast<ACTTCharacter>(UGameplayStatics::GetActorOfClass(GetWorld(), TargetCharacterClass));
-	if (false == TargetCharacterInstance.IsValid())
-	{
-		UE_LOG(LogTemp, Error, TEXT("TargetCharacterInstance is not valid"));
-	}
 }
 
 // Called every frame
@@ -41,55 +35,31 @@ void ACTTFollowCamera::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	UpdateCameraLocation(DeltaTime);
-	CameraMovement(DeltaTime);
 }
 
 void ACTTFollowCamera::InitializeCameraComponents()
 {
-	SpringArmComponent = FindComponentByClass<USpringArmComponent>();
-	CameraComponent = FindComponentByClass<UCameraComponent>();
-
 	SpringArmComponent->TargetArmLength = InitialSpringArmLength;
 	TargetArmLength = InitialSpringArmLength;
 	SpringArmComponent->SetRelativeRotation(InitialSpringArmRotation);
 }
 
-void ACTTFollowCamera::CameraMovement(float DeltaTime)
-{
-	float CurrentTargetArmLength = SpringArmComponent->TargetArmLength;
-	float NewTargetArmLength = FMath::FInterpTo(CurrentTargetArmLength, TargetArmLength, DeltaTime, CameraZoomSpeed);
-	SpringArmComponent->TargetArmLength = NewTargetArmLength;
-}
-
 void ACTTFollowCamera::UpdateCameraLocation(float DeltaTime)
 {
-	if (false == TargetCharacterInstance.IsValid())
+	if (nullptr == TargetActor)
 	{
-		UE_LOG(LogTemp, Error, TEXT("TargetCharacterInstance is not valid"));
+		UE_LOG(LogTemp, Error, TEXT("TargetActor is nullptr"));
 		return;
 	}
 
-	FVector CharacterLocation = TargetCharacterInstance->GetActorLocation();
+	FVector TargetLocation = TargetActor->GetActorLocation();
 	FRotator SpringArmRotation = SpringArmComponent->GetComponentRotation();
-	FVector CameraLocation = CharacterLocation - SpringArmRotation.Vector() * SpringArmComponent->TargetArmLength;
+	FVector CameraLocation = TargetLocation - SpringArmRotation.Vector() * SpringArmComponent->TargetArmLength;
 
 	SpringArmComponent->SetWorldLocation(CameraLocation);
 }
 
-void ACTTFollowCamera::RotateCamera(float InputValue)
+void ACTTFollowCamera::SetTarget(AActor* NewTarget)
 {
-	FRotator RotationDelta(0.0f, InputValue * 2.f * GetWorld()->DeltaTimeSeconds * RotationSpeed, 0.0f);
-	FRotator NewRotation = SpringArmComponent->GetComponentRotation() + RotationDelta;
-
-	SpringArmComponent->SetWorldRotation(NewRotation);
-}
-
-void ACTTFollowCamera::MoveCameraCloser()
-{
-	TargetArmLength = FMath::Clamp(SpringArmComponent->TargetArmLength - CameraMoveDistance, MinSpringArmLength, MaxSpringArmLength);
-}
-
-void ACTTFollowCamera::MoveCameraAway()
-{
-	TargetArmLength = FMath::Clamp(SpringArmComponent->TargetArmLength + CameraMoveDistance, MinSpringArmLength, MaxSpringArmLength);
+	TargetActor = NewTarget;
 }

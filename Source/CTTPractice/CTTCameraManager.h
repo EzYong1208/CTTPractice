@@ -3,42 +3,42 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Subsystems/WorldSubsystem.h"
+#include "UObject/NoExportTypes.h"
 #include "CTTCameraManager.generated.h"
 
 /**
  * 
  */
 
-class ACTTStaticCamera;
-class ACTTFollowCamera;
+class ACTTCharacterFollowCamera;
+class ACTTNPCFollowCamera;
 
-UCLASS()
-class CTTPRACTICE_API UCTTCameraManager : public UWorldSubsystem
+UCLASS(Blueprintable)
+class CTTPRACTICE_API UCTTCameraManager : public UObject
 {
 	GENERATED_BODY()
 	
 public:
-	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
-	virtual void Deinitialize() override;
+	void InitializeCameras();
+
+	void SwitchToFollowCamera();
+	void SwitchToNPCCameraByName(FName CameraName);
+	
+	ACTTCharacterFollowCamera* GetFollowCamera() const { return CharacterFollowCamera; }
+
+private:
+	TWeakObjectPtr<ACTTNPCFollowCamera> FindNPCFollowCameraByName(FName CameraName) const;
+	void SetViewTargetToCamera(AActor* CameraActor);
+	void SpawnNPCFollowCameras();
 
 public:
-	void InitializeCameras();
-	void SwitchToCameraByID(int32 CameraID);
-	void SwitchToFollowCamera();
-	void SetViewTargetToCamera(AActor* CameraActor);
-
-	TWeakObjectPtr<ACTTFollowCamera> GetFollowCamera() const { return FollowCamera; }
-
-private:
-	TWeakObjectPtr<ACTTStaticCamera> FindStaticCameraByID(int32 CameraID) const;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<ACTTCharacterFollowCamera> CharacterFollowCameraClass;
 
 private:
 	UPROPERTY()
-	TMap<int32, TWeakObjectPtr<ACTTStaticCamera>> StaticCameraMap;
+	ACTTCharacterFollowCamera* CharacterFollowCamera = nullptr;
 
-	UPROPERTY()
-	TWeakObjectPtr<ACTTFollowCamera> FollowCamera;
-
+	TMap<FName, TWeakObjectPtr<ACTTNPCFollowCamera>> NPCFollowCameraMap;
 	static constexpr float CAMERA_BLEND_TIME = 1.f;
 };

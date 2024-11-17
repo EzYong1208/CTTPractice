@@ -29,19 +29,14 @@ public:
 
 public:
 	void InitializeCameraComponents();
-
-	void CameraMovement(float DeltaTime);
 	void UpdateCameraLocation(float DeltaTime);
-
-	void RotateCamera(float InputValue);
-	void MoveCameraCloser();
-	void MoveCameraAway();
+	void SetTarget(AActor* NewTarget);
 
 public:
-	TWeakObjectPtr<USpringArmComponent> GetSpringArmComponent() const { return SpringArmComponent; }
-	TWeakObjectPtr<UCameraComponent> GetCameraComponent() const { return CameraComponent; }
+	USpringArmComponent* GetSpringArmComponent() const { return SpringArmComponent; }
+	UCameraComponent* GetCameraComponent() const { return CameraComponent; }
 
-public:
+protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera")
 	float InitialSpringArmLength = 0.f;
 
@@ -63,19 +58,15 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera")
 	float CameraMoveDistance = 0.f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TSubclassOf<ACTTCharacter> TargetCharacterClass;
-
-private:
 	FVector OwnerLocation = FVector(0.f, 0.f, 0.f);
 	float TargetArmLength = 0.f;
 
 	UPROPERTY()
-    TWeakObjectPtr<USpringArmComponent> SpringArmComponent;
+	USpringArmComponent* SpringArmComponent;
 
 	UPROPERTY()
-    TWeakObjectPtr<UCameraComponent> CameraComponent;
+	UCameraComponent* CameraComponent;
 
 	UPROPERTY()
-	TWeakObjectPtr<ACTTCharacter> TargetCharacterInstance;
+    AActor* TargetActor = nullptr;
 };
