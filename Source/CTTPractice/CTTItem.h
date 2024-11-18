@@ -34,7 +34,7 @@ public:
 
 	FName GetItemName() const { return ItemName; }
 	bool CheckItemDead() const { return bIsDead; }
-	ECTTItemCollisionType GetCollisionType() const { return CollisionType; }
+	ECTTCollisionType GetCollisionType() const { return CollisionType; }
 	int32 GetCollectItemIndex() const { return CollectItemIndex; }
 
 	void DoAction();
@@ -49,7 +49,7 @@ public:
     UDataTable* ItemSpawnOffsetDataTable;
 
 private:
-	FName ChangeItemCollisionTypeEnumToFName(ECTTItemCollisionType CollisionTypeEnum) const;
+	FName ChangeItemCollisionTypeEnumToFName(ECTTCollisionType CollisionTypeEnum) const;
 
 private:
 	UPROPERTY()
@@ -57,7 +57,7 @@ private:
 
 	FName ItemName;
 	int32 CollectItemIndex = 0;
-	ECTTItemCollisionType CollisionType;
+	ECTTCollisionType CollisionType;
 	FCTTCollectData CollectData;
 
 	static constexpr int32 NON_COLLECTIBLE_ITEM_INDEX = -1;

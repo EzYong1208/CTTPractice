@@ -28,14 +28,11 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 public:
-	void UpdateProjectileMovement(float DeltaTime);
-	void InitializeProjectile(const FCTTProjectileData& ProjectileData);
-
+	void InitializeProjectilePath();
 	void FollowCharacter(ACharacter* Character);
 	void StopFollowingCharacter();
 
 	void ChangeState(ECTTProjectileState NewState);
-	void Test();
 
 private:
 	void HandleStateFollowingCharacter(float DeltaTime);
@@ -49,11 +46,16 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float InitialVerticalVelocity = 0.f;
 
-private:
-	FName Name;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FVector PositionOffset;
-	FRotator RotationOffset;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FVector RotationOffset;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float SphereRadius = 0.f;
+
+private:
 	bool bIsFollowingCharacter = true;
 
 	float CurrentTime = 0.0f;
@@ -68,4 +70,5 @@ private:
 
 	TWeakObjectPtr<ACTTCharacter> AttachedCharacter;
 	ECTTProjectileState CurrentState = ECTTProjectileState::FollowingCharacter;
+	ECTTCollisionType CollisionType = ECTTCollisionType::Projectile;
 };

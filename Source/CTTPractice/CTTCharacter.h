@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "CTTPractice/CTTEnum.h"
 #include "CTTCharacter.generated.h"
 
 class ACTTItem;
@@ -40,7 +41,7 @@ public:
 
 	void SetCharacterAttack(bool InbCanAttack);
 
-protected:
+public:
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite)
 	float Speed = 0.f;
 
@@ -66,6 +67,7 @@ private:
 	void Test();
 
 private:
+	ECTTCollisionType CollisionType = ECTTCollisionType::None;
 	float VerticalMovementInput = 0.f;
 	float HorizontalMovementInput = 0.f;
 

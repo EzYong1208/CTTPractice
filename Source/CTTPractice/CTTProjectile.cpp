@@ -3,7 +3,9 @@
 
 #include "CTTProjectile.h"
 #include "CTTCharacter.h"
+#include "CTTMapObject.h"
 #include "Components/SphereComponent.h"
+#include "Components/BoxComponent.h"
 #include "Kismet/GameplayStatics.h"
 
 // Sets default values
@@ -22,6 +24,10 @@ void ACTTProjectile::BeginPlay()
 	Super::BeginPlay();
 	
 	CollisionSphereComponent->SetSphereRadius(SphereRadius);
+
+	USkeletalMeshComponent* SkeletalMeshComponent = FindComponentByClass<USkeletalMeshComponent>();
+	FRotator Rotation = FRotator::MakeFromEuler(RotationOffset);
+	SkeletalMeshComponent->SetRelativeRotation(Rotation);
 }
 
 // Called every frame
@@ -48,41 +54,11 @@ void ACTTProjectile::Tick(float DeltaTime)
 	}
 }
 
-void ACTTProjectile::UpdateProjectileMovement(float DeltaTime)
+void ACTTProjectile::InitializeProjectilePath()
 {
-
-}
-
-void ACTTProjectile::InitializeProjectile(const FCTTProjectileData& ProjectileData)
-{
-	USkeletalMeshComponent* SkeletalMeshComponent = NewObject<USkeletalMeshComponent>(this, USkeletalMeshComponent::StaticClass(), TEXT("SkeletalMeshComponent"));
-
-	if (false == IsValid(SkeletalMeshComponent))
-	{
-		UE_LOG(LogTemp, Warning, TEXT("SkeletalMeshComponent NewObject failed"));
-		return;
-	}
-
-	SkeletalMeshComponent->SetSkeletalMesh(ProjectileData.SkeletalMesh);
-
-	if (ProjectileData.AnimBlueprintClass)
-	{
-		SkeletalMeshComponent->SetAnimInstanceClass(ProjectileData.AnimBlueprintClass);
-	}
-
-	if (IsValid(SkeletalMeshComponent))
-	{
-		SkeletalMeshComponent->AttachToComponent(GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
-		SkeletalMeshComponent->RegisterComponent();
-		SkeletalMeshComponent->SetRelativeLocation(ProjectileData.MeshLocation);
-		FRotator Rotation = FRotator::MakeFromEuler(ProjectileData.RotationOffset);
-		SkeletalMeshComponent->SetRelativeRotation(Rotation);
-	}
-
-	CollisionSphereComponent->SetSphereRadius(ProjectileData.SphereRadius);
-	Name = ProjectileData.Name;
-	PositionOffset = ProjectileData.PositionOffset;
-	RotationOffset = FRotator::MakeFromEuler(ProjectileData.RotationOffset);
+	FVector ForwardDirection = GetActorForwardVector();
+	Velocity = ForwardDirection * InitialForwardSpeed + FVector(0.0f, 0.0f, InitialVerticalVelocity);
+	GroundZ = AttachedCharacter->GetActorLocation().Z;
 }
 
 void ACTTProjectile::FollowCharacter(ACharacter* Character)
@@ -100,7 +76,7 @@ void ACTTProjectile::StopFollowingCharacter()
 {
 	ChangeState(ECTTProjectileState::IndependentMovement);
 
-	Test();
+	InitializeProjectilePath();
 }
 
 void ACTTProjectile::ChangeState(ECTTProjectileState NewState)
@@ -128,13 +104,6 @@ void ACTTProjectile::ChangeState(ECTTProjectileState NewState)
 	default:
 		break;
 	}
-}
-
-void ACTTProjectile::Test()
-{
-	FVector ForwardDirection = GetActorForwardVector();
-	Velocity = ForwardDirection * InitialForwardSpeed + FVector(0.0f, 0.0f, InitialVerticalVelocity);
-	GroundZ = AttachedCharacter->GetActorLocation().Z;
 }
 
 void ACTTProjectile::HandleStateFollowingCharacter(float DeltaTime)

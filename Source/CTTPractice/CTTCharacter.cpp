@@ -65,17 +65,17 @@ void ACTTCharacter::NotifyActorBeginOverlap(AActor* OtherActor)
 	}
 	
 	OverlappingItem = Item;
-	ECTTItemCollisionType CollisionType = Item->GetCollisionType();
-	switch (CollisionType)
+	ECTTCollisionType ItemCollisionType = Item->GetCollisionType();
+	switch (ItemCollisionType)
 	{
-	case ECTTItemCollisionType::Interactable:
+	case ECTTCollisionType::Interactable:
 		break;
 
-	case ECTTItemCollisionType::Collectible:
+	case ECTTCollisionType::Collectible:
 		OverlappingItem->CollectAction();
 		break;
 
-	case ECTTItemCollisionType::Ladder:
+	case ECTTCollisionType::Ladder:
 		bIsInLadder = true;
 		break;
 	}
@@ -267,8 +267,13 @@ void ACTTCharacter::Test()
 			return;
 		}
 
-		FName TestName = TEXT("Radish");
-		SpawnedProjectile = GameMode->SpawnProjectile(this, TestName);
+		SpawnedProjectile = GameMode->SpawnProjectile(this);
+		if (false == SpawnedProjectile.IsValid())
+		{
+			UE_LOG(LogTemp, Error, TEXT("SpawnedProjectile is InValid"));
+			return;
+		}
+
 		bIsHolding = true;
 	}
 	else

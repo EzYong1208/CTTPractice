@@ -95,7 +95,7 @@ void ACTTItem::InitializeItem(const FCTTItemData& ItemData, int32 CollectIndex)
 	CollisionType = ItemData.CollisionType;
 	CollectData = ItemData.CollectData;
 
-	if (ECTTItemCollisionType::Collectible == ItemData.CollisionType &&
+	if (ECTTCollisionType::Collectible == ItemData.CollisionType &&
 		ECTTCollectType::CollectItem == CollectData.ActionType)
 	{
 		CollectItemIndex = CollectIndex;
@@ -170,33 +170,33 @@ void ACTTItem::CollectAction()
 	Destroy();
 }
 
-FName ACTTItem::ChangeItemCollisionTypeEnumToFName(ECTTItemCollisionType CollisionTypeEnum) const
+FName ACTTItem::ChangeItemCollisionTypeEnumToFName(ECTTCollisionType CollisionTypeEnum) const
 {
 	FName CollisionTypeName;
 
 	switch (CollisionTypeEnum)
 	{
-	case ECTTItemCollisionType::Ignore:
+	case ECTTCollisionType::Ignore:
 		CollisionTypeName = TEXT("Ignore");
 		UE_LOG(LogTemp, Warning, TEXT("CollisionTypeName is Ignore"));
 		break;
 
-	case ECTTItemCollisionType::Block:
+	case ECTTCollisionType::Block:
 		CollisionTypeName = TEXT("Block");
 		UE_LOG(LogTemp, Warning, TEXT("CollisionTypeName is Block"));
 		break;
 
-	case ECTTItemCollisionType::Interactable:
+	case ECTTCollisionType::Interactable:
 		CollisionTypeName = TEXT("Interactable");
 		UE_LOG(LogTemp, Warning, TEXT("CollisionTypeName is Interactable"));
 		break;
 
-	case ECTTItemCollisionType::Collectible:
+	case ECTTCollisionType::Collectible:
 		CollisionTypeName = TEXT("Collectible");
 		UE_LOG(LogTemp, Warning, TEXT("CollisionTypeName is Collectible"));
 		break;
 
-	case ECTTItemCollisionType::Ladder:
+	case ECTTCollisionType::Ladder:
 		CollisionTypeName = TEXT("Ladder");
 		UE_LOG(LogTemp, Warning, TEXT("CollisionTypeName is Ladder"));
 		break;

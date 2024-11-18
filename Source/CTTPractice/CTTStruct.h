@@ -65,7 +65,7 @@ struct CTTPRACTICE_API FCTTItemData : public FTableRowBase
 	FVector Scale = FVector(1.f, 1.f, 1.f);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	ECTTItemCollisionType CollisionType;
+	ECTTCollisionType CollisionType;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bIsWeapon = false;

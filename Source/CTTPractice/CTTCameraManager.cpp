@@ -98,21 +98,28 @@ void UCTTCameraManager::SpawnNPCFollowCameras()
 	for (AActor* Actor : FoundActors)
 	{
 		ACTTNPCActor* NPCActor = Cast<ACTTNPCActor>(Actor);
-		if (NPCActor != nullptr)
+		if (nullptr == NPCActor)
 		{
-			TSubclassOf<ACTTNPCFollowCamera> NPCFollowCameraClass = NPCActor->NPCFollowCameraClass;
-			if (NPCFollowCameraClass != nullptr)
-			{
-				FActorSpawnParameters SpawnParams;
-				ACTTNPCFollowCamera* SpawnedCamera = GetWorld()->SpawnActor<ACTTNPCFollowCamera>(NPCFollowCameraClass, NPCActor->GetActorLocation(), NPCActor->GetActorRotation(), SpawnParams);
-
-				if (SpawnedCamera != nullptr)
-				{
-					SpawnedCamera->SetTarget(NPCActor);
-
-					NPCFollowCameraMap.Add(NPCActor->GetNPCName(), SpawnedCamera);
-				}
-			}
+			UE_LOG(LogTemp, Error, TEXT("NPCActor is nullptr"));
+			return;
 		}
+
+		TSubclassOf<ACTTNPCFollowCamera> NPCFollowCameraClass = NPCActor->NPCFollowCameraClass;
+		if (nullptr == NPCFollowCameraClass)
+		{
+			UE_LOG(LogTemp, Error, TEXT("NPCFollowCameraClass is nullptr"));
+			return;
+		}
+
+		FActorSpawnParameters SpawnParams;
+		ACTTNPCFollowCamera* SpawnedCamera = GetWorld()->SpawnActor<ACTTNPCFollowCamera>(NPCFollowCameraClass, NPCActor->GetActorLocation(), NPCActor->GetActorRotation(), SpawnParams);
+		if (nullptr == SpawnedCamera)
+		{
+			UE_LOG(LogTemp, Error, TEXT("SpawnedCamera is nullptr"));
+			return;
+		}
+
+		SpawnedCamera->SetTarget(NPCActor);
+		NPCFollowCameraMap.Add(NPCActor->GetNPCName(), SpawnedCamera);
 	}
 }

@@ -168,30 +168,39 @@ void ACTTPracticeGameModeBase::MoveActorZAxis(const FName& SwitchName, float Del
 	}
 }
 
-TWeakObjectPtr<ACTTProjectile> ACTTPracticeGameModeBase::SpawnProjectile(ACharacter* Character, FName SpawnProjectileName)
+TWeakObjectPtr<ACTTProjectile> ACTTPracticeGameModeBase::SpawnProjectile(ACharacter* Character)
 {
-	// TODO : 수정필요
-	TArray<FName> RowNames = ProjectileDataTable->GetRowNames();
-	int32 CollectIndex = 0;
-	for (const FName& RowName : RowNames)
+	if (nullptr == Character)
 	{
-		FCTTProjectileData* ProjectileData = ProjectileDataTable->FindRow<FCTTProjectileData>(RowName, TEXT(""));
-		if (SpawnProjectileName == ProjectileData->Name)
-		{
-			FRotator SpawnRotation = FRotator::MakeFromEuler(FVector(0.f, 0.f, 0.f));
-			ACTTProjectile* NewProjectile = GetWorld()->SpawnActor<ACTTProjectile>(ACTTProjectile::StaticClass(), Character->GetActorLocation() + ProjectileData->PositionOffset, SpawnRotation);
-			if (false == IsValid(NewProjectile))
-			{
-				UE_LOG(LogTemp, Error, TEXT("Failed to spawn NewProjectile"));
-				return nullptr;
-			}
-
-			NewProjectile->InitializeProjectile(*ProjectileData);
-			NewProjectile->FollowCharacter(Character);
-
-			return TWeakObjectPtr<ACTTProjectile>(NewProjectile);
-		}
+		UE_LOG(LogTemp, Error, TEXT("Character is nullptr"));
+		return nullptr;
 	}
 
-	return nullptr;
+	TSubclassOf<ACTTProjectile> ProjectileClass = Cast<ACTTCharacter>(Character)->ProjectileClass;
+	if (nullptr == ProjectileClass)
+	{
+		UE_LOG(LogTemp, Error, TEXT("ProjectileClass is nullptr"));
+		return nullptr;
+	}
+
+	const ACTTProjectile* DefaultProjectile = ProjectileClass->GetDefaultObject<ACTTProjectile>();
+	if (nullptr == DefaultProjectile)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Failed to get default object for ProjectileClass"));
+		return nullptr;
+	}
+
+	FVector PositionOffset = DefaultProjectile->PositionOffset;
+	FVector SpawnLocation = Character->GetActorLocation() + PositionOffset;
+	FRotator SpawnRotation = FRotator::ZeroRotator;
+	ACTTProjectile* NewProjectile = GetWorld()->SpawnActor<ACTTProjectile>(ProjectileClass, SpawnLocation, SpawnRotation);
+	if (false == IsValid(NewProjectile))
+	{
+		UE_LOG(LogTemp, Error, TEXT("Failed to spawn NewProjectile"));
+		return nullptr;
+	}
+
+	NewProjectile->FollowCharacter(Character);
+
+	return TWeakObjectPtr<ACTTProjectile>(NewProjectile);
 }

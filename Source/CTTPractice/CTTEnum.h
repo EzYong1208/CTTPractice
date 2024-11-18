@@ -20,14 +20,18 @@ enum class ECTTNumberImageType : uint8
 };
 
 UENUM()
-enum class ECTTItemCollisionType : uint8
+enum class ECTTCollisionType : uint8
 {
 	None,
+	Buff,
+	Projectile,
 	Ignore,
-	Block,
 	Interactable,
 	Collectible,
 	Ladder,
+	Map,
+	Block,
+	HardBlock,
 	MAX
 };
 
