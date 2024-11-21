@@ -58,7 +58,22 @@ void ACTTProjectile::InitializeProjectilePath()
 {
 	FVector ForwardDirection = GetActorForwardVector();
 	Velocity = ForwardDirection * InitialForwardSpeed + FVector(0.0f, 0.0f, InitialVerticalVelocity);
-	GroundZ = AttachedCharacter->GetActorLocation().Z;
+
+	// 초기 Z 높이 오프셋 적용
+	float InitialZHeight = GetActorLocation().Z;
+	float ZOffset = PositionOffset.Z;
+	float FixedInitialHeight = InitialZHeight + ZOffset;
+
+	// 최대 이동시간 계산
+	float TimeToReachHighest = InitialVerticalVelocity / -PROJECTILE_GRAVITY;
+	float HighestHeight = FixedInitialHeight + (InitialVerticalVelocity * TimeToReachHighest) + (0.5f * PROJECTILE_GRAVITY * FMath::Square(TimeToReachHighest));
+
+	// 전체 비행시간
+	float TimeToFall = FMath::Sqrt(2 * HighestHeight / -PROJECTILE_GRAVITY);
+	float TotalFlightTime = TimeToReachHighest + TimeToFall;
+
+	// 최대 이동거리 계산
+	MaxTravelDistance = InitialForwardSpeed * TotalFlightTime;
 }
 
 void ACTTProjectile::FollowCharacter(ACharacter* Character)
@@ -122,6 +137,13 @@ void ACTTProjectile::HandleStateFollowingCharacter(float DeltaTime)
 
 void ACTTProjectile::HandleStateIndependentMovement(float DeltaTime)
 {
+	for (AActor* OverlappingActor : GetOverlappingActors())
+	{
+		CheckOverlap(OverlappingActor);
+	}
+
+	FVector PreviousLocation = GetActorLocation();
+
 	CurrentTime += DeltaTime;
 
 	FVector Gravity(0, 0, PROJECTILE_GRAVITY * DeltaTime);
@@ -130,8 +152,13 @@ void ACTTProjectile::HandleStateIndependentMovement(float DeltaTime)
 
 	SetActorLocation(NewLocation);
 
-	if (GetActorLocation().Z <= GroundZ)
+	float DistanceThisFrame = FVector::Dist(PreviousLocation, NewLocation);
+	CurrentTravelDistance += DistanceThisFrame;
+
+	if (CurrentTravelDistance >= MaxTravelDistance)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("Projectile reached maximum travel distance"));
+
 		ChangeState(ECTTProjectileState::Destroy);
 	}
 }
@@ -139,4 +166,33 @@ void ACTTProjectile::HandleStateIndependentMovement(float DeltaTime)
 void ACTTProjectile::HandleStateDestroy(float DeltaTime)
 {
 	Destroy();
+}
+
+void ACTTProjectile::CheckOverlap(AActor* OtherActor)
+{
+	if (nullptr == OtherActor)
+	{
+		return;
+	}
+
+	ACTTMapObject* MapObject = Cast<ACTTMapObject>(OtherActor);
+	if (nullptr == MapObject)
+	{
+		return;
+	}
+
+	if (CollisionSphereComponent->IsOverlappingActor(OtherActor))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Projectile is overlapping with %s"), *OtherActor->GetName());
+
+		MapObject->HandleCollisionEvent(CollisionType);
+		ChangeState(ECTTProjectileState::Destroy);
+	}
+}
+
+TArray<AActor*> ACTTProjectile::GetOverlappingActors() const
+{
+	TArray<AActor*> OverlappingActors;
+	CollisionSphereComponent->GetOverlappingActors(OverlappingActors);
+	return OverlappingActors;
 }

@@ -38,6 +38,9 @@ private:
 	void HandleStateFollowingCharacter(float DeltaTime);
 	void HandleStateIndependentMovement(float DeltaTime);
 	void HandleStateDestroy(float DeltaTime);
+	
+	void CheckOverlap(AActor* OtherActor);
+	TArray<AActor*> GetOverlappingActors() const;
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -58,9 +61,10 @@ public:
 private:
 	bool bIsFollowingCharacter = true;
 
-	float CurrentTime = 0.0f;
+	float CurrentTime = 0.f;
 	FVector Velocity;
-	float GroundZ = 0.0f;
+	float CurrentTravelDistance = 0.f;
+	float MaxTravelDistance = 0.f;
 
 	static constexpr float PROJECTILE_GRAVITY = -980.f;
 
