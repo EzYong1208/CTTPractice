@@ -76,7 +76,7 @@ void ACTTCharacter::NotifyActorBeginOverlap(AActor* OtherActor)
 		break;
 
 	case ECTTCollisionType::Ladder:
-		bIsInLadder = true;
+		//bIsInLadder = true;
 		break;
 	}
 }
@@ -267,10 +267,10 @@ void ACTTCharacter::Test()
 			return;
 		}
 
-		SpawnedProjectile = GameMode->SpawnProjectile(this);
-		if (false == SpawnedProjectile.IsValid())
+		bool SpawnProjectileSuccess = SpawnProjectile();
+		if (false == SpawnProjectileSuccess)
 		{
-			UE_LOG(LogTemp, Error, TEXT("SpawnedProjectile is InValid"));
+			UE_LOG(LogTemp, Error, TEXT("SpawnedProjectile has failed"));
 			return;
 		}
 
@@ -278,9 +278,9 @@ void ACTTCharacter::Test()
 	}
 	else
 	{
-		if (false == SpawnedProjectile.IsValid())
+		if (nullptr == SpawnedProjectile)
 		{
-			UE_LOG(LogTemp, Error, TEXT("SpawnedProjectile is InValid"));
+			UE_LOG(LogTemp, Error, TEXT("SpawnedProjectile is nullptr"));
 			return;
 		}
 
@@ -288,4 +288,35 @@ void ACTTCharacter::Test()
 		bIsHolding = false;
 		SpawnedProjectile = nullptr;
 	}
+}
+
+bool ACTTCharacter::SpawnProjectile()
+{
+	if (nullptr == ProjectileClass)
+	{
+		UE_LOG(LogTemp, Error, TEXT("ProjectileClass is nullptr"));
+		return false;
+	}
+
+	const ACTTProjectile* DefaultProjectile = ProjectileClass->GetDefaultObject<ACTTProjectile>();
+	if (nullptr == DefaultProjectile)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Failed to get default object for ProjectileClass"));
+		return false;
+	}
+
+	FVector PositionOffset = DefaultProjectile->PositionOffset;
+	FVector SpawnLocation = GetActorLocation() + PositionOffset;
+	FRotator SpawnRotation = FRotator::ZeroRotator;
+	ACTTProjectile* NewProjectile = GetWorld()->SpawnActor<ACTTProjectile>(ProjectileClass, SpawnLocation, SpawnRotation);
+	if (false == IsValid(NewProjectile))
+	{
+		UE_LOG(LogTemp, Error, TEXT("Failed to spawn NewProjectile"));
+		return false;
+	}
+
+	NewProjectile->FollowCharacter(this);
+	SpawnedProjectile = NewProjectile;
+
+	return true;
 }

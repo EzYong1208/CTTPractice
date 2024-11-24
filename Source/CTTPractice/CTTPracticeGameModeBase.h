@@ -12,7 +12,6 @@
  * 
  */
 class UCTTUICommonResource;
-class ACTTProjectile;
 
 UCLASS()
 class CTTPRACTICE_API ACTTPracticeGameModeBase : public AGameModeBase
@@ -28,8 +27,6 @@ public:
 	FCTTItemSpawnOffsetData* GetItemSpawnOffsetData(const FName& ItemName) const;
 
 	void MoveActorZAxis(const FName& SwitchName, float DeltaTime);
-
-	TWeakObjectPtr<ACTTProjectile> SpawnProjectile(ACharacter* Character);
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)

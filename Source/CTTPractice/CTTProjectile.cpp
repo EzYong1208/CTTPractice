@@ -14,8 +14,6 @@ ACTTProjectile::ACTTProjectile()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	CollisionSphereComponent = CreateDefaultSubobject<USphereComponent>(TEXT("CollisionSphereComponent"));
-	SetRootComponent(CollisionSphereComponent);
 }
 
 // Called when the game starts or when spawned
@@ -23,7 +21,12 @@ void ACTTProjectile::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	CollisionSphereComponent->SetSphereRadius(SphereRadius);
+	CollisionSphereComponent = FindComponentByClass<USphereComponent>();
+	if (nullptr == CollisionSphereComponent)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("CollisionSphereComponent is nullptr"));
+		return;
+	}
 
 	USkeletalMeshComponent* SkeletalMeshComponent = FindComponentByClass<USkeletalMeshComponent>();
 	FRotator Rotation = FRotator::MakeFromEuler(RotationOffset);
@@ -137,18 +140,18 @@ void ACTTProjectile::HandleStateFollowingCharacter(float DeltaTime)
 
 void ACTTProjectile::HandleStateIndependentMovement(float DeltaTime)
 {
-	for (AActor* OverlappingActor : GetOverlappingActors())
-	{
-		CheckOverlap(OverlappingActor);
-	}
-
 	FVector PreviousLocation = GetActorLocation();
 
 	CurrentTime += DeltaTime;
-
 	FVector Gravity(0, 0, PROJECTILE_GRAVITY * DeltaTime);
 	Velocity += Gravity;
-	FVector NewLocation = GetActorLocation() + Velocity * DeltaTime;
+	FVector NewLocation = PreviousLocation + Velocity * DeltaTime;
+
+	bool bIsProjectileHit = CheckProjectileCollision(PreviousLocation, NewLocation);
+	if (true == bIsProjectileHit)
+	{
+		return;
+	}
 
 	SetActorLocation(NewLocation);
 
@@ -158,7 +161,6 @@ void ACTTProjectile::HandleStateIndependentMovement(float DeltaTime)
 	if (CurrentTravelDistance >= MaxTravelDistance)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Projectile reached maximum travel distance"));
-
 		ChangeState(ECTTProjectileState::Destroy);
 	}
 }
@@ -168,31 +170,45 @@ void ACTTProjectile::HandleStateDestroy(float DeltaTime)
 	Destroy();
 }
 
-void ACTTProjectile::CheckOverlap(AActor* OtherActor)
+bool ACTTProjectile::CheckProjectileCollision(const FVector& StartLocation, const FVector& EndLocation)
 {
-	if (nullptr == OtherActor)
+	FHitResult HitResult;
+	FCollisionQueryParams QueryParams;
+	QueryParams.AddIgnoredActor(this);
+	QueryParams.AddIgnoredActor(AttachedCharacter.Get());
+
+	bool bHit = GetWorld()->SweepSingleByChannel(
+		HitResult,
+		StartLocation,
+		EndLocation,
+		FQuat::Identity,
+		ECC_PhysicsBody,
+		FCollisionShape::MakeSphere(CollisionSphereComponent->GetScaledSphereRadius()),
+		QueryParams
+	);
+
+	if (false == bHit)
 	{
-		return;
+		return false;
 	}
 
-	ACTTMapObject* MapObject = Cast<ACTTMapObject>(OtherActor);
-	if (nullptr == MapObject)
+	AActor* HitActor = HitResult.GetActor();
+	if (nullptr == HitActor)
 	{
-		return;
+		return false;
 	}
 
-	if (CollisionSphereComponent->IsOverlappingActor(OtherActor))
+	UE_LOG(LogTemp, Warning, TEXT("Projectile hit actor: %s"), *HitActor->GetName());
+
+	if (HitActor->IsA(ACTTMapObject::StaticClass()))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Projectile is overlapping with %s"), *OtherActor->GetName());
-
-		MapObject->HandleCollisionEvent(CollisionType);
-		ChangeState(ECTTProjectileState::Destroy);
+		ACTTMapObject* MapObject = Cast<ACTTMapObject>(HitActor);
+		if (MapObject)
+		{
+			MapObject->HandleCollisionEvent(CollisionType);
+		}
 	}
-}
 
-TArray<AActor*> ACTTProjectile::GetOverlappingActors() const
-{
-	TArray<AActor*> OverlappingActors;
-	CollisionSphereComponent->GetOverlappingActors(OverlappingActors);
-	return OverlappingActors;
+	ChangeState(ECTTProjectileState::Destroy);
+	return true;
 }

@@ -66,6 +66,8 @@ private:
 	void Attack();
 	void Test();
 
+	bool SpawnProjectile();
+
 private:
 	ECTTCollisionType CollisionType = ECTTCollisionType::None;
 	float VerticalMovementInput = 0.f;
@@ -73,7 +75,9 @@ private:
 
 	// TODO : 테스트용, 수정 필요
 	bool bIsHolding = false;
-	TWeakObjectPtr<ACTTProjectile> SpawnedProjectile;
+
+	UPROPERTY()
+	ACTTProjectile* SpawnedProjectile = nullptr;
 
 	UPROPERTY()
 	ACTTItem* OverlappingItem = nullptr;

@@ -39,8 +39,7 @@ private:
 	void HandleStateIndependentMovement(float DeltaTime);
 	void HandleStateDestroy(float DeltaTime);
 	
-	void CheckOverlap(AActor* OtherActor);
-	TArray<AActor*> GetOverlappingActors() const;
+	bool CheckProjectileCollision(const FVector& StartLocation, const FVector& EndLocation);
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
