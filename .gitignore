@@ -2,4 +2,6 @@
 DerivedDataCache/
 Intermediate/
 Saved/
+Content/
+Binaries/
 *.sln
