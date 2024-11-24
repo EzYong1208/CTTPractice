@@ -23,7 +23,12 @@ void ACTTProjectile::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	CollisionSphereComponent->SetSphereRadius(SphereRadius);
+	CollisionSphereComponent = FindComponentByClass<USphereComponent>();
+	if (nullptr == CollisionSphereComponent)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("CollisionSphereComponent is nullptr"));
+		return;
+	}
 
 	USkeletalMeshComponent* SkeletalMeshComponent = FindComponentByClass<USkeletalMeshComponent>();
 	FRotator Rotation = FRotator::MakeFromEuler(RotationOffset);
