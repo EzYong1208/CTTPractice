@@ -38,7 +38,7 @@ private:
 	void HandleStateFollowingCharacter(float DeltaTime);
 	void HandleStateIndependentMovement(float DeltaTime);
 	void HandleStateDestroy(float DeltaTime);
-	
+
 	bool CheckProjectileCollision(const FVector& StartLocation, const FVector& EndLocation);
 
 public:

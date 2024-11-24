@@ -5,7 +5,6 @@
 #include "CTTPractice/UI/CTTUICommonResource.h"
 #include "CTTPractice/CTTItem.h"
 #include "CTTPractice/CTTCharacter.h"
-#include "CTTPractice/CTTProjectile.h"
 #include "CTTPractice/CTTGameInstance.h"
 #include "CTTCameraManager.h"
 #include "EngineUtils.h" 

@@ -14,6 +14,8 @@ ACTTProjectile::ACTTProjectile()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	CollisionSphereComponent = CreateDefaultSubobject<USphereComponent>(TEXT("CollisionSphereComponent"));
+	SetRootComponent(CollisionSphereComponent);
 }
 
 // Called when the game starts or when spawned
@@ -21,12 +23,7 @@ void ACTTProjectile::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	CollisionSphereComponent = FindComponentByClass<USphereComponent>();
-	if (nullptr == CollisionSphereComponent)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("CollisionSphereComponent is nullptr"));
-		return;
-	}
+	CollisionSphereComponent->SetSphereRadius(SphereRadius);
 
 	USkeletalMeshComponent* SkeletalMeshComponent = FindComponentByClass<USkeletalMeshComponent>();
 	FRotator Rotation = FRotator::MakeFromEuler(RotationOffset);
@@ -143,9 +140,10 @@ void ACTTProjectile::HandleStateIndependentMovement(float DeltaTime)
 	FVector PreviousLocation = GetActorLocation();
 
 	CurrentTime += DeltaTime;
+
 	FVector Gravity(0, 0, PROJECTILE_GRAVITY * DeltaTime);
 	Velocity += Gravity;
-	FVector NewLocation = PreviousLocation + Velocity * DeltaTime;
+	FVector NewLocation = GetActorLocation() + Velocity * DeltaTime;
 
 	bool bIsProjectileHit = CheckProjectileCollision(PreviousLocation, NewLocation);
 	if (true == bIsProjectileHit)
@@ -161,6 +159,7 @@ void ACTTProjectile::HandleStateIndependentMovement(float DeltaTime)
 	if (CurrentTravelDistance >= MaxTravelDistance)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Projectile reached maximum travel distance"));
+
 		ChangeState(ECTTProjectileState::Destroy);
 	}
 }

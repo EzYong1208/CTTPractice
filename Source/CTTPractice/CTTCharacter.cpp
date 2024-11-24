@@ -267,8 +267,8 @@ void ACTTCharacter::Test()
 			return;
 		}
 
-		bool SpawnProjectileSuccess = SpawnProjectile();
-		if (false == SpawnProjectileSuccess)
+		bool bSpawnProjectileSuccess = SpawnProjectile();
+		if (false == bSpawnProjectileSuccess)
 		{
 			UE_LOG(LogTemp, Error, TEXT("SpawnedProjectile has failed"));
 			return;
