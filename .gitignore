@@ -2,4 +2,7 @@
 DerivedDataCache/
 Intermediate/
 Saved/
+Binaries/
+Content/
 *.sln
+*.uasset
