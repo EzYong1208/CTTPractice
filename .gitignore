@@ -2,6 +2,13 @@
 DerivedDataCache/
 Intermediate/
 Saved/
+<<<<<<< HEAD
 Content/
 Binaries/
 *.sln
+=======
+Binaries/
+Content/
+*.sln
+*.uasset
+>>>>>>> help
