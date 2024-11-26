@@ -149,3 +149,21 @@ struct CTTPRACTICE_API FCTTProjectileData : public FTableRowBase
 	float SphereRadius = 0.f;
 
 };
+
+class UCTTInteractionComponent;
+
+USTRUCT(BlueprintType)
+struct CTTPRACTICE_API FCTTInteractionInfo
+{
+	GENERATED_BODY()
+
+	FCTTInteractionInfo() {}
+	FCTTInteractionInfo(UCTTInteractionComponent* Interactor, const FHitResult& HitResult)
+		: Interactor(Interactor), HitResult(HitResult) {}
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UCTTInteractionComponent* Interactor;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FHitResult HitResult;
+};

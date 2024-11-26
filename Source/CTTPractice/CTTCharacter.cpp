@@ -12,6 +12,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "CTTPractice/CTTPracticeGameModeBase.h"
 #include "Kismet/GameplayStatics.h"
+#include "CTTInteractionComponent.h"
 
 // Sets default values
 ACTTCharacter::ACTTCharacter()
@@ -52,6 +53,16 @@ void ACTTCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 	PlayerInputComponent->BindAxis(TEXT("RotateCamera"), this, &ACTTCharacter::RotateCamera);
 	PlayerInputComponent->BindAction("MoveCameraCloser", IE_Pressed, this, &ACTTCharacter::MoveCameraCloser);
 	PlayerInputComponent->BindAction("MoveCameraAway", IE_Pressed, this, &ACTTCharacter::MoveCameraAway);
+
+	UCTTInteractionComponent* InteractionComponent = FindComponentByClass<UCTTInteractionComponent>();
+	if (nullptr == InteractionComponent)
+	{
+		UE_LOG(LogTemp, Error, TEXT("InteractionComponent is nullptr"));
+		return;
+	}
+
+	PlayerInputComponent->BindAction("Interaction", IE_Pressed, InteractionComponent, &UCTTInteractionComponent::BeginInteraction);
+	PlayerInputComponent->BindAction("Interaction", IE_Released, InteractionComponent, &UCTTInteractionComponent::EndInteraction);
 }
 
 void ACTTCharacter::NotifyActorBeginOverlap(AActor* OtherActor)

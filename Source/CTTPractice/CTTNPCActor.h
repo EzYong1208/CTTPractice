@@ -3,13 +3,13 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Actor.h"
+#include "CTTInteractableActor.h"
 #include "CTTNPCActor.generated.h"
 
 class ACTTNPCFollowCamera;
 
 UCLASS()
-class CTTPRACTICE_API ACTTNPCActor : public AActor
+class CTTPRACTICE_API ACTTNPCActor : public ACTTInteractableActor
 {
 	GENERATED_BODY()
 	
@@ -27,6 +27,10 @@ public:
 
 public:
 	FName GetNPCName() const { return NPCName; }
+
+	void OnEnterInteract(const FCTTInteractionInfo& InteractionInfo) override;
+	void OnInteract() override;
+	void OnExitInteract() override;
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)

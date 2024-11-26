@@ -3,6 +3,7 @@
 
 #include "CTTNPCActor.h"
 #include "CTTNPCFollowCamera.h"
+#include "Components/SphereComponent.h"
 
 // Sets default values
 ACTTNPCActor::ACTTNPCActor()
@@ -22,6 +23,16 @@ void ACTTNPCActor::BeginPlay()
 		UE_LOG(LogTemp, Error, TEXT("NPCFollowCameraClass is nullptr"));
 		return;
 	}
+
+	USphereComponent* SphereComponent = FindComponentByClass<USphereComponent>();
+	if (nullptr == SphereComponent)
+	{
+		UE_LOG(LogTemp, Error, TEXT("SphereComponent is nullptr"));
+		return;
+	}
+
+	SphereComponent->SetCollisionResponseToChannel(ECC_Visibility, ECR_Overlap);
+	SphereComponent->SetCollisionResponseToChannel(ECC_GameTraceChannel7, ECR_Overlap); // DetectInteractable
 }
 
 // Called every frame
@@ -29,5 +40,20 @@ void ACTTNPCActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+}
+
+void ACTTNPCActor::OnEnterInteract(const FCTTInteractionInfo& InteractionInfo)
+{
+	UE_LOG(LogTemp, Warning, TEXT("ENTER"));
+}
+
+void ACTTNPCActor::OnInteract()
+{
+	UE_LOG(LogTemp, Warning, TEXT("KEEP"));
+}
+
+void ACTTNPCActor::OnExitInteract()
+{
+	UE_LOG(LogTemp, Warning, TEXT("EXIT"));
 }
 
