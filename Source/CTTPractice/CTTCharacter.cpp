@@ -61,8 +61,7 @@ void ACTTCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 		return;
 	}
 
-	PlayerInputComponent->BindAction("Interaction", IE_Pressed, InteractionComponent, &UCTTInteractionComponent::BeginInteraction);
-	PlayerInputComponent->BindAction("Interaction", IE_Released, InteractionComponent, &UCTTInteractionComponent::EndInteraction);
+	PlayerInputComponent->BindAction("Interaction", IE_Pressed, InteractionComponent, &UCTTInteractionComponent::ToggleInteraction);
 }
 
 void ACTTCharacter::NotifyActorBeginOverlap(AActor* OtherActor)

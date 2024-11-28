@@ -27,15 +27,23 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 public:
+	void ToggleInteraction();
 	void BeginInteraction();
 	void EndInteraction();
 
 private:
 	bool DetectInteractable(FHitResult& OutHitResult);
+	bool FindClosestHit(const TArray<FHitResult>& HitResults, const FVector& Start, FHitResult& OutHitResult);
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TEnumAsByte<ECollisionChannel> TraceChannel;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float CapsuleRadius = 0.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float CapsuleHalfHeight = 0.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float DetectHeight = 0.f;

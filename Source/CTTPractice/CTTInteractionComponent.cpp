@@ -39,6 +39,18 @@ void UCTTInteractionComponent::TickComponent(float DeltaTime, ELevelTick TickTyp
 	CurrentInteractable->OnInteractDelegate.Broadcast();
 }
 
+void UCTTInteractionComponent::ToggleInteraction()
+{
+	if (false == bIsInteracting)
+	{
+		BeginInteraction();
+	}
+	else
+	{
+		EndInteraction();
+	}
+}
+
 void UCTTInteractionComponent::BeginInteraction()
 {
 	UE_LOG(LogTemp, Warning, TEXT("BeginInteraction"));
@@ -85,21 +97,59 @@ void UCTTInteractionComponent::EndInteraction()
 bool UCTTInteractionComponent::DetectInteractable(FHitResult& OutHitResult)
 {
 	FVector Start = GetComponentLocation() + FVector::UpVector * DetectHeight;
-	FVector End = Start + GetForwardVector() * DetectDistance;
+	FVector ForwardVector = GetForwardVector();
+	FVector End = Start + ForwardVector * DetectDistance;
 
-	DrawDebugLine(GetWorld(), Start, End, FColor::Red, true);
+	DrawDebugCapsule(GetWorld(), (Start + End) * 0.5f, CapsuleHalfHeight, CapsuleRadius, FRotationMatrix::MakeFromX(ForwardVector).ToQuat(), FColor::Blue, false, 1.0f);
 
-	bool bHit = GetWorld()->LineTraceSingleByChannel(OutHitResult, Start, End, TraceChannel);
+	TArray<FHitResult> HitResults;
+	bool bHit = GetWorld()->SweepMultiByChannel(
+		HitResults,
+		Start,
+		End,
+		FQuat::Identity,
+		TraceChannel,
+		FCollisionShape::MakeCapsule(CapsuleRadius, CapsuleHalfHeight)
+	);
 
 	if (bHit)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Hit: %s"), *OutHitResult.GetActor()->GetName());
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("No hit detected."));
+		bool bHasValidHit = FindClosestHit(HitResults, Start, OutHitResult);
+		if (true == bHasValidHit)
+		{
+			return true;
+		}
 	}
 
-	return bHit;
+	UE_LOG(LogTemp, Warning, TEXT("No hit detected within capsule."));
+	return false;
 }
 
+bool UCTTInteractionComponent::FindClosestHit(const TArray<FHitResult>& HitResults, const FVector& Start, FHitResult& OutHitResult)
+{
+	FHitResult ClosestHit;
+	float ClosestDistance = -1.0f;
+
+	for (const FHitResult& Hit : HitResults)
+	{
+		if (Hit.GetActor() && Hit.GetActor() != GetOwner())
+		{
+			float Distance = FVector::Dist(Start, Hit.ImpactPoint);
+			if (ClosestDistance < 0 || Distance < ClosestDistance)
+			{
+				ClosestDistance = Distance;
+				ClosestHit = Hit;
+			}
+		}
+	}
+
+	if (ClosestDistance >= 0)
+	{
+		OutHitResult = ClosestHit;
+		UE_LOG(LogTemp, Warning, TEXT("Closest Capsule Hit: %s at distance: %f"), *ClosestHit.GetActor()->GetName(), ClosestDistance);
+		return true;
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("No closest hit detected."));
+	return false;
+}

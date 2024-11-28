@@ -24,15 +24,6 @@ void ACTTNPCActor::BeginPlay()
 		return;
 	}
 
-	USphereComponent* SphereComponent = FindComponentByClass<USphereComponent>();
-	if (nullptr == SphereComponent)
-	{
-		UE_LOG(LogTemp, Error, TEXT("SphereComponent is nullptr"));
-		return;
-	}
-
-	SphereComponent->SetCollisionResponseToChannel(ECC_Visibility, ECR_Overlap);
-	SphereComponent->SetCollisionResponseToChannel(ECC_GameTraceChannel7, ECR_Overlap); // DetectInteractable
 }
 
 // Called every frame
@@ -44,16 +35,20 @@ void ACTTNPCActor::Tick(float DeltaTime)
 
 void ACTTNPCActor::OnEnterInteract(const FCTTInteractionInfo& InteractionInfo)
 {
-	UE_LOG(LogTemp, Warning, TEXT("ENTER"));
+	UE_LOG(LogTemp, Warning, TEXT("Entered interaction with NPC: %s"), *NPCName.ToString());
+
 }
 
 void ACTTNPCActor::OnInteract()
 {
-	UE_LOG(LogTemp, Warning, TEXT("KEEP"));
+	UE_LOG(LogTemp, Warning, TEXT("Interacting with NPC: %s"), *NPCName.ToString());
+
 }
 
 void ACTTNPCActor::OnExitInteract()
 {
-	UE_LOG(LogTemp, Warning, TEXT("EXIT"));
+	UE_LOG(LogTemp, Warning, TEXT("Exited interaction with NPC: %s"), *NPCName.ToString());
+
+
 }
 
