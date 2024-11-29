@@ -36,6 +36,12 @@ public:
 	UFUNCTION(BlueprintCallable)
 	virtual void OnExitInteract() override;
 
+	float GetMinInteractionDistance() const { return MinInteractionDistance; }
+
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float MinInteractionDistance = 0.f;
+
 private:
 	UPROPERTY()
 	UCTTInteractableComponent* InteractableComponent = nullptr;

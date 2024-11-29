@@ -35,19 +35,19 @@ void ACTTNPCActor::Tick(float DeltaTime)
 
 void ACTTNPCActor::OnEnterInteract(const FCTTInteractionInfo& InteractionInfo)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Entered interaction with NPC: %s"), *NPCName.ToString());
+	//UE_LOG(LogTemp, Warning, TEXT("Entered interaction with NPC: %s"), *NPCName.ToString());
 
 }
 
 void ACTTNPCActor::OnInteract()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Interacting with NPC: %s"), *NPCName.ToString());
+	//UE_LOG(LogTemp, Warning, TEXT("Interacting with NPC: %s"), *NPCName.ToString());
 
 }
 
 void ACTTNPCActor::OnExitInteract()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Exited interaction with NPC: %s"), *NPCName.ToString());
+	//UE_LOG(LogTemp, Warning, TEXT("Exited interaction with NPC: %s"), *NPCName.ToString());
 
 
 }

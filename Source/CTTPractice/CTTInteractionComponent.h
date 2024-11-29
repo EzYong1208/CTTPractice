@@ -8,6 +8,7 @@
 #include "CTTInteractionComponent.generated.h"
 
 class UCTTInteractableComponent;
+class ACTTInteractableActor;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class CTTPRACTICE_API UCTTInteractionComponent : public USceneComponent
@@ -34,6 +35,7 @@ public:
 private:
 	bool DetectInteractable(FHitResult& OutHitResult);
 	bool FindClosestHit(const TArray<FHitResult>& HitResults, const FVector& Start, FHitResult& OutHitResult);
+	void AdjustCharacterPositionToInteractableActor(ACTTInteractableActor* InteractableActor, float CurrentDistance);
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)

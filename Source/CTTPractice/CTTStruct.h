@@ -160,7 +160,7 @@ struct CTTPRACTICE_API FCTTInteractionInfo
 	FCTTInteractionInfo() {}
 	FCTTInteractionInfo(UCTTInteractionComponent* Interactor, const FHitResult& HitResult)
 		: Interactor(Interactor), HitResult(HitResult) {}
-
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UCTTInteractionComponent* Interactor;
 	

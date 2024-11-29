@@ -4,6 +4,7 @@
 #include "CTTInteractionComponent.h"
 #include "CTTInteractableComponent.h"
 #include "DrawDebugHelpers.h"
+#include "CTTInteractableActor.h"
 
 // Sets default values for this component's properties
 UCTTInteractionComponent::UCTTInteractionComponent()
@@ -130,6 +131,8 @@ bool UCTTInteractionComponent::FindClosestHit(const TArray<FHitResult>& HitResul
 	FHitResult ClosestHit;
 	float ClosestDistance = -1.0f;
 
+	ACTTInteractableActor* ClosestInteractableActor = nullptr;
+
 	for (const FHitResult& Hit : HitResults)
 	{
 		if (Hit.GetActor() && Hit.GetActor() != GetOwner())
@@ -139,6 +142,12 @@ bool UCTTInteractionComponent::FindClosestHit(const TArray<FHitResult>& HitResul
 			{
 				ClosestDistance = Distance;
 				ClosestHit = Hit;
+
+				ACTTInteractableActor* InteractableActor = Cast<ACTTInteractableActor>(Hit.GetActor());
+				if (nullptr != InteractableActor)
+				{
+					ClosestInteractableActor = InteractableActor;
+				}
 			}
 		}
 	}
@@ -146,10 +155,37 @@ bool UCTTInteractionComponent::FindClosestHit(const TArray<FHitResult>& HitResul
 	if (ClosestDistance >= 0)
 	{
 		OutHitResult = ClosestHit;
-		UE_LOG(LogTemp, Warning, TEXT("Closest Capsule Hit: %s at distance: %f"), *ClosestHit.GetActor()->GetName(), ClosestDistance);
+		if (nullptr != ClosestInteractableActor)
+		{
+			AdjustCharacterPositionToInteractableActor(ClosestInteractableActor, ClosestDistance);
+		}
+
 		return true;
 	}
 
 	UE_LOG(LogTemp, Warning, TEXT("No closest hit detected."));
 	return false;
+}
+
+void UCTTInteractionComponent::AdjustCharacterPositionToInteractableActor(ACTTInteractableActor* InteractableActor, float CurrentDistance)
+{
+	if (nullptr == InteractableActor)
+	{
+		UE_LOG(LogTemp, Error, TEXT("InteractableActor is nullptr"));
+		return;
+	}
+
+	float MinInteractionDistance = InteractableActor->GetMinInteractionDistance();
+	if (CurrentDistance <= MinInteractionDistance)
+	{
+		return;
+	}
+
+	// TODO : 부드럽게 이동하는거 생각하기
+	FVector DirectionToNPC = (InteractableActor->GetActorLocation() - GetOwner()->GetActorLocation()).GetSafeNormal();
+	FVector NewPosition = GetOwner()->GetActorLocation() + DirectionToNPC * (CurrentDistance - MinInteractionDistance);
+	
+	GetOwner()->SetActorLocation(NewPosition);
+
+	UE_LOG(LogTemp, Warning, TEXT("Character moved to NPC at adjusted distance: %f"), MinInteractionDistance);
 }
