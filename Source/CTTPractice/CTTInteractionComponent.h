@@ -32,6 +32,8 @@ public:
 	void BeginInteraction();
 	void EndInteraction();
 
+	bool GetIsInteracting() const { return bIsInteracting; }
+
 private:
 	bool DetectInteractable(FHitResult& OutHitResult);
 	bool FindClosestHit(const TArray<FHitResult>& HitResults, const FVector& Start, FHitResult& OutHitResult);

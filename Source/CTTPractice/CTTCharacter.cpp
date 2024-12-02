@@ -54,6 +54,55 @@ void ACTTCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 	PlayerInputComponent->BindAction("MoveCameraCloser", IE_Pressed, this, &ACTTCharacter::MoveCameraCloser);
 	PlayerInputComponent->BindAction("MoveCameraAway", IE_Pressed, this, &ACTTCharacter::MoveCameraAway);
 
+	PlayerInputComponent->BindAction("Interaction", IE_Pressed, this, &ACTTCharacter::ToggleInteraction);
+}
+
+//void ACTTCharacter::NotifyActorBeginOverlap(AActor* OtherActor)
+//{
+//	Super::NotifyActorBeginOverlap(OtherActor);
+//
+//	ACTTItem* Item = Cast<ACTTItem>(OtherActor);
+//	if (nullptr == Item)
+//	{
+//		return;
+//	}
+//	
+//	OverlappingItem = Item;
+//	ECTTCollisionType ItemCollisionType = Item->GetCollisionType();
+//	switch (ItemCollisionType)
+//	{
+//	case ECTTCollisionType::Interactable:
+//		break;
+//
+//	case ECTTCollisionType::Collectible:
+//		OverlappingItem->CollectAction();
+//		break;
+//
+//	case ECTTCollisionType::Ladder:
+//		//bIsInLadder = true;
+//		break;
+//	}
+//}
+//
+//void ACTTCharacter::NotifyActorEndOverlap(AActor* OtherActor)
+//{
+//	Super::NotifyActorEndOverlap(OtherActor);
+//
+//	ACTTItem* Item = Cast<ACTTItem>(OtherActor);
+//	if (Item && OverlappingItem == Item)
+//	{
+//		OverlappingItem = nullptr;
+//		UE_LOG(LogTemp, Error, TEXT("NotifyActorEndOverlap"));
+//	}
+//}
+
+void ACTTCharacter::SetCharacterAttack(bool bInCanAttack)
+{
+	bCanAttack = bInCanAttack;
+}
+
+void ACTTCharacter::ToggleInteraction()
+{
 	UCTTInteractionComponent* InteractionComponent = FindComponentByClass<UCTTInteractionComponent>();
 	if (nullptr == InteractionComponent)
 	{
@@ -61,51 +110,19 @@ void ACTTCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 		return;
 	}
 
-	PlayerInputComponent->BindAction("Interaction", IE_Pressed, InteractionComponent, &UCTTInteractionComponent::ToggleInteraction);
-}
+	InteractionComponent->ToggleInteraction();
 
-void ACTTCharacter::NotifyActorBeginOverlap(AActor* OtherActor)
-{
-	Super::NotifyActorBeginOverlap(OtherActor);
-
-	ACTTItem* Item = Cast<ACTTItem>(OtherActor);
-	if (nullptr == Item)
+	bool bIsInteracting = InteractionComponent->GetIsInteracting();
+	if (false == bIsInteracting)
 	{
-		return;
+		bCanMove = true;
+		bCanControlCamera = true;
 	}
-	
-	OverlappingItem = Item;
-	ECTTCollisionType ItemCollisionType = Item->GetCollisionType();
-	switch (ItemCollisionType)
+	else
 	{
-	case ECTTCollisionType::Interactable:
-		break;
-
-	case ECTTCollisionType::Collectible:
-		OverlappingItem->CollectAction();
-		break;
-
-	case ECTTCollisionType::Ladder:
-		//bIsInLadder = true;
-		break;
+		bCanMove = false;
+		bCanControlCamera = false;
 	}
-}
-
-void ACTTCharacter::NotifyActorEndOverlap(AActor* OtherActor)
-{
-	Super::NotifyActorEndOverlap(OtherActor);
-
-	ACTTItem* Item = Cast<ACTTItem>(OtherActor);
-	if (Item && OverlappingItem == Item)
-	{
-		OverlappingItem = nullptr;
-		UE_LOG(LogTemp, Error, TEXT("NotifyActorEndOverlap"));
-	}
-}
-
-void ACTTCharacter::SetCharacterAttack(bool InbCanAttack)
-{
-	bCanAttack = InbCanAttack;
 }
 
 void ACTTCharacter::MoveUpDown(float InputValue)
@@ -120,6 +137,11 @@ void ACTTCharacter::MoveLeftRight(float InputValue)
 
 void ACTTCharacter::UpdateMoveVector(float DeltaTime)
 {
+	if (false == bCanMove)
+	{
+		return;
+	}
+
 	UCTTGameInstance* GameInstance = Cast<UCTTGameInstance>(UGameplayStatics::GetGameInstance(this));
 	if (nullptr == GameInstance)
 	{
@@ -174,6 +196,11 @@ void ACTTCharacter::UpdateMoveVector(float DeltaTime)
 
 void ACTTCharacter::RotateCamera(float InputValue)
 {
+	if (false == bCanControlCamera)
+	{
+		return;
+	}
+
 	UCTTGameInstance* GameInstance = Cast<UCTTGameInstance>(UGameplayStatics::GetGameInstance(this));
 	if (nullptr == GameInstance)
 	{
@@ -200,6 +227,11 @@ void ACTTCharacter::RotateCamera(float InputValue)
 
 void ACTTCharacter::MoveCameraCloser()
 {
+	if (false == bCanControlCamera)
+	{
+		return;
+	}
+
 	UCTTGameInstance* GameInstance = Cast<UCTTGameInstance>(UGameplayStatics::GetGameInstance(this));
 	if (nullptr == GameInstance)
 	{
@@ -226,6 +258,11 @@ void ACTTCharacter::MoveCameraCloser()
 
 void ACTTCharacter::MoveCameraAway()
 {
+	if (false == bCanControlCamera)
+	{
+		return;
+	}
+
 	UCTTGameInstance* GameInstance = Cast<UCTTGameInstance>(UGameplayStatics::GetGameInstance(this));
 	if (nullptr == GameInstance)
 	{
@@ -252,6 +289,11 @@ void ACTTCharacter::MoveCameraAway()
 
 void ACTTCharacter::Attack()
 {
+	if (false == bCanMove)
+	{
+		return;
+	}
+
 	if (false == bCanAttack)
 	{
 		UE_LOG(LogTemp, Error, TEXT("bCanAttack is false"));

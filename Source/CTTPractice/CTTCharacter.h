@@ -30,8 +30,8 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	virtual void NotifyActorBeginOverlap(AActor* OtherActor) override;
-	virtual void NotifyActorEndOverlap(AActor* OtherActor) override;
+	//virtual void NotifyActorBeginOverlap(AActor* OtherActor) override;
+	//virtual void NotifyActorEndOverlap(AActor* OtherActor) override;
 
 
 public:
@@ -39,7 +39,8 @@ public:
 	bool CheckCharacterAttack() const { return bCanAttack; }
 	bool CheckCharacterInLadder() const { return bIsInLadder; }
 
-	void SetCharacterAttack(bool InbCanAttack);
+	void SetCharacterAttack(bool bInCanAttack);
+	void ToggleInteraction();
 
 public:
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite)
@@ -75,6 +76,8 @@ private:
 
 	// TODO : 테스트용, 수정 필요
 	bool bIsHolding = false;
+	bool bCanMove = true;
+	bool bCanControlCamera = true;
 
 	UPROPERTY()
 	ACTTProjectile* SpawnedProjectile = nullptr;
