@@ -3,7 +3,7 @@
 
 #include "CTTCharacter.h"
 #include "CTTItem.h"
-#include "CTTCameraManager.h"
+#include "CTTPractice/Managers/CTTCameraManager.h"
 #include "CTTPractice/CTTGameInstance.h"
 #include "Camera/CameraComponent.h"
 #include "CTTCharacterFollowCamera.h"

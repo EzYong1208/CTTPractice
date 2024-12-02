@@ -5,6 +5,7 @@
 #include "Components/SphereComponent.h"
 #include "CTTPractice/CTTPracticeGameModeBase.h"
 #include "CTTPractice/CTTGameInstance.h"
+#include "CTTPractice/Managers/CTTDatatableManager.h"
 #include "Kismet/GameplayStatics.h"
 
 // Sets default values
@@ -121,7 +122,14 @@ void ACTTItem::HandleDeath()
 		return;
 	}
 
-	FCTTItemSpawnOffsetData* SpawnOffsetData = GameMode->GetItemSpawnOffsetData(ItemName);
+	UCTTGameInstance* GameInstance = Cast<UCTTGameInstance>(UGameplayStatics::GetGameInstance(this));
+	if (nullptr == GameInstance)
+	{
+		UE_LOG(LogTemp, Error, TEXT("GameInstance is nullptr"));
+		return;
+	}
+
+	FCTTItemSpawnOffsetData* SpawnOffsetData = GameInstance->GetDatatableManager()->GetItemSpawnOffsetData(ItemName);
 	if (nullptr != SpawnOffsetData)
 	{
 		FCTTWorldItemSetupData SpawnData;

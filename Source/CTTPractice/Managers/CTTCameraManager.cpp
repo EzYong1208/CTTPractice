@@ -1,11 +1,11 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "CTTCameraManager.h"
-#include "CTTCharacterFollowCamera.h"
-#include "CTTNPCFollowCamera.h"
-#include "CTTNPCActor.h"
-#include "CTTPracticeGameModeBase.h"
+#include "CTTPractice/Managers/CTTCameraManager.h"
+#include "CTTPractice/CTTCharacterFollowCamera.h"
+#include "CTTPractice/CTTNPCFollowCamera.h"
+#include "CTTPractice/CTTNPCActor.h"
+#include "CTTPractice/CTTPracticeGameModeBase.h"
 #include "Kismet/GameplayStatics.h"
 
 void UCTTCameraManager::InitializeCameras()

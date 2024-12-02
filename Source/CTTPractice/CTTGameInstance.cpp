@@ -2,7 +2,8 @@
 
 
 #include "CTTGameInstance.h"
-#include "CTTCameraManager.h"
+#include "CTTPractice/Managers/CTTCameraManager.h"
+#include "CTTPractice/Managers/CTTDatatableManager.h"
 
 void UCTTGameInstance::Init()
 {
@@ -48,6 +49,11 @@ void UCTTGameInstance::InitializeManagers()
 	{
 		CameraManagerInstance = NewObject<UCTTCameraManager>(this, CameraManagerClass);
 		CameraManagerInstance->InitializeCameras();
+	}
+
+	if (IsValid(DatatableManagerClass))
+	{
+		DatatableManagerInstance = NewObject<UCTTDatatableManager>(this, DatatableManagerClass);
 	}
 }
 

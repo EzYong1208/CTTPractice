@@ -6,7 +6,7 @@
 #include "CTTPractice/CTTItem.h"
 #include "CTTPractice/CTTCharacter.h"
 #include "CTTPractice/CTTGameInstance.h"
-#include "CTTCameraManager.h"
+#include "CTTPractice/Managers/CTTDatatableManager.h"
 #include "EngineUtils.h" 
 #include "Kismet/GameplayStatics.h"
 
@@ -30,37 +30,48 @@ void ACTTPracticeGameModeBase::BeginPlay()
 	}
 
 	// TODO : 아이템 스폰
-	TArray<FName> ItemNames = WorldItemSetupDataTable->GetRowNames();
-	for (const FName& RowName : ItemNames)
+	TArray<const FCTTWorldItemSetupData*> ItemRows = GameInstance->GetDatatableManager()->GetWorldItemSetupRows();
+	for (const FCTTWorldItemSetupData* RowData : ItemRows)
 	{
-		FCTTWorldItemSetupData* SpawnData = WorldItemSetupDataTable->FindRow<FCTTWorldItemSetupData>(RowName, TEXT(""));
-		if (SpawnData)
+		if (RowData)
 		{
-			SpawnItem(*SpawnData);
+			SpawnItem(*RowData);
 		}
 	}
 
-	TArray<FName> SwitchNames = SwitchMovementDataTable->GetRowNames();
-	for (int32 i = 0; i < SwitchNames.Num(); ++i)
+	TArray<const FCTTSwitchMovementData*> SwitchRows = GameInstance->GetDatatableManager()->GetSwitchMovementRows();
+	for (const FCTTSwitchMovementData* RowData : SwitchRows)
 	{
-		FCTTSwitchMovementData* SwitchMovementData = SwitchMovementDataTable->FindRow<FCTTSwitchMovementData>(SwitchNames[i], TEXT(""));
-		if (SwitchMovementData)
+		if (RowData)
 		{
-			SwitchMovementDataMap.FindOrAdd(SwitchMovementData->TriggerItemName).Add(SwitchMovementData->ActorName, SwitchMovementData->TargetLocation);
+			SwitchMovementDataMap.FindOrAdd(RowData->TriggerItemName).Add(RowData->ActorName, RowData->TargetLocation);
 		}
 	}
-
-
 }
 
 void ACTTPracticeGameModeBase::SpawnItem(const FCTTWorldItemSetupData& SpawnData)
 {
+	UCTTGameInstance* GameInstance = Cast<UCTTGameInstance>(UGameplayStatics::GetGameInstance(this));
+	if (nullptr == GameInstance)
+	{
+		UE_LOG(LogTemp, Error, TEXT("GameInstance is nullptr"));
+		return;
+	}
+
+	const UDataTable* ItemDataTable = GameInstance->GetDatatableManager()->GetItemDataTable();
+	if (nullptr == ItemDataTable)
+	{
+		UE_LOG(LogTemp, Error, TEXT("ItemDataTable is nullptr"));
+		return;
+	}
+
 	TArray<FName> RowNames = ItemDataTable->GetRowNames();
 	int32 CollectIndex = 0;
+
 	for (const FName& RowName : RowNames)
 	{
 		FCTTItemData* ItemData = ItemDataTable->FindRow<FCTTItemData>(RowName, TEXT(""));
-		if (SpawnData.ItemName == ItemData->ItemName)
+		if (ItemData && SpawnData.ItemName == ItemData->ItemName)
 		{
 			FRotator SpawnRotation = FRotator::MakeFromEuler(SpawnData.Rotation);
 			ACTTItem* NewItem = GetWorld()->SpawnActor<ACTTItem>(ACTTItem::StaticClass(), SpawnData.Position, SpawnRotation);
@@ -70,52 +81,25 @@ void ACTTPracticeGameModeBase::SpawnItem(const FCTTWorldItemSetupData& SpawnData
 				return;
 			}
 
-			UCTTGameInstance* GameInstance = Cast<UCTTGameInstance>(GetGameInstance());
-			if (GameInstance)
-			{
-				CollectIndex = GameInstance->GetNextCollectItemStatusIndex();
-			}
-
+			CollectIndex = GameInstance->GetNextCollectItemStatusIndex();
 			NewItem->InitializeItem(*ItemData, CollectIndex);
 
-			if (ItemData->bIsWeapon)
-			{
-				APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
-				if (true == IsValid(PlayerController))
-				{
-					ACTTCharacter* Character = Cast<ACTTCharacter>(PlayerController->GetCharacter());
-					if (IsValid(Character))
-					{
-						NewItem->AttachToComponent(Character->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, SOCKETNAME_WEAPON);
-					}
-				}
-			}
+			//if (ItemData->bIsWeapon)
+			//{
+			//	APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
+			//	if (IsValid(PlayerController))
+			//	{
+			//		ACTTCharacter* Character = Cast<ACTTCharacter>(PlayerController->GetCharacter());
+			//		if (IsValid(Character))
+			//		{
+			//			NewItem->AttachToComponent(Character->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, SOCKETNAME_WEAPON);
+			//		}
+			//	}
+			//}
 
 			break;
 		}
 	}
-}
-
-FCTTItemSpawnOffsetData* ACTTPracticeGameModeBase::GetItemSpawnOffsetData(const FName& ItemName) const
-{
-	if (!IsValid(ItemSpawnOffsetDataTable))
-	{
-		UE_LOG(LogTemp, Error, TEXT("ItemSpawnOffsetDataTable is InValid"));
-		return nullptr;
-	}
-
-	TArray<FName> RowNames = ItemSpawnOffsetDataTable->GetRowNames();
-	for (const FName& RowName : RowNames)
-	{
-		FCTTItemSpawnOffsetData* SpawnOffsetData = ItemSpawnOffsetDataTable->FindRow<FCTTItemSpawnOffsetData>(RowName, TEXT(""));
-		if (ItemName == SpawnOffsetData->ItemName)
-		{
-			return SpawnOffsetData;
-		}
-	}
-
-	UE_LOG(LogTemp, Warning, TEXT("There is no item to spawn"));
-	return nullptr;
 }
 
 void ACTTPracticeGameModeBase::MoveActorZAxis(const FName& SwitchName, float DeltaTime)

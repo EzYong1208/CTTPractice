@@ -3,7 +3,7 @@
 
 #include "CTTCheatManager.h"
 #include "CTTPractice/CTTGameInstance.h"
-#include "CTTPractice/CTTCameraManager.h"
+#include "CTTPractice/Managers/CTTCameraManager.h"
 #include "Kismet/GameplayStatics.h"
 #include "Engine/World.h"
 

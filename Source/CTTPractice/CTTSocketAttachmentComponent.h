@@ -21,8 +21,8 @@ public:
     UFUNCTION(BlueprintCallable)
     void SetMeshByName(FName RowName);
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    UDataTable* SocketMeshDataTable;
+private:
+	void LoadSocketMeshData();
 
 private:
 	TMap<FName, TMap<FName, UStaticMesh*>> SocketMeshMap;

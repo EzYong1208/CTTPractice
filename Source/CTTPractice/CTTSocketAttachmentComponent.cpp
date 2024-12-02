@@ -2,11 +2,12 @@
 
 
 #include "CTTSocketAttachmentComponent.h"
-#include "Engine/DataTable.h"
+#include "CTTPractice/CTTGameInstance.h"
+#include "CTTPractice/Managers/CTTDatatableManager.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 UCTTSocketAttachmentComponent::UCTTSocketAttachmentComponent()
-    : SocketMeshDataTable(nullptr)
 {
 	PrimaryComponentTick.bCanEverTick = false;
 
@@ -16,21 +17,7 @@ void UCTTSocketAttachmentComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-    if (nullptr == SocketMeshDataTable)
-    {
-        UE_LOG(LogTemp, Error, TEXT("SocketMeshDataTable is nullptr"));
-        return;
-    }
-
-	TArray<FName> RowNames = SocketMeshDataTable->GetRowNames();
-	for (int32 i = 0; i < RowNames.Num(); ++i)
-	{
-		FCTTSocketMeshData* MeshData = SocketMeshDataTable->FindRow<FCTTSocketMeshData>(RowNames[i], TEXT(""));
-		if (MeshData)
-		{
-			SocketMeshMap.FindOrAdd(MeshData->AnimationName).Add(MeshData->SocketName, MeshData->Mesh);
-		}
-	}
+	LoadSocketMeshData();
 }
 
 void UCTTSocketAttachmentComponent::SetMeshByName(FName RowName)
@@ -78,4 +65,23 @@ void UCTTSocketAttachmentComponent::SetMeshByName(FName RowName)
 		StaticMesh->SetStaticMesh(*MeshToAttach);
 		StaticMesh->AttachToComponent(SkeletalMeshComponent, FAttachmentTransformRules::SnapToTargetIncludingScale, StaticMesh->GetFName());
 	}
+}
+
+void UCTTSocketAttachmentComponent::LoadSocketMeshData()
+{
+	UCTTGameInstance* GameInstance = Cast<UCTTGameInstance>(UGameplayStatics::GetGameInstance(this));
+	if (nullptr == GameInstance)
+	{
+		UE_LOG(LogTemp, Error, TEXT("GameInstance is nullptr"));
+		return;
+	}
+
+	UCTTDatatableManager* DatatableManager = GameInstance->GetDatatableManager();
+	if (nullptr == DatatableManager)
+	{
+		UE_LOG(LogTemp, Error, TEXT("DatatableManager is nullptr"));
+		return;
+	}
+
+	DatatableManager->GetSocketMeshData(SocketMeshMap);
 }

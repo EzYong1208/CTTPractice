@@ -15,6 +15,7 @@ DECLARE_MULTICAST_DELEGATE_OneParam(FCTTOnChangeCoinCount, int32);
 DECLARE_MULTICAST_DELEGATE_TwoParams(FCTTOnChangeCollectItem, int32, bool);
 
 class UCTTCameraManager;
+class UCTTDatatableManager;
 
 UCLASS()
 class CTTPRACTICE_API UCTTGameInstance : public UGameInstance
@@ -43,10 +44,14 @@ public:
 	void InitializeManagers();
 
 	UCTTCameraManager* GetCameraManager() const { return CameraManagerInstance; }
-	
+	UCTTDatatableManager* GetDatatableManager() const { return DatatableManagerInstance; }
+
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<UCTTCameraManager> CameraManagerClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<UCTTDatatableManager> DatatableManagerClass;
 
 protected:
 	UPROPERTY(BlueprintReadWrite)
@@ -68,4 +73,7 @@ protected:
 private:
 	UPROPERTY()
 	UCTTCameraManager* CameraManagerInstance = nullptr;
+
+	UPROPERTY()
+	UCTTDatatableManager* DatatableManagerInstance = nullptr;
 };

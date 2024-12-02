@@ -24,7 +24,6 @@ public:
 	int32 GetCollectItemNumber() const { return CollectItemNumber; }
 
 	void SpawnItem(const FCTTWorldItemSetupData& SpawnData);
-	FCTTItemSpawnOffsetData* GetItemSpawnOffsetData(const FName& ItemName) const;
 
 	void MoveActorZAxis(const FName& SwitchName, float DeltaTime);
 
@@ -49,18 +48,6 @@ protected:
 
 	UPROPERTY()
 	UCTTUICommonResource* UICommonResource = nullptr;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DataTable")
-    UDataTable* WorldItemSetupDataTable;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DataTable")
-    UDataTable* ItemDataTable;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DataTable")
-    UDataTable* ItemSpawnOffsetDataTable;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DataTable")
-    UDataTable* SwitchMovementDataTable;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	float SwitchMovementSpeed = 0.f;
