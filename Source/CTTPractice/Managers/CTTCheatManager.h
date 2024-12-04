@@ -29,4 +29,10 @@ class CTTPRACTICE_API UCTTCheatManager : public UCheatManager
 
 	UFUNCTION(exec)
 	void SwitchToNPCCameraByName(FName CameraName);
+
+	UFUNCTION(exec)
+	void ShowUIGroup(FName GroupName);
+
+	UFUNCTION(exec)
+	void HideUIGroup(FName GroupName);
 };

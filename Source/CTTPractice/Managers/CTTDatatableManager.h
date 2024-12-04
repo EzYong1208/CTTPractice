@@ -43,4 +43,6 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SocketMesh")
     UDataTable* SocketMeshDataTable;
+
+	int32 i = 0;
 };

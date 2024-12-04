@@ -4,6 +4,7 @@
 #include "CTTCheatManager.h"
 #include "CTTPractice/CTTGameInstance.h"
 #include "CTTPractice/Managers/CTTCameraManager.h"
+#include "CTTPractice/Managers/CTTUIManager.h"
 #include "Kismet/GameplayStatics.h"
 #include "Engine/World.h"
 
@@ -80,4 +81,42 @@ void UCTTCheatManager::SwitchToNPCCameraByName(FName CameraName)
 	}
 
 	CameraManager->SwitchToNPCCameraByName(CameraName);
+}
+
+void UCTTCheatManager::ShowUIGroup(FName GroupName)
+{
+	UCTTGameInstance* GameInstance = Cast<UCTTGameInstance>(UGameplayStatics::GetGameInstance(this));
+	if (nullptr == GameInstance)
+	{
+		UE_LOG(LogTemp, Error, TEXT("GameInstance is nullptr"));
+		return;
+	}
+
+	UCTTUIManager* UIManager = GameInstance->GetUIManager();
+	if (nullptr == UIManager)
+	{
+		UE_LOG(LogTemp, Error, TEXT("UIManager is nullptr"));
+		return;
+	}
+
+	UIManager->ShowUIGroup(GroupName);
+}
+
+void UCTTCheatManager::HideUIGroup(FName GroupName)
+{
+	UCTTGameInstance* GameInstance = Cast<UCTTGameInstance>(UGameplayStatics::GetGameInstance(this));
+	if (nullptr == GameInstance)
+	{
+		UE_LOG(LogTemp, Error, TEXT("GameInstance is nullptr"));
+		return;
+	}
+
+	UCTTUIManager* UIManager = GameInstance->GetUIManager();
+	if (nullptr == UIManager)
+	{
+		UE_LOG(LogTemp, Error, TEXT("UIManager is nullptr"));
+		return;
+	}
+
+	UIManager->HideUIGroup(GroupName);
 }

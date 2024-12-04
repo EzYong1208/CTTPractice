@@ -4,6 +4,7 @@
 #include "CTTGameInstance.h"
 #include "CTTPractice/Managers/CTTCameraManager.h"
 #include "CTTPractice/Managers/CTTDatatableManager.h"
+#include "CTTPractice/Managers/CTTUIManager.h"
 
 void UCTTGameInstance::Init()
 {
@@ -54,6 +55,12 @@ void UCTTGameInstance::InitializeManagers()
 	if (IsValid(DatatableManagerClass))
 	{
 		DatatableManagerInstance = NewObject<UCTTDatatableManager>(this, DatatableManagerClass);
+	}
+
+	if (IsValid(UIManagerClass))
+	{
+		UIManagerInstance = NewObject<UCTTUIManager>(this, UIManagerClass);
+		UIManagerInstance->InitializeUIManager();
 	}
 }
 

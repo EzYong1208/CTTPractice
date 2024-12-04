@@ -16,6 +16,7 @@ DECLARE_MULTICAST_DELEGATE_TwoParams(FCTTOnChangeCollectItem, int32, bool);
 
 class UCTTCameraManager;
 class UCTTDatatableManager;
+class UCTTUIManager;
 
 UCLASS()
 class CTTPRACTICE_API UCTTGameInstance : public UGameInstance
@@ -45,6 +46,7 @@ public:
 
 	UCTTCameraManager* GetCameraManager() const { return CameraManagerInstance; }
 	UCTTDatatableManager* GetDatatableManager() const { return DatatableManagerInstance; }
+	UCTTUIManager* GetUIManager() const { return UIManagerInstance; }
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -52,6 +54,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<UCTTDatatableManager> DatatableManagerClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<UCTTUIManager> UIManagerClass;
 
 protected:
 	UPROPERTY(BlueprintReadWrite)
@@ -76,4 +81,7 @@ private:
 
 	UPROPERTY()
 	UCTTDatatableManager* DatatableManagerInstance = nullptr;
+
+	UPROPERTY()
+	UCTTUIManager* UIManagerInstance = nullptr;
 };

@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Engine/DataTable.h"
+#include "Components/SlateWrapperTypes.h"
 #include "CTTPractice/CTTEnum.h"
 #include "CTTStruct.generated.h"
 
@@ -166,4 +167,16 @@ struct CTTPRACTICE_API FCTTInteractionInfo
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FHitResult HitResult;
+};
+
+USTRUCT(BlueprintType)
+struct CTTPRACTICE_API FCTTWidgetGroup
+{
+    GENERATED_BODY()
+
+    UPROPERTY()
+    TArray<UUserWidget*> Widgets;
+
+	UPROPERTY()
+	ESlateVisibility GroupVisibility = ESlateVisibility::Collapsed;
 };
