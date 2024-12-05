@@ -8,6 +8,7 @@
 #include "CTTInteractableActor.generated.h"
 
 class UCTTInteractableComponent;
+class UWidgetComponent;
 
 UCLASS()
 class CTTPRACTICE_API ACTTInteractableActor : public AActor, public ICTTInteractableInterface
@@ -42,8 +43,13 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float MinInteractionDistance = 0.f;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+    UWidgetComponent* InteractionWidgetComponent;
+
 private:
 	UPROPERTY()
 	UCTTInteractableComponent* InteractableComponent = nullptr;
 
+	UPROPERTY()
+    USceneComponent* InteractionRootComponent;
 };

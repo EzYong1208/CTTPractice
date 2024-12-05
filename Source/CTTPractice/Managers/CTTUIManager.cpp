@@ -3,6 +3,8 @@
 
 #include "CTTPractice/Managers/CTTUIManager.h"
 #include "CTTPractice/UI/CTTUIScreenWidget.h"
+#include "Components/WidgetComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 void UCTTUIManager::InitializeUIManager()
 {

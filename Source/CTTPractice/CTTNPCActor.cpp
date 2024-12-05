@@ -31,11 +31,14 @@ void ACTTNPCActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+
 }
 
 void ACTTNPCActor::OnEnterInteract(const FCTTInteractionInfo& InteractionInfo)
 {
 	//UE_LOG(LogTemp, Warning, TEXT("Entered interaction with NPC: %s"), *NPCName.ToString());
+
+	Super::OnEnterInteract(InteractionInfo);
 
 }
 
@@ -43,12 +46,14 @@ void ACTTNPCActor::OnInteract()
 {
 	//UE_LOG(LogTemp, Warning, TEXT("Interacting with NPC: %s"), *NPCName.ToString());
 
+	Super::OnInteract();
 }
 
 void ACTTNPCActor::OnExitInteract()
 {
 	//UE_LOG(LogTemp, Warning, TEXT("Exited interaction with NPC: %s"), *NPCName.ToString());
 
+	Super::OnExitInteract();
 
 }
 

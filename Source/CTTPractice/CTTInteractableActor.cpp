@@ -3,6 +3,7 @@
 
 #include "CTTInteractableActor.h"
 #include "CTTInteractableComponent.h"
+#include "Components/WidgetComponent.h"
 
 // Sets default values
 ACTTInteractableActor::ACTTInteractableActor()
@@ -15,6 +16,12 @@ ACTTInteractableActor::ACTTInteractableActor()
 	InteractableComponent->OnEnterInteractDelegate.AddDynamic(this, &ACTTInteractableActor::OnEnterInteract);
 	InteractableComponent->OnInteractDelegate.AddDynamic(this, &ACTTInteractableActor::OnInteract);
 	InteractableComponent->OnExitInteractDelegate.AddDynamic(this, &ACTTInteractableActor::OnExitInteract);
+
+	InteractionRootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("InteractionRoot"));
+	RootComponent = InteractionRootComponent;
+
+	InteractionWidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("InteractionWidget"));
+	InteractionWidgetComponent->SetupAttachment(InteractionRootComponent);
 }
 
 // Called when the game starts or when spawned
@@ -22,7 +29,13 @@ void ACTTInteractableActor::BeginPlay()
 {
 	Super::BeginPlay();
 
-
+	InteractionWidgetComponent = FindComponentByClass<UWidgetComponent>();
+	if (nullptr == InteractionWidgetComponent)
+	{
+		UE_LOG(LogTemp, Error, TEXT("InteractionWidgetComponent is nullptr"));
+		return;
+	}
+	InteractionWidgetComponent->SetVisibility(false);
 }
 
 // Called every frame
@@ -34,7 +47,12 @@ void ACTTInteractableActor::Tick(float DeltaTime)
 
 void ACTTInteractableActor::OnEnterInteract(const FCTTInteractionInfo& InteractionInfo)
 {
-
+	if (nullptr == InteractionWidgetComponent)
+	{
+		UE_LOG(LogTemp, Error, TEXT("InteractionWidgetComponent is nullptr"));
+		return;
+	}
+	InteractionWidgetComponent->SetVisibility(true);
 }
 
 void ACTTInteractableActor::OnInteract()
@@ -44,6 +62,11 @@ void ACTTInteractableActor::OnInteract()
 
 void ACTTInteractableActor::OnExitInteract()
 {
-
+	if (nullptr == InteractionWidgetComponent)
+	{
+		UE_LOG(LogTemp, Error, TEXT("InteractionWidgetComponent is nullptr"));
+		return;
+	}
+	InteractionWidgetComponent->SetVisibility(false);
 }
 
