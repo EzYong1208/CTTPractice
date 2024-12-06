@@ -33,11 +33,16 @@ void UCTTInteractionComponent::TickComponent(float DeltaTime, ELevelTick TickTyp
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	// ...
-	if (false == bIsInteracting)
+	FHitResult HitResult;
+	AActor* InteractableActor = CheckForInteractable(HitResult);
+
+	HandleInteractableVisibility(InteractableActor);
+
+	// 상호작용 중이라면 Delegate 호출
+	if (bIsInteracting && CurrentInteractable)
 	{
-		return;
+		CurrentInteractable->OnInteractDelegate.Broadcast();
 	}
-	CurrentInteractable->OnInteractDelegate.Broadcast();
 }
 
 void UCTTInteractionComponent::ToggleInteraction()
@@ -57,21 +62,14 @@ void UCTTInteractionComponent::BeginInteraction()
 	UE_LOG(LogTemp, Warning, TEXT("BeginInteraction"));
 
 	FHitResult HitResult;
-	bool bIsInteractableDetected = DetectInteractable(HitResult);
-
-	if (false == bIsInteractableDetected)
+	AActor* InteractableActor = CheckForInteractable(HitResult);
+	if (!InteractableActor)
 	{
 		return;
 	}
 
-	AActor* HitActor = HitResult.GetActor();
-	if (nullptr == HitActor)
-	{
-		return;
-	}
-
-	UCTTInteractableComponent* Interactable = HitActor->FindComponentByClass<UCTTInteractableComponent>();
-	if (nullptr == Interactable)
+	UCTTInteractableComponent* Interactable = InteractableActor->FindComponentByClass<UCTTInteractableComponent>();
+	if (!Interactable)
 	{
 		return;
 	}
@@ -80,6 +78,26 @@ void UCTTInteractionComponent::BeginInteraction()
 	CurrentInteractable->OnEnterInteractDelegate.Broadcast(FCTTInteractionInfo(this, HitResult));
 	UE_LOG(LogTemp, Warning, TEXT("OnEnterInteractDelegate Broadcast"));
 	bIsInteracting = true;
+
+	bool bHasValidHit = FindClosestHit({ HitResult }, HitResult.ImpactPoint, HitResult);
+	if (true == bHasValidHit)
+	{
+		AActor* HitActor = HitResult.GetActor();
+		if (nullptr == HitActor)
+		{
+			UE_LOG(LogTemp, Error, TEXT("HitActor is nullptr"));
+			return;
+		}
+
+		ACTTInteractableActor* InteractableActorFromHit = Cast<ACTTInteractableActor>(HitActor);
+		if (nullptr == InteractableActorFromHit)
+		{
+			UE_LOG(LogTemp, Error, TEXT("InteractableActorFromHit is not of type ACTTInteractableActor"));
+			return;
+		}
+
+		AdjustCharacterPositionToInteractableActor(InteractableActorFromHit, FVector::Dist(GetOwner()->GetActorLocation(), HitResult.ImpactPoint));
+	}
 }
 
 void UCTTInteractionComponent::EndInteraction()
@@ -101,7 +119,7 @@ bool UCTTInteractionComponent::DetectInteractable(FHitResult& OutHitResult)
 	FVector ForwardVector = GetForwardVector();
 	FVector End = Start + ForwardVector * DetectDistance;
 
-	DrawDebugCapsule(GetWorld(), (Start + End) * 0.5f, CapsuleHalfHeight, CapsuleRadius, FRotationMatrix::MakeFromX(ForwardVector).ToQuat(), FColor::Blue, false, 1.0f);
+	//DrawDebugCapsule(GetWorld(), (Start + End) * 0.5f, CapsuleHalfHeight, CapsuleRadius, FRotationMatrix::MakeFromX(ForwardVector).ToQuat(), FColor::Blue, false, 1.0f);
 
 	TArray<FHitResult> HitResults;
 	bool bHit = GetWorld()->SweepMultiByChannel(
@@ -122,16 +140,14 @@ bool UCTTInteractionComponent::DetectInteractable(FHitResult& OutHitResult)
 		}
 	}
 
-	UE_LOG(LogTemp, Warning, TEXT("No hit detected within capsule."));
 	return false;
 }
 
 bool UCTTInteractionComponent::FindClosestHit(const TArray<FHitResult>& HitResults, const FVector& Start, FHitResult& OutHitResult)
 {
+
 	FHitResult ClosestHit;
 	float ClosestDistance = -1.0f;
-
-	ACTTInteractableActor* ClosestInteractableActor = nullptr;
 
 	for (const FHitResult& Hit : HitResults)
 	{
@@ -142,12 +158,6 @@ bool UCTTInteractionComponent::FindClosestHit(const TArray<FHitResult>& HitResul
 			{
 				ClosestDistance = Distance;
 				ClosestHit = Hit;
-
-				ACTTInteractableActor* InteractableActor = Cast<ACTTInteractableActor>(Hit.GetActor());
-				if (nullptr != InteractableActor)
-				{
-					ClosestInteractableActor = InteractableActor;
-				}
 			}
 		}
 	}
@@ -155,15 +165,9 @@ bool UCTTInteractionComponent::FindClosestHit(const TArray<FHitResult>& HitResul
 	if (ClosestDistance >= 0)
 	{
 		OutHitResult = ClosestHit;
-		if (nullptr != ClosestInteractableActor)
-		{
-			AdjustCharacterPositionToInteractableActor(ClosestInteractableActor, ClosestDistance);
-		}
-
 		return true;
 	}
 
-	UE_LOG(LogTemp, Warning, TEXT("No closest hit detected."));
 	return false;
 }
 
@@ -188,4 +192,50 @@ void UCTTInteractionComponent::AdjustCharacterPositionToInteractableActor(ACTTIn
 	GetOwner()->SetActorLocation(NewPosition);
 
 	UE_LOG(LogTemp, Warning, TEXT("Character moved to NPC at adjusted distance: %f"), MinInteractionDistance);
+}
+
+AActor* UCTTInteractionComponent::CheckForInteractable(FHitResult& OutHitResult)
+{
+	bool bIsInteractableDetected = DetectInteractable(OutHitResult);
+	if (false == bIsInteractableDetected)
+	{
+		return nullptr;
+	}
+
+	AActor* HitActor = OutHitResult.GetActor();
+	if (nullptr == HitActor)
+	{
+		return nullptr;
+	}
+
+	return HitActor;
+}
+
+void UCTTInteractionComponent::HandleInteractableVisibility(AActor* NewInteractableActor)
+{
+	if (nullptr != LastDetectedInteractableActor)
+	{
+		if (LastDetectedInteractableActor != NewInteractableActor)
+		{
+			ACTTInteractableActor* LastInteractable = Cast<ACTTInteractableActor>(LastDetectedInteractableActor);
+			if (nullptr != LastInteractable)
+			{
+				LastInteractable->SetInteractionWidgetComponentVisibility(false);
+			}
+		}
+	}
+
+	if (nullptr != NewInteractableActor)
+	{
+		if (NewInteractableActor != LastDetectedInteractableActor)
+		{
+			ACTTInteractableActor* NewInteractable = Cast<ACTTInteractableActor>(NewInteractableActor);
+			if (nullptr != NewInteractable)
+			{
+				NewInteractable->SetInteractionWidgetComponentVisibility(true);
+			}
+		}
+	}
+
+	LastDetectedInteractableActor = NewInteractableActor;
 }

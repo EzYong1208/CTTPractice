@@ -30,12 +30,7 @@ void ACTTInteractableActor::BeginPlay()
 	Super::BeginPlay();
 
 	InteractionWidgetComponent = FindComponentByClass<UWidgetComponent>();
-	if (nullptr == InteractionWidgetComponent)
-	{
-		UE_LOG(LogTemp, Error, TEXT("InteractionWidgetComponent is nullptr"));
-		return;
-	}
-	InteractionWidgetComponent->SetVisibility(false);
+	SetInteractionWidgetComponentVisibility(false);
 }
 
 // Called every frame
@@ -47,12 +42,7 @@ void ACTTInteractableActor::Tick(float DeltaTime)
 
 void ACTTInteractableActor::OnEnterInteract(const FCTTInteractionInfo& InteractionInfo)
 {
-	if (nullptr == InteractionWidgetComponent)
-	{
-		UE_LOG(LogTemp, Error, TEXT("InteractionWidgetComponent is nullptr"));
-		return;
-	}
-	InteractionWidgetComponent->SetVisibility(true);
+	SetInteractionWidgetComponentVisibility(false);
 }
 
 void ACTTInteractableActor::OnInteract()
@@ -62,11 +52,16 @@ void ACTTInteractableActor::OnInteract()
 
 void ACTTInteractableActor::OnExitInteract()
 {
+	
+}
+
+void ACTTInteractableActor::SetInteractionWidgetComponentVisibility(bool bNewVisibility)
+{
 	if (nullptr == InteractionWidgetComponent)
 	{
 		UE_LOG(LogTemp, Error, TEXT("InteractionWidgetComponent is nullptr"));
 		return;
 	}
-	InteractionWidgetComponent->SetVisibility(false);
+	InteractionWidgetComponent->SetVisibility(bNewVisibility);
 }
 

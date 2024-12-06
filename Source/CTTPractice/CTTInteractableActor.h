@@ -38,6 +38,7 @@ public:
 	virtual void OnExitInteract() override;
 
 	float GetMinInteractionDistance() const { return MinInteractionDistance; }
+	void SetInteractionWidgetComponentVisibility(bool bNewVisibility);
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)

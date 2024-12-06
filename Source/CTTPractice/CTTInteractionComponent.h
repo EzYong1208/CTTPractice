@@ -39,6 +39,9 @@ private:
 	bool FindClosestHit(const TArray<FHitResult>& HitResults, const FVector& Start, FHitResult& OutHitResult);
 	void AdjustCharacterPositionToInteractableActor(ACTTInteractableActor* InteractableActor, float CurrentDistance);
 
+	AActor* CheckForInteractable(FHitResult& OutHitResult);
+	void HandleInteractableVisibility(AActor* NewInteractableActor);
+
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TEnumAsByte<ECollisionChannel> TraceChannel;
@@ -60,4 +63,7 @@ private:
 	
 	UPROPERTY()
 	UCTTInteractableComponent* CurrentInteractable = nullptr;
+
+	UPROPERTY()
+	AActor* LastDetectedInteractableActor = nullptr;
 };
