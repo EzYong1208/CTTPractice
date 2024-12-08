@@ -3,7 +3,6 @@
 
 #include "CTTNPCActor.h"
 #include "CTTNPCFollowCamera.h"
-#include "Components/SphereComponent.h"
 
 // Sets default values
 ACTTNPCActor::ACTTNPCActor()
@@ -36,24 +35,22 @@ void ACTTNPCActor::Tick(float DeltaTime)
 
 void ACTTNPCActor::OnEnterInteract(const FCTTInteractionInfo& InteractionInfo)
 {
-	//UE_LOG(LogTemp, Warning, TEXT("Entered interaction with NPC: %s"), *NPCName.ToString());
-
 	Super::OnEnterInteract(InteractionInfo);
+
+	UE_LOG(LogTemp, Warning, TEXT("Entered interaction with NPC: %s"), *NPCName.ToString());
 
 }
 
 void ACTTNPCActor::OnInteract()
 {
-	//UE_LOG(LogTemp, Warning, TEXT("Interacting with NPC: %s"), *NPCName.ToString());
-
 	Super::OnInteract();
+
+	//UE_LOG(LogTemp, Warning, TEXT("Interacting with NPC: %s"), *NPCName.ToString());
 }
 
 void ACTTNPCActor::OnExitInteract()
 {
-	//UE_LOG(LogTemp, Warning, TEXT("Exited interaction with NPC: %s"), *NPCName.ToString());
-
 	Super::OnExitInteract();
 
+	//UE_LOG(LogTemp, Warning, TEXT("Exited interaction with NPC: %s"), *NPCName.ToString());
 }
-

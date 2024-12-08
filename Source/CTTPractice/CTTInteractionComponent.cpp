@@ -5,6 +5,7 @@
 #include "CTTInteractableComponent.h"
 #include "DrawDebugHelpers.h"
 #include "CTTInteractableActor.h"
+#include "Components/CapsuleComponent.h"
 
 // Sets default values for this component's properties
 UCTTInteractionComponent::UCTTInteractionComponent()
@@ -23,7 +24,15 @@ void UCTTInteractionComponent::BeginPlay()
 	Super::BeginPlay();
 
 	// ...
-	
+	AActor* Owner = GetOwner();
+	UCapsuleComponent* CapsuleComponent = Owner->FindComponentByClass<UCapsuleComponent>();
+	if (nullptr == CapsuleComponent)
+	{
+		UE_LOG(LogTemp, Error, TEXT("CapsuleComponent is nullptr"));
+		return;
+	}
+	CapsuleComponent->OnComponentBeginOverlap.AddDynamic(this, &UCTTInteractionComponent::OnOverlapBegin);
+	CapsuleComponent->OnComponentEndOverlap.AddDynamic(this, &UCTTInteractionComponent::OnOverlapEnd);
 }
 
 
@@ -33,11 +42,6 @@ void UCTTInteractionComponent::TickComponent(float DeltaTime, ELevelTick TickTyp
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	// ...
-	FHitResult HitResult;
-	AActor* InteractableActor = CheckForInteractable(HitResult);
-
-	HandleInteractableVisibility(InteractableActor);
-
 	// 상호작용 중이라면 Delegate 호출
 	if (bIsInteracting && CurrentInteractable)
 	{
@@ -61,43 +65,24 @@ void UCTTInteractionComponent::BeginInteraction()
 {
 	UE_LOG(LogTemp, Warning, TEXT("BeginInteraction"));
 
-	FHitResult HitResult;
-	AActor* InteractableActor = CheckForInteractable(HitResult);
-	if (!InteractableActor)
+	ACTTInteractableActor* CurrentInteractableActor = Cast<ACTTInteractableActor>(PreviousClosestInteractable);
+	if (nullptr == CurrentInteractableActor)
 	{
+		UE_LOG(LogTemp, Error, TEXT("CurrentInteractableActor is nullptr"));
 		return;
 	}
 
-	UCTTInteractableComponent* Interactable = InteractableActor->FindComponentByClass<UCTTInteractableComponent>();
+	UCTTInteractableComponent* Interactable = CurrentInteractableActor->FindComponentByClass<UCTTInteractableComponent>();
 	if (!Interactable)
 	{
 		return;
 	}
 
 	CurrentInteractable = Interactable;
-	CurrentInteractable->OnEnterInteractDelegate.Broadcast(FCTTInteractionInfo(this, HitResult));
+	CurrentInteractable->OnEnterInteractDelegate.Broadcast(FCTTInteractionInfo(this));
 	UE_LOG(LogTemp, Warning, TEXT("OnEnterInteractDelegate Broadcast"));
 	bIsInteracting = true;
-
-	bool bHasValidHit = FindClosestHit({ HitResult }, HitResult.ImpactPoint, HitResult);
-	if (true == bHasValidHit)
-	{
-		AActor* HitActor = HitResult.GetActor();
-		if (nullptr == HitActor)
-		{
-			UE_LOG(LogTemp, Error, TEXT("HitActor is nullptr"));
-			return;
-		}
-
-		ACTTInteractableActor* InteractableActorFromHit = Cast<ACTTInteractableActor>(HitActor);
-		if (nullptr == InteractableActorFromHit)
-		{
-			UE_LOG(LogTemp, Error, TEXT("InteractableActorFromHit is not of type ACTTInteractableActor"));
-			return;
-		}
-
-		AdjustCharacterPositionToInteractableActor(InteractableActorFromHit, FVector::Dist(GetOwner()->GetActorLocation(), HitResult.ImpactPoint));
-	}
+	AdjustCharacterPositionToInteractableActor(CurrentInteractableActor);
 }
 
 void UCTTInteractionComponent::EndInteraction()
@@ -113,65 +98,64 @@ void UCTTInteractionComponent::EndInteraction()
 	UE_LOG(LogTemp, Warning, TEXT("EndInteraction"));
 }
 
-bool UCTTInteractionComponent::DetectInteractable(FHitResult& OutHitResult)
+void UCTTInteractionComponent::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	FVector Start = GetComponentLocation() + FVector::UpVector * DetectHeight;
-	FVector ForwardVector = GetForwardVector();
-	FVector End = Start + ForwardVector * DetectDistance;
-
-	//DrawDebugCapsule(GetWorld(), (Start + End) * 0.5f, CapsuleHalfHeight, CapsuleRadius, FRotationMatrix::MakeFromX(ForwardVector).ToQuat(), FColor::Blue, false, 1.0f);
-
-	TArray<FHitResult> HitResults;
-	bool bHit = GetWorld()->SweepMultiByChannel(
-		HitResults,
-		Start,
-		End,
-		FQuat::Identity,
-		TraceChannel,
-		FCollisionShape::MakeCapsule(CapsuleRadius, CapsuleHalfHeight)
-	);
-
-	if (bHit)
+	if (OtherActor && OtherActor->IsA<ACTTInteractableActor>())
 	{
-		bool bHasValidHit = FindClosestHit(HitResults, Start, OutHitResult);
-		if (true == bHasValidHit)
-		{
-			return true;
-		}
+		OverlappingInteractables.Add(OtherActor, FVector::Dist(GetOwner()->GetActorLocation(), OtherActor->GetActorLocation()));
 	}
 
-	return false;
+	FindClosestInteractable();
 }
 
-bool UCTTInteractionComponent::FindClosestHit(const TArray<FHitResult>& HitResults, const FVector& Start, FHitResult& OutHitResult)
+void UCTTInteractionComponent::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-
-	FHitResult ClosestHit;
-	float ClosestDistance = -1.0f;
-
-	for (const FHitResult& Hit : HitResults)
+	OverlappingInteractables.Remove(OtherActor);
+	ACTTInteractableActor* NewInteractable = Cast<ACTTInteractableActor>(OtherActor);
+	if (nullptr != NewInteractable)
 	{
-		if (Hit.GetActor() && Hit.GetActor() != GetOwner())
+		NewInteractable->SetInteractionWidgetComponentVisibility(false);
+	}
+}
+
+void UCTTInteractionComponent::FindClosestInteractable()
+{
+	if (OverlappingInteractables.Num() > 0)
+	{
+		float MinDistance = FLT_MAX;
+		AActor* ClosestInteractable = nullptr;
+
+		for (auto& Pair : OverlappingInteractables)
 		{
-			float Distance = FVector::Dist(Start, Hit.ImpactPoint);
-			if (ClosestDistance < 0 || Distance < ClosestDistance)
+			if (Pair.Value < MinDistance)
 			{
-				ClosestDistance = Distance;
-				ClosestHit = Hit;
+				MinDistance = Pair.Value;
+				ClosestInteractable = Pair.Key;
+			}
+		}
+
+		if (PreviousClosestInteractable)
+		{
+			ACTTInteractableActor* OldInteractable = Cast<ACTTInteractableActor>(PreviousClosestInteractable);
+			if (OldInteractable)
+			{
+				OldInteractable->SetInteractionWidgetComponentVisibility(false);
+			}
+		}
+
+		PreviousClosestInteractable = ClosestInteractable;
+		if (ClosestInteractable)
+		{
+			ACTTInteractableActor* NewInteractable = Cast<ACTTInteractableActor>(ClosestInteractable);
+			if (NewInteractable)
+			{
+				NewInteractable->SetInteractionWidgetComponentVisibility(true);
 			}
 		}
 	}
-
-	if (ClosestDistance >= 0)
-	{
-		OutHitResult = ClosestHit;
-		return true;
-	}
-
-	return false;
 }
 
-void UCTTInteractionComponent::AdjustCharacterPositionToInteractableActor(ACTTInteractableActor* InteractableActor, float CurrentDistance)
+void UCTTInteractionComponent::AdjustCharacterPositionToInteractableActor(ACTTInteractableActor* InteractableActor)
 {
 	if (nullptr == InteractableActor)
 	{
@@ -179,6 +163,7 @@ void UCTTInteractionComponent::AdjustCharacterPositionToInteractableActor(ACTTIn
 		return;
 	}
 
+	float CurrentDistance = FVector::Dist(GetOwner()->GetActorLocation(), InteractableActor->GetActorLocation());
 	float MinInteractionDistance = InteractableActor->GetMinInteractionDistance();
 	if (CurrentDistance <= MinInteractionDistance)
 	{
@@ -188,54 +173,8 @@ void UCTTInteractionComponent::AdjustCharacterPositionToInteractableActor(ACTTIn
 	// TODO : 부드럽게 이동하는거 생각하기
 	FVector DirectionToNPC = (InteractableActor->GetActorLocation() - GetOwner()->GetActorLocation()).GetSafeNormal();
 	FVector NewPosition = GetOwner()->GetActorLocation() + DirectionToNPC * (CurrentDistance - MinInteractionDistance);
-	
+
 	GetOwner()->SetActorLocation(NewPosition);
 
 	UE_LOG(LogTemp, Warning, TEXT("Character moved to NPC at adjusted distance: %f"), MinInteractionDistance);
-}
-
-AActor* UCTTInteractionComponent::CheckForInteractable(FHitResult& OutHitResult)
-{
-	bool bIsInteractableDetected = DetectInteractable(OutHitResult);
-	if (false == bIsInteractableDetected)
-	{
-		return nullptr;
-	}
-
-	AActor* HitActor = OutHitResult.GetActor();
-	if (nullptr == HitActor)
-	{
-		return nullptr;
-	}
-
-	return HitActor;
-}
-
-void UCTTInteractionComponent::HandleInteractableVisibility(AActor* NewInteractableActor)
-{
-	if (nullptr != LastDetectedInteractableActor)
-	{
-		if (LastDetectedInteractableActor != NewInteractableActor)
-		{
-			ACTTInteractableActor* LastInteractable = Cast<ACTTInteractableActor>(LastDetectedInteractableActor);
-			if (nullptr != LastInteractable)
-			{
-				LastInteractable->SetInteractionWidgetComponentVisibility(false);
-			}
-		}
-	}
-
-	if (nullptr != NewInteractableActor)
-	{
-		if (NewInteractableActor != LastDetectedInteractableActor)
-		{
-			ACTTInteractableActor* NewInteractable = Cast<ACTTInteractableActor>(NewInteractableActor);
-			if (nullptr != NewInteractable)
-			{
-				NewInteractable->SetInteractionWidgetComponentVisibility(true);
-			}
-		}
-	}
-
-	LastDetectedInteractableActor = NewInteractableActor;
 }

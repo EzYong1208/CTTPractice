@@ -158,15 +158,13 @@ struct CTTPRACTICE_API FCTTInteractionInfo
 {
 	GENERATED_BODY()
 
-	FCTTInteractionInfo() {}
-	FCTTInteractionInfo(UCTTInteractionComponent* Interactor, const FHitResult& HitResult)
-		: Interactor(Interactor), HitResult(HitResult) {}
+	FCTTInteractionInfo()
+		: Interactor(nullptr) {}
+	FCTTInteractionInfo(UCTTInteractionComponent* Interactor)
+		: Interactor(Interactor) {}
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UCTTInteractionComponent* Interactor;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FHitResult HitResult;
 };
 
 USTRUCT(BlueprintType)

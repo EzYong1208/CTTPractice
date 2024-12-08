@@ -87,7 +87,23 @@ void UCTTCameraManager::SetViewTargetToCamera(AActor* CameraActor)
 		return;
 	}
 
-	PlayerController->SetViewTargetWithBlend(CameraActor, CAMERA_BLEND_TIME);
+	APlayerCameraManager* CameraManager = PlayerController->PlayerCameraManager;
+	if (nullptr == CameraManager)
+	{
+		UE_LOG(LogTemp, Error, TEXT("CameraManager is nullptr"));
+		return;
+	}
+
+	// 페이드인아웃
+	CameraManager->StartCameraFade(0.f, 1.f, FadeOutTime, FLinearColor::Black, false, true);
+
+	FTimerHandle TimerHandle;
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle, [PlayerController, CameraActor, CameraManager, this]()
+		{
+			PlayerController->SetViewTargetWithBlend(CameraActor, 0.f);
+			CameraManager->StartCameraFade(1.f, 0.f, FadeInTime, FLinearColor::Black, false, true);
+
+		}, FadeOutTime, false);
 }
 
 void UCTTCameraManager::SpawnNPCFollowCameras()
@@ -122,4 +138,23 @@ void UCTTCameraManager::SpawnNPCFollowCameras()
 		SpawnedCamera->SetTarget(NPCActor);
 		NPCFollowCameraMap.Add(NPCActor->GetNPCName(), SpawnedCamera);
 	}
+}
+
+void UCTTCameraManager::FadeScreen(float FromAlpha, float ToAlpha, float Duration, FLinearColor FadeColor /*= FLinearColor::Black*/)
+{
+	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+	if (nullptr == PlayerController)
+	{
+		UE_LOG(LogTemp, Error, TEXT("PlayerController is nullptr"));
+		return;
+	}
+
+	APlayerCameraManager* CameraManager = PlayerController->PlayerCameraManager;
+	if (nullptr == CameraManager)
+	{
+		UE_LOG(LogTemp, Error, TEXT("CameraManager is nullptr"));
+		return;
+	}
+
+	CameraManager->StartCameraFade(FromAlpha, ToAlpha, Duration, FadeColor, false, true);
 }

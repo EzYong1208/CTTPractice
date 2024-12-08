@@ -12,6 +12,7 @@
 
 class ACTTCharacterFollowCamera;
 class ACTTNPCFollowCamera;
+class UPostProcessVolume;
 
 UCLASS(Blueprintable)
 class CTTPRACTICE_API UCTTCameraManager : public UObject
@@ -30,10 +31,18 @@ private:
 	TWeakObjectPtr<ACTTNPCFollowCamera> FindNPCFollowCameraByName(FName CameraName) const;
 	void SetViewTargetToCamera(AActor* CameraActor);
 	void SpawnNPCFollowCameras();
+	void FadeScreen(float FromAlpha, float ToAlpha, float Duration, FLinearColor FadeColor = FLinearColor::Black);
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<ACTTCharacterFollowCamera> CharacterFollowCameraClass;
+
+protected:
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+    float FadeOutTime = 0.f;
+
+    UPROPERTY(BlueprintReadWrite, EditAnywhere)
+    float FadeInTime = 0.f;
 
 private:
 	UPROPERTY()

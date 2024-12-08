@@ -35,12 +35,13 @@ public:
 	bool GetIsInteracting() const { return bIsInteracting; }
 
 private:
-	bool DetectInteractable(FHitResult& OutHitResult);
-	bool FindClosestHit(const TArray<FHitResult>& HitResults, const FVector& Start, FHitResult& OutHitResult);
-	void AdjustCharacterPositionToInteractableActor(ACTTInteractableActor* InteractableActor, float CurrentDistance);
+	UFUNCTION()
+	void OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	UFUNCTION()
+	void OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
-	AActor* CheckForInteractable(FHitResult& OutHitResult);
-	void HandleInteractableVisibility(AActor* NewInteractableActor);
+	void FindClosestInteractable();
+	void AdjustCharacterPositionToInteractableActor(ACTTInteractableActor* InteractableActor);
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -60,10 +61,11 @@ public:
 
 private:
 	bool bIsInteracting = false;
+	TMap<AActor*, float> OverlappingInteractables;
 	
 	UPROPERTY()
 	UCTTInteractableComponent* CurrentInteractable = nullptr;
 
 	UPROPERTY()
-	AActor* LastDetectedInteractableActor = nullptr;
+	AActor* PreviousClosestInteractable = nullptr;
 };
