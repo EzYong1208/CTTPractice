@@ -178,3 +178,18 @@ struct CTTPRACTICE_API FCTTWidgetGroup
 	UPROPERTY()
 	ESlateVisibility GroupVisibility = ESlateVisibility::Collapsed;
 };
+
+USTRUCT(BlueprintType)
+struct CTTPRACTICE_API FCTTQuestData : public FTableRowBase
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FName QuestName;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 GoalCount = 0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 CurrentProgress = 0;
+};

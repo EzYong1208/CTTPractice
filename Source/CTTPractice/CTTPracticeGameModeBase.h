@@ -32,7 +32,7 @@ protected:
 	int32 PlayerInitialLifeCount = 0;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int32 CoinInitialLifeCount = 0;
+	int32 CoinInitialCount = 0;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 CollectItemNumber = 0;

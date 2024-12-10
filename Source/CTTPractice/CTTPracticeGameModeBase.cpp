@@ -25,7 +25,7 @@ void ACTTPracticeGameModeBase::BeginPlay()
 		GameInstance->InitializeManagers();
 
 		GameInstance->SetPlayerLifeCount(PlayerInitialLifeCount);
-		GameInstance->SetCoinCount(CoinInitialLifeCount);
+		GameInstance->SetCoinCount(CoinInitialCount);
 		GameInstance->InitializeCollectItem(CollectItemNumber, CollectItemInitialState);
 	}
 

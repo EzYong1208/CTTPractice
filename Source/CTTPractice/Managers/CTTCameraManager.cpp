@@ -139,22 +139,3 @@ void UCTTCameraManager::SpawnNPCFollowCameras()
 		NPCFollowCameraMap.Add(NPCActor->GetNPCName(), SpawnedCamera);
 	}
 }
-
-void UCTTCameraManager::FadeScreen(float FromAlpha, float ToAlpha, float Duration, FLinearColor FadeColor /*= FLinearColor::Black*/)
-{
-	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
-	if (nullptr == PlayerController)
-	{
-		UE_LOG(LogTemp, Error, TEXT("PlayerController is nullptr"));
-		return;
-	}
-
-	APlayerCameraManager* CameraManager = PlayerController->PlayerCameraManager;
-	if (nullptr == CameraManager)
-	{
-		UE_LOG(LogTemp, Error, TEXT("CameraManager is nullptr"));
-		return;
-	}
-
-	CameraManager->StartCameraFade(FromAlpha, ToAlpha, Duration, FadeColor, false, true);
-}

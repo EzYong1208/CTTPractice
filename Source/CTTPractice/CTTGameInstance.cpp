@@ -5,6 +5,7 @@
 #include "CTTPractice/Managers/CTTCameraManager.h"
 #include "CTTPractice/Managers/CTTDatatableManager.h"
 #include "CTTPractice/Managers/CTTUIManager.h"
+#include "CTTPractice/Managers/CTTQuestManager.h"
 
 void UCTTGameInstance::Init()
 {
@@ -61,6 +62,11 @@ void UCTTGameInstance::InitializeManagers()
 	{
 		UIManagerInstance = NewObject<UCTTUIManager>(this, UIManagerClass);
 		UIManagerInstance->InitializeUIManager();
+	}
+
+	if (IsValid(QuestManagerClass))
+	{
+		QuestManagerInstance = NewObject<UCTTQuestManager>(this, QuestManagerClass);
 	}
 }
 

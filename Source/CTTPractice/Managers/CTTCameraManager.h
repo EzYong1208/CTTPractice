@@ -31,7 +31,6 @@ private:
 	TWeakObjectPtr<ACTTNPCFollowCamera> FindNPCFollowCameraByName(FName CameraName) const;
 	void SetViewTargetToCamera(AActor* CameraActor);
 	void SpawnNPCFollowCameras();
-	void FadeScreen(float FromAlpha, float ToAlpha, float Duration, FLinearColor FadeColor = FLinearColor::Black);
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
