@@ -47,6 +47,7 @@ private:
 	UPROPERTY()
 	ACTTCharacterFollowCamera* CharacterFollowCamera = nullptr;
 
+	// EzYong TODO : npc카메라 1개만
 	TMap<FName, TWeakObjectPtr<ACTTNPCFollowCamera>> NPCFollowCameraMap;
 	static constexpr float CAMERA_BLEND_TIME = 1.f;
 };

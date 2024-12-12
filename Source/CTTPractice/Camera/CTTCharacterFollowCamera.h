@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "CTTFollowCamera.h"
+#include "CTTPractice/Camera/CTTFollowCamera.h"
 #include "CTTCharacterFollowCamera.generated.h"
 
 /**

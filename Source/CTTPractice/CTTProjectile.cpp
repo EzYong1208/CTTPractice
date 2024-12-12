@@ -40,12 +40,12 @@ void ACTTProjectile::Tick(float DeltaTime)
 
 	switch (CurrentState)
 	{
-	case ECTTProjectileState::FollowingCharacter:
-		HandleStateFollowingCharacter(DeltaTime);
+	case ECTTProjectileState::Attached:
+		HandleStateAttached(DeltaTime);
 		break;
 
-	case ECTTProjectileState::IndependentMovement:
-		HandleStateIndependentMovement(DeltaTime);
+	case ECTTProjectileState::Move:
+		HandleStateMove(DeltaTime);
 		break;
 
 	case ECTTProjectileState::Destroy:
@@ -87,12 +87,12 @@ void ACTTProjectile::FollowCharacter(ACharacter* Character)
 	}
 
 	AttachedCharacter = Cast<ACTTCharacter>(Character);
-	ChangeState(ECTTProjectileState::FollowingCharacter);
+	ChangeState(ECTTProjectileState::Attached);
 }
 
 void ACTTProjectile::StopFollowingCharacter()
 {
-	ChangeState(ECTTProjectileState::IndependentMovement);
+	ChangeState(ECTTProjectileState::Move);
 
 	InitializeProjectilePath();
 }
@@ -108,11 +108,11 @@ void ACTTProjectile::ChangeState(ECTTProjectileState NewState)
 
 	switch (CurrentState)
 	{
-	case ECTTProjectileState::FollowingCharacter:
+	case ECTTProjectileState::Attached:
 		bIsFollowingCharacter = true;
 		break;
 
-	case ECTTProjectileState::IndependentMovement:
+	case ECTTProjectileState::Move:
 		bIsFollowingCharacter = false;
 		break;
 
@@ -124,7 +124,7 @@ void ACTTProjectile::ChangeState(ECTTProjectileState NewState)
 	}
 }
 
-void ACTTProjectile::HandleStateFollowingCharacter(float DeltaTime)
+void ACTTProjectile::HandleStateAttached(float DeltaTime)
 {
 	if (false == AttachedCharacter.IsValid())
 	{
@@ -138,7 +138,7 @@ void ACTTProjectile::HandleStateFollowingCharacter(float DeltaTime)
 	SetActorRotation(CharacterRotation);
 }
 
-void ACTTProjectile::HandleStateIndependentMovement(float DeltaTime)
+void ACTTProjectile::HandleStateMove(float DeltaTime)
 {
 	FVector PreviousLocation = GetActorLocation();
 
@@ -169,7 +169,8 @@ void ACTTProjectile::HandleStateIndependentMovement(float DeltaTime)
 
 void ACTTProjectile::HandleStateDestroy(float DeltaTime)
 {
-	Destroy();
+	// EzYong TODO : 펜딩킬 찾아보기, 밖에서 지우는걸로 하자
+	//Destroy();
 }
 
 bool ACTTProjectile::CheckProjectileCollision(const FVector& StartLocation, const FVector& EndLocation)

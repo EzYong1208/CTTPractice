@@ -2,9 +2,9 @@
 
 
 #include "CTTPractice/Managers/CTTCameraManager.h"
-#include "CTTPractice/CTTCharacterFollowCamera.h"
-#include "CTTPractice/CTTNPCFollowCamera.h"
-#include "CTTPractice/CTTNPCActor.h"
+#include "CTTPractice/Camera/CTTCharacterFollowCamera.h"
+#include "CTTPractice/Camera/CTTNPCFollowCamera.h"
+#include "CTTPractice/Interaction/CTTNPCActor.h"
 #include "CTTPractice/CTTPracticeGameModeBase.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -16,7 +16,7 @@ void UCTTCameraManager::InitializeCameras()
 		return;
 	}
 
-	CharacterFollowCamera = GetWorld()->SpawnActor<ACTTCharacterFollowCamera>(CharacterFollowCameraClass, FVector::ZeroVector, FRotator::ZeroRotator/*, SpawnParams*/);
+	CharacterFollowCamera = GetWorld()->SpawnActor<ACTTCharacterFollowCamera>(CharacterFollowCameraClass, FVector::ZeroVector, FRotator::ZeroRotator);
 	if (!IsValid(CharacterFollowCamera))
 	{
 		UE_LOG(LogTemp, Error, TEXT("Failed to spawn CharacterFollowCamera"));
@@ -30,14 +30,14 @@ void UCTTCameraManager::InitializeCameras()
 		return;
 	}
 
-	PlayerController->SetViewTargetWithBlend(Cast<AActor>(CharacterFollowCamera), 0.f);
+	PlayerController->SetViewTargetWithBlend(CharacterFollowCamera, 0.f);
 
 	SpawnNPCFollowCameras();
 }
 
 void UCTTCameraManager::SwitchToFollowCamera()
 {
-	SetViewTargetToCamera(Cast<AActor>(CharacterFollowCamera));
+	SetViewTargetToCamera(CharacterFollowCamera);
 }
 
 void UCTTCameraManager::SwitchToNPCCameraByName(FName CameraName)
@@ -50,7 +50,7 @@ void UCTTCameraManager::SwitchToNPCCameraByName(FName CameraName)
 		return;
 	}
 
-	SetViewTargetToCamera(Cast<AActor>(NPCCamera.Get()));
+	SetViewTargetToCamera(NPCCamera.Get());
 }
 
 TWeakObjectPtr<ACTTNPCFollowCamera> UCTTCameraManager::FindNPCFollowCameraByName(FName CameraName) const

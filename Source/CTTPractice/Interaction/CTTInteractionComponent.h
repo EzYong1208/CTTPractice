@@ -3,15 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Components/SceneComponent.h"
+#include "Components/ActorComponent.h"
 #include "CTTPractice/CTTStruct.h"
 #include "CTTInteractionComponent.generated.h"
 
-class UCTTInteractableComponent;
 class ACTTInteractableActor;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class CTTPRACTICE_API UCTTInteractionComponent : public USceneComponent
+class CTTPRACTICE_API UCTTInteractionComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
@@ -35,17 +34,13 @@ public:
 	bool GetIsInteracting() const { return bIsInteracting; }
 
 private:
-	UFUNCTION()
-	void OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
-	UFUNCTION()
-	void OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
-
-	void FindClosestInteractable();
+	bool DetectInteractable(FHitResult& OutHitResult);
+	bool FindClosestOverlap(const TArray<FOverlapResult>& OverlapResults, const FVector& Start, FHitResult& OutHitResult);
 	void AdjustCharacterPositionToInteractableActor(ACTTInteractableActor* InteractableActor);
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TEnumAsByte<ECollisionChannel> TraceChannel;
+    TEnumAsByte<ECollisionChannel> TraceChannel;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float CapsuleRadius = 0.f;
@@ -61,11 +56,6 @@ public:
 
 private:
 	bool bIsInteracting = false;
-	TMap<AActor*, float> OverlappingInteractables;
-	
-	UPROPERTY()
-	UCTTInteractableComponent* CurrentInteractable = nullptr;
-
-	UPROPERTY()
-	AActor* PreviousClosestInteractable = nullptr;
+	TMap<TWeakObjectPtr<ACTTInteractableActor>, float> OverlappingInteractables;
+	TWeakObjectPtr<ACTTInteractableActor> PreviousClosestInteractable;
 };

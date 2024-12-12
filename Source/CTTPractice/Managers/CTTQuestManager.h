@@ -24,6 +24,4 @@ public:
 
 private:
 	TMap<FName, FCTTQuestData> ActiveQuests;
-
-	int32 i = 0;
 };

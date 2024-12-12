@@ -1,8 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "CTTNPCActor.h"
-#include "CTTNPCFollowCamera.h"
+#include "CTTPractice/Interaction/CTTNPCActor.h"
+#include "CTTPractice/Camera/CTTNPCFollowCamera.h"
 
 // Sets default values
 ACTTNPCActor::ACTTNPCActor()

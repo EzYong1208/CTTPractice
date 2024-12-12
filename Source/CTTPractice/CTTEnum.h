@@ -50,8 +50,8 @@ UENUM()
 enum class ECTTProjectileState : uint8
 {
     None,
-	FollowingCharacter,
-	IndependentMovement,
+	Attached,
+	Move,
 	Destroy,
 	MAX
 };

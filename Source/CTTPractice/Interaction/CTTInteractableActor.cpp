@@ -1,8 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "CTTInteractableActor.h"
-#include "CTTInteractableComponent.h"
+#include "CTTPractice/Interaction/CTTInteractableActor.h"
 #include "Components/WidgetComponent.h"
 
 // Sets default values
@@ -11,17 +10,12 @@ ACTTInteractableActor::ACTTInteractableActor()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	InteractableComponent = CreateDefaultSubobject<UCTTInteractableComponent>(TEXT("Interactable"));
-
-	InteractableComponent->OnEnterInteractDelegate.AddDynamic(this, &ACTTInteractableActor::OnEnterInteract);
-	InteractableComponent->OnInteractDelegate.AddDynamic(this, &ACTTInteractableActor::OnInteract);
-	InteractableComponent->OnExitInteractDelegate.AddDynamic(this, &ACTTInteractableActor::OnExitInteract);
-
-	InteractionRootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("InteractionRoot"));
-	RootComponent = InteractionRootComponent;
+	OnEnterInteractDelegate.AddDynamic(this, &ACTTInteractableActor::OnEnterInteract);
+	OnInteractDelegate.AddDynamic(this, &ACTTInteractableActor::OnInteract);
+	OnExitInteractDelegate.AddDynamic(this, &ACTTInteractableActor::OnExitInteract);
 
 	InteractionWidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("InteractionWidget"));
-	InteractionWidgetComponent->SetupAttachment(InteractionRootComponent);
+	InteractionWidgetComponent->SetupAttachment(RootComponent);
 }
 
 // Called when the game starts or when spawned

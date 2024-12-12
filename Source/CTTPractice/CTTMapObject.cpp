@@ -26,32 +26,8 @@ void ACTTMapObject::Tick(float DeltaTime)
 
 }
 
+// EzYong TODO : 수정예정
 void ACTTMapObject::HandleCollisionEvent(ECTTCollisionType InCollisionType)
 {
-    switch (InCollisionType)
-    {
-    case ECTTCollisionType::Buff:
-    {
-        if (ECTTCollisionType::Block == CollisionType)
-        {
-            Destroy();
-        }
-        else if (ECTTCollisionType::HardBlock == CollisionType)
-        {
-            Destroy();
-        }
-    }
-        break;
-
-    case ECTTCollisionType::Projectile:
-        if (ECTTCollisionType::Block == CollisionType)
-        {
-            Destroy();
-        }
-        else if (ECTTCollisionType::HardBlock == CollisionType)
-        {
-
-        }
-        break;
-    }
+    
 }

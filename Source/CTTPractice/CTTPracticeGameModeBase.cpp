@@ -29,7 +29,7 @@ void ACTTPracticeGameModeBase::BeginPlay()
 		GameInstance->InitializeCollectItem(CollectItemNumber, CollectItemInitialState);
 	}
 
-	// TODO : 아이템 스폰
+	// EzYong TODO : 아이템 스폰
 	TArray<const FCTTWorldItemSetupData*> ItemRows = GameInstance->GetDatatableManager()->GetWorldItemSetupRows();
 	for (const FCTTWorldItemSetupData* RowData : ItemRows)
 	{

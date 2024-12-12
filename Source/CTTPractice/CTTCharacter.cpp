@@ -6,13 +6,13 @@
 #include "CTTPractice/Managers/CTTCameraManager.h"
 #include "CTTPractice/CTTGameInstance.h"
 #include "Camera/CameraComponent.h"
-#include "CTTCharacterFollowCamera.h"
+#include "CTTPractice/Camera/CTTCharacterFollowCamera.h"
 #include "CTTProjectile.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "CTTPractice/CTTPracticeGameModeBase.h"
 #include "Kismet/GameplayStatics.h"
-#include "CTTInteractionComponent.h"
+#include "CTTPractice/Interaction/CTTInteractionComponent.h"
 
 // Sets default values
 ACTTCharacter::ACTTCharacter()
@@ -47,7 +47,7 @@ void ACTTCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 
 	PlayerInputComponent->BindAction("Attack", IE_Pressed, this, &ACTTCharacter::Attack);
 
-	// TODO : 투사체 함수 수정할 것
+	// EzYong TODO : 투사체 함수 수정할 것
 	PlayerInputComponent->BindAction("Test", IE_Pressed, this, &ACTTCharacter::Test);
 
 	PlayerInputComponent->BindAxis(TEXT("RotateCamera"), this, &ACTTCharacter::RotateCamera);

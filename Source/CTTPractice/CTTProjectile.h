@@ -35,8 +35,8 @@ public:
 	void ChangeState(ECTTProjectileState NewState);
 
 private:
-	void HandleStateFollowingCharacter(float DeltaTime);
-	void HandleStateIndependentMovement(float DeltaTime);
+	void HandleStateAttached(float DeltaTime);
+	void HandleStateMove(float DeltaTime);
 	void HandleStateDestroy(float DeltaTime);
 
 	bool CheckProjectileCollision(const FVector& StartLocation, const FVector& EndLocation);
@@ -72,6 +72,6 @@ private:
 	USphereComponent* CollisionSphereComponent;
 
 	TWeakObjectPtr<ACTTCharacter> AttachedCharacter;
-	ECTTProjectileState CurrentState = ECTTProjectileState::FollowingCharacter;
+	ECTTProjectileState CurrentState = ECTTProjectileState::Attached;
 	ECTTCollisionType CollisionType = ECTTCollisionType::Projectile;
 };

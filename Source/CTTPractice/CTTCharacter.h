@@ -74,7 +74,7 @@ private:
 	float VerticalMovementInput = 0.f;
 	float HorizontalMovementInput = 0.f;
 
-	// TODO : 테스트용, 수정 필요
+	// EzYong TODO : 테스트용, 수정 필요
 	bool bIsHolding = false;
 	bool bCanMove = true;
 	bool bCanControlCamera = true;

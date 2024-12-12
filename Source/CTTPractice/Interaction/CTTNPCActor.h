@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "CTTInteractableActor.h"
+#include "CTTPractice/Interaction/CTTInteractableActor.h"
 #include "CTTNPCActor.generated.h"
 
 class ACTTNPCFollowCamera;

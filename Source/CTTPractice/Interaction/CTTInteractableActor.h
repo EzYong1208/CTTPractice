@@ -4,14 +4,17 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "CTTInteractableInterface.h"
+#include "CTTPractice/CTTStruct.h"
 #include "CTTInteractableActor.generated.h"
 
-class UCTTInteractableComponent;
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCTTOnEnterInteract, const FCTTInteractionInfo&, InteractionInfo);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FCTTOnInteract);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FCTTOnExitInteract);
+
 class UWidgetComponent;
 
 UCLASS()
-class CTTPRACTICE_API ACTTInteractableActor : public AActor, public ICTTInteractableInterface
+class CTTPRACTICE_API ACTTInteractableActor : public AActor
 {
 	GENERATED_BODY()
 	
@@ -29,16 +32,21 @@ public:
 
 public:
 	UFUNCTION(BlueprintCallable)
-	virtual void OnEnterInteract(const FCTTInteractionInfo& InteractionInfo) override;
+	virtual void OnEnterInteract(const FCTTInteractionInfo& InteractionInfo);
 
 	UFUNCTION(BlueprintCallable)
-	virtual void OnInteract() override;
+	virtual void OnInteract();
 
 	UFUNCTION(BlueprintCallable)
-	virtual void OnExitInteract() override;
+	virtual void OnExitInteract();
 
 	float GetMinInteractionDistance() const { return MinInteractionDistance; }
 	void SetInteractionWidgetComponentVisibility(bool bNewVisibility);
+
+public:
+	FCTTOnEnterInteract OnEnterInteractDelegate;
+	FCTTOnInteract OnInteractDelegate;
+	FCTTOnExitInteract OnExitInteractDelegate;
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -46,11 +54,4 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
     UWidgetComponent* InteractionWidgetComponent;
-
-private:
-	UPROPERTY()
-	UCTTInteractableComponent* InteractableComponent = nullptr;
-
-	UPROPERTY()
-    USceneComponent* InteractionRootComponent;
 };
