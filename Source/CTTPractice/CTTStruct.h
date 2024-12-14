@@ -193,3 +193,15 @@ struct CTTPRACTICE_API FCTTQuestData : public FTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 CurrentProgress = 0;
 };
+
+USTRUCT(BlueprintType)
+struct CTTPRACTICE_API FCTTSpringArmData : public FTableRowBase
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float SpringArmLength = 0.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FRotator SpringArmRotation;
+};

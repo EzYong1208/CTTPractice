@@ -47,7 +47,7 @@ void ACTTFollowCamera::UpdateCameraLocation(float DeltaTime)
 {
 	if (nullptr == TargetActor)
 	{
-		UE_LOG(LogTemp, Error, TEXT("TargetActor is nullptr"));
+		//UE_LOG(LogTemp, Error, TEXT("TargetActor is nullptr"));
 		return;
 	}
 
@@ -56,6 +56,12 @@ void ACTTFollowCamera::UpdateCameraLocation(float DeltaTime)
 	FVector CameraLocation = TargetLocation - SpringArmRotation.Vector() * SpringArmComponent->TargetArmLength;
 
 	SpringArmComponent->SetWorldLocation(CameraLocation);
+}
+
+void ACTTFollowCamera::UpdateSpringArmData(const FCTTSpringArmData& SpringArmData)
+{
+	SpringArmComponent->TargetArmLength = SpringArmData.SpringArmLength;
+	SpringArmComponent->SetWorldRotation(SpringArmData.SpringArmRotation);
 }
 
 void ACTTFollowCamera::SetTarget(AActor* NewTarget)

@@ -3,6 +3,7 @@
 
 #include "CTTPractice/Interaction/CTTInteractableActor.h"
 #include "Components/WidgetComponent.h"
+#include "Components/CapsuleComponent.h"
 
 // Sets default values
 ACTTInteractableActor::ACTTInteractableActor()
@@ -13,6 +14,9 @@ ACTTInteractableActor::ACTTInteractableActor()
 	OnEnterInteractDelegate.AddDynamic(this, &ACTTInteractableActor::OnEnterInteract);
 	OnInteractDelegate.AddDynamic(this, &ACTTInteractableActor::OnInteract);
 	OnExitInteractDelegate.AddDynamic(this, &ACTTInteractableActor::OnExitInteract);
+
+	CapsuleComponent = CreateDefaultSubobject<UCapsuleComponent>(TEXT("CapsuleComponent"));
+	RootComponent = CapsuleComponent;
 
 	InteractionWidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("InteractionWidget"));
 	InteractionWidgetComponent->SetupAttachment(RootComponent);

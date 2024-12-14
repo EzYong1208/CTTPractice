@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
+#include "CTTPractice/CTTStruct.h"
 #include "CTTCameraManager.generated.h"
 
 /**
@@ -23,18 +24,21 @@ public:
 	void InitializeCameras();
 
 	void SwitchToFollowCamera();
-	void SwitchToNPCCameraByName(FName CameraName);
+	void SwitchToNPCCameraByName(FName NPCName);
 	
 	ACTTCharacterFollowCamera* GetFollowCamera() const { return CharacterFollowCamera; }
 
 private:
-	TWeakObjectPtr<ACTTNPCFollowCamera> FindNPCFollowCameraByName(FName CameraName) const;
+	void LoadNPCActorData();
+	const FCTTSpringArmData* GetNPCActorData(const FName& RowName) const;
 	void SetViewTargetToCamera(AActor* CameraActor);
-	void SpawnNPCFollowCameras();
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<ACTTCharacterFollowCamera> CharacterFollowCameraClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<ACTTNPCFollowCamera> NPCFollowCameraClass;
 
 protected:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
@@ -47,7 +51,11 @@ private:
 	UPROPERTY()
 	ACTTCharacterFollowCamera* CharacterFollowCamera = nullptr;
 
-	// EzYong TODO : npc카메라 1개만
-	TMap<FName, TWeakObjectPtr<ACTTNPCFollowCamera>> NPCFollowCameraMap;
+	UPROPERTY()
+	ACTTNPCFollowCamera* NPCFollowCamera = nullptr;
+
+	// EzYong TODO : NPCActor뿐만 아니라 다른 액터들도 이런 맵이 필요할거 같은데 다른 클래스에서 이걸 총괄해야할 것 같음.
+	TMap<FName, TWeakObjectPtr<AActor>> NPCActorMap;
+	TMap<FName, FCTTSpringArmData> NPCActorDataMap;
 	static constexpr float CAMERA_BLEND_TIME = 1.f;
 };

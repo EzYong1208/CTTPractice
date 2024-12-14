@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "CTTPractice/CTTStruct.h"
 #include "CTTFollowCamera.generated.h"
 
 class USpringArmComponent;
@@ -30,6 +31,7 @@ public:
 public:
 	void InitializeCameraComponents();
 	void UpdateCameraLocation(float DeltaTime);
+	void UpdateSpringArmData(const FCTTSpringArmData& SpringArmData);
 	void SetTarget(AActor* NewTarget);
 
 public:
@@ -62,11 +64,11 @@ protected:
 	float TargetArmLength = 0.f;
 
 	UPROPERTY()
-	USpringArmComponent* SpringArmComponent;
+	USpringArmComponent* SpringArmComponent = nullptr;
 
 	UPROPERTY()
-	UCameraComponent* CameraComponent;
+	UCameraComponent* CameraComponent = nullptr;
 
 	UPROPERTY()
-    AActor* TargetActor = nullptr;
+	AActor* TargetActor = nullptr;
 };

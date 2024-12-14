@@ -24,7 +24,8 @@ public:
 	UDataTable* GetItemDataTable() const {return ItemDataTable;}		// EzYong TODO : 수정필요(weakptr 던지기,const 붙이기)
 	FCTTItemSpawnOffsetData* GetItemSpawnOffsetData(const FName& ItemName) const;
 #pragma endregion
-	void GetSocketMeshData(TMap<FName, TMap<FName, UStaticMesh*>>& OutSocketMeshMap) const;
+	const void GetSocketMeshData(TMap<FName, TMap<FName, UStaticMesh*>>& OutSocketMeshMap) const;
+	const void GetNPCSpringArmDataMap(TMap<FName, FCTTSpringArmData>& OutNPCSpringArmDataMap) const;
 
 protected:
 	// EzYong TODO : 아이템 데이터테이블들은 개편필요(아이템 클래스를 수정할 예정)
@@ -44,4 +45,7 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SocketMesh")
     UDataTable* SocketMeshDataTable;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "NPCCameraSpringArm")
+    UDataTable* NPCCameraSpringArmDataTable;
 };

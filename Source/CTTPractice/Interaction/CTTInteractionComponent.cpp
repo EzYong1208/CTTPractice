@@ -23,6 +23,13 @@ void UCTTInteractionComponent::BeginPlay()
 	Super::BeginPlay();
 
 	// ...
+	GetWorld()->GetTimerManager().SetTimer(
+		DetectInteractableTimerHandle,
+		this,
+		&UCTTInteractionComponent::PeriodicDetectInteractable,
+		InteractionCooldownTime,
+		true
+	);
 }
 
 
@@ -33,10 +40,16 @@ void UCTTInteractionComponent::TickComponent(float DeltaTime, ELevelTick TickTyp
 
 	// ...
 	// 상호작용 중이라면 Delegate 호출
-	if (bIsInteracting/* && CurrentInteractable*/)
+	if (bIsInteracting && ClosestInteractable.IsValid())
 	{
-		PreviousClosestInteractable->OnInteractDelegate.Broadcast();
+		ClosestInteractable->OnInteractDelegate.Broadcast();
 	}
+}
+
+void UCTTInteractionComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	GetWorld()->GetTimerManager().ClearTimer(DetectInteractableTimerHandle);
+	Super::EndPlay(EndPlayReason);
 }
 
 void UCTTInteractionComponent::ToggleInteraction()
@@ -55,43 +68,25 @@ void UCTTInteractionComponent::BeginInteraction()
 {
 	UE_LOG(LogTemp, Warning, TEXT("BeginInteraction"));
 
-	//ACTTInteractableActor* CurrentInteractableActor = Cast<ACTTInteractableActor>(PreviousClosestInteractable);
-	//if (nullptr == CurrentInteractableActor)
-	//{
-	//	UE_LOG(LogTemp, Error, TEXT("CurrentInteractableActor is nullptr"));
-	//	return;
-	//}
-
-	////UCTTInteractableComponent* Interactable = CurrentInteractableActor->FindComponentByClass<UCTTInteractableComponent>();
-	////if (!Interactable)
-	////{
-	////	return;
-	////}
-
-	////CurrentInteractable = Interactable;
-	//PreviousClosestInteractable->OnEnterInteractDelegate.Broadcast(FCTTInteractionInfo(this));
-	//UE_LOG(LogTemp, Warning, TEXT("OnEnterInteractDelegate Broadcast"));
-	//bIsInteracting = true;
-	////AdjustCharacterPositionToInteractableActor(CurrentInteractableActor);
-
-	FHitResult HitResult;
-	bool bHit = DetectInteractable(HitResult);
-	//if (bHit)
-	//{
-	//	PreviousClosestInteractable->OnEnterInteractDelegate.Broadcast(FCTTInteractionInfo(this));
-	//	UE_LOG(LogTemp, Warning, TEXT("OnEnterInteractDelegate Broadcast"));
-	//	bIsInteracting = true;
-	//}
+	if (ClosestInteractable.IsValid())
+	{
+		ClosestInteractable->OnEnterInteractDelegate.Broadcast(FCTTInteractionInfo(this));
+		UE_LOG(LogTemp, Warning, TEXT("OnEnterInteractDelegate Broadcast"));
+		bIsInteracting = true;
+		AdjustCharacterPositionToInteractableActor(ClosestInteractable);
+		GetWorld()->GetTimerManager().PauseTimer(DetectInteractableTimerHandle);
+	}
 }
 
 void UCTTInteractionComponent::EndInteraction()
 {
-	if (PreviousClosestInteractable.IsValid())
+	if (ClosestInteractable.IsValid())
 	{
-		PreviousClosestInteractable->OnExitInteractDelegate.Broadcast();
+		ClosestInteractable->OnExitInteractDelegate.Broadcast();
 	}
 
 	bIsInteracting = false;
+	GetWorld()->GetTimerManager().UnPauseTimer(DetectInteractableTimerHandle);
 
 	UE_LOG(LogTemp, Warning, TEXT("EndInteraction"));
 }
@@ -188,7 +183,7 @@ bool UCTTInteractionComponent::FindClosestOverlap(const TArray<FOverlapResult>& 
 	return false;
 }
 
-void UCTTInteractionComponent::AdjustCharacterPositionToInteractableActor(ACTTInteractableActor* InteractableActor)
+void UCTTInteractionComponent::AdjustCharacterPositionToInteractableActor(TWeakObjectPtr<ACTTInteractableActor> InteractableActor)
 {
 	if (nullptr == InteractableActor)
 	{
@@ -210,4 +205,33 @@ void UCTTInteractionComponent::AdjustCharacterPositionToInteractableActor(ACTTIn
 	GetOwner()->SetActorLocation(NewPosition);
 
 	UE_LOG(LogTemp, Warning, TEXT("Character moved to NPC at adjusted distance: %f"), MinInteractionDistance);
+}
+
+void UCTTInteractionComponent::PeriodicDetectInteractable()
+{
+	if (bIsInteracting)
+	{
+		return;
+	}
+
+	FHitResult HitResult;
+	bool bHit = DetectInteractable(HitResult);
+
+	TWeakObjectPtr<ACTTInteractableActor> CurrentClosestInteractable = Cast<ACTTInteractableActor>(HitResult.Actor);
+
+	if (ClosestInteractable != CurrentClosestInteractable)
+	{
+		if (ClosestInteractable.IsValid())
+		{
+			ClosestInteractable->SetInteractionWidgetComponentVisibility(false);
+		}
+
+		if (CurrentClosestInteractable.IsValid())
+		{
+			CurrentClosestInteractable->SetInteractionWidgetComponentVisibility(true);
+		}
+
+		PreviousClosestInteractable = ClosestInteractable;
+		ClosestInteractable = CurrentClosestInteractable;
+	}
 }

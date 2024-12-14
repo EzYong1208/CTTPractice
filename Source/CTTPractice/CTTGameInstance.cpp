@@ -47,15 +47,15 @@ void UCTTGameInstance::SetCollectItemStatus(int32 InIndex, bool bInEnable)
 
 void UCTTGameInstance::InitializeManagers()
 {
+	if (IsValid(DatatableManagerClass))
+	{
+		DatatableManagerInstance = NewObject<UCTTDatatableManager>(this, DatatableManagerClass);
+	}
+
 	if (IsValid(CameraManagerClass))
 	{
 		CameraManagerInstance = NewObject<UCTTCameraManager>(this, CameraManagerClass);
 		CameraManagerInstance->InitializeCameras();
-	}
-
-	if (IsValid(DatatableManagerClass))
-	{
-		DatatableManagerInstance = NewObject<UCTTDatatableManager>(this, DatatableManagerClass);
 	}
 
 	if (IsValid(UIManagerClass))

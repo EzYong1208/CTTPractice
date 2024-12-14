@@ -7,6 +7,8 @@
 #include "CTTPractice/Interaction/CTTNPCActor.h"
 #include "CTTPractice/CTTPracticeGameModeBase.h"
 #include "Kismet/GameplayStatics.h"
+#include "CTTPractice/CTTGameInstance.h"
+#include "CTTPractice/Managers/CTTDatatableManager.h"
 
 void UCTTCameraManager::InitializeCameras()
 {
@@ -23,6 +25,19 @@ void UCTTCameraManager::InitializeCameras()
 		return;
 	}
 
+	if (false == IsValid(NPCFollowCameraClass))
+	{
+		UE_LOG(LogTemp, Error, TEXT("NPCFollowCameraClass is invalid"));
+		return;
+	}
+
+	NPCFollowCamera = GetWorld()->SpawnActor<ACTTNPCFollowCamera>(NPCFollowCameraClass, FVector::ZeroVector, FRotator::ZeroRotator);
+	if (!IsValid(NPCFollowCamera))
+	{
+		UE_LOG(LogTemp, Error, TEXT("Failed to spawn NPCFollowCamera"));
+		return;
+	}
+
 	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
 	if (nullptr == PlayerController)
 	{
@@ -32,7 +47,7 @@ void UCTTCameraManager::InitializeCameras()
 
 	PlayerController->SetViewTargetWithBlend(CharacterFollowCamera, 0.f);
 
-	SpawnNPCFollowCameras();
+	LoadNPCActorData();
 }
 
 void UCTTCameraManager::SwitchToFollowCamera()
@@ -40,36 +55,72 @@ void UCTTCameraManager::SwitchToFollowCamera()
 	SetViewTargetToCamera(CharacterFollowCamera);
 }
 
-void UCTTCameraManager::SwitchToNPCCameraByName(FName CameraName)
+void UCTTCameraManager::SwitchToNPCCameraByName(FName NPCName)
 {
-	TWeakObjectPtr<ACTTNPCFollowCamera> NPCCamera = FindNPCFollowCameraByName(CameraName);
-
-	if (false == NPCCamera.IsValid())
+	const FCTTSpringArmData* SpringArmData = GetNPCActorData(NPCName);
+	if (nullptr == SpringArmData)
 	{
-		UE_LOG(LogTemp, Error, TEXT("NPCCamera is invalid"));
+		UE_LOG(LogTemp, Error, TEXT("SpringArmData is nullptr"));
 		return;
 	}
 
-	SetViewTargetToCamera(NPCCamera.Get());
+	TWeakObjectPtr<AActor>* NPCActor = NPCActorMap.Find(NPCName);
+	if (nullptr == NPCActor)
+	{
+		UE_LOG(LogTemp, Error, TEXT("NPCActor is nullptr"));
+		return;
+	}
+
+	NPCFollowCamera->SetTarget(NPCActor->Get());
+	NPCFollowCamera->UpdateSpringArmData(*SpringArmData);
+	SetViewTargetToCamera(NPCFollowCamera);
 }
 
-TWeakObjectPtr<ACTTNPCFollowCamera> UCTTCameraManager::FindNPCFollowCameraByName(FName CameraName) const
+void UCTTCameraManager::LoadNPCActorData()
 {
-	const TWeakObjectPtr<ACTTNPCFollowCamera>* CameraPtr = NPCFollowCameraMap.Find(CameraName);
-
-	if (nullptr == CameraPtr)
+	UCTTGameInstance* GameInstance = Cast<UCTTGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+	if (!GameInstance)
 	{
-		UE_LOG(LogTemp, Error, TEXT("NPCCamera Name: %s is nullptr"), *CameraName.ToString());
-		return nullptr;
+		UE_LOG(LogTemp, Error, TEXT("GameInstance is nullptr"));
+		return;
 	}
 
-	if (false == CameraPtr->IsValid())
+	UCTTDatatableManager* DatatableManager = GameInstance->GetDatatableManager();
+	if (!DatatableManager)
 	{
-		UE_LOG(LogTemp, Error, TEXT("NPCCamera Name: %s not found"), *CameraName.ToString());
-		return nullptr;
+		UE_LOG(LogTemp, Error, TEXT("DatatableManager is nullptr"));
+		return;
 	}
 
-	return CameraPtr->Get();
+	DatatableManager->GetNPCSpringArmDataMap(NPCActorDataMap);
+
+	TArray<AActor*> FoundActors;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACTTNPCActor::StaticClass(), FoundActors);
+
+	for (AActor* Actor : FoundActors)
+	{
+		ACTTNPCActor* NPCActor = Cast<ACTTNPCActor>(Actor);
+		if (nullptr == NPCActor)
+		{
+			UE_LOG(LogTemp, Error, TEXT("NPCActor is nullptr"));
+			continue;
+		}
+
+		NPCActorMap.Add(NPCActor->GetNPCName(), NPCActor);
+	}
+}
+
+const FCTTSpringArmData* UCTTCameraManager::GetNPCActorData(const FName& RowName) const
+{
+	const FCTTSpringArmData* SpringArmData = NPCActorDataMap.Find(RowName);
+
+	if (SpringArmData)
+	{
+		return SpringArmData;
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("No SpringArmData found for RowName: %s"), *RowName.ToString());
+	return nullptr;
 }
 
 void UCTTCameraManager::SetViewTargetToCamera(AActor* CameraActor)
@@ -104,38 +155,4 @@ void UCTTCameraManager::SetViewTargetToCamera(AActor* CameraActor)
 			CameraManager->StartCameraFade(1.f, 0.f, FadeInTime, FLinearColor::Black, false, true);
 
 		}, FadeOutTime, false);
-}
-
-void UCTTCameraManager::SpawnNPCFollowCameras()
-{
-	TArray<AActor*> FoundActors;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACTTNPCActor::StaticClass(), FoundActors);
-
-	for (AActor* Actor : FoundActors)
-	{
-		ACTTNPCActor* NPCActor = Cast<ACTTNPCActor>(Actor);
-		if (nullptr == NPCActor)
-		{
-			UE_LOG(LogTemp, Error, TEXT("NPCActor is nullptr"));
-			return;
-		}
-
-		TSubclassOf<ACTTNPCFollowCamera> NPCFollowCameraClass = NPCActor->NPCFollowCameraClass;
-		if (nullptr == NPCFollowCameraClass)
-		{
-			UE_LOG(LogTemp, Error, TEXT("NPCFollowCameraClass is nullptr"));
-			return;
-		}
-
-		FActorSpawnParameters SpawnParams;
-		ACTTNPCFollowCamera* SpawnedCamera = GetWorld()->SpawnActor<ACTTNPCFollowCamera>(NPCFollowCameraClass, NPCActor->GetActorLocation(), NPCActor->GetActorRotation(), SpawnParams);
-		if (nullptr == SpawnedCamera)
-		{
-			UE_LOG(LogTemp, Error, TEXT("SpawnedCamera is nullptr"));
-			return;
-		}
-
-		SpawnedCamera->SetTarget(NPCActor);
-		NPCFollowCameraMap.Add(NPCActor->GetNPCName(), SpawnedCamera);
-	}
 }

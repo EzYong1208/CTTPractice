@@ -61,7 +61,7 @@ FCTTItemSpawnOffsetData* UCTTDatatableManager::GetItemSpawnOffsetData(const FNam
 	return nullptr;
 }
 
-void UCTTDatatableManager::GetSocketMeshData(TMap<FName, TMap<FName, UStaticMesh*>>& OutSocketMeshMap) const
+const void UCTTDatatableManager::GetSocketMeshData(TMap<FName, TMap<FName, UStaticMesh*>>& OutSocketMeshMap) const
 {
 	if (false == IsValid(SocketMeshDataTable))
 	{
@@ -76,6 +76,26 @@ void UCTTDatatableManager::GetSocketMeshData(TMap<FName, TMap<FName, UStaticMesh
 		if (MeshData)
 		{
 			OutSocketMeshMap.FindOrAdd(MeshData->AnimationName).Add(MeshData->SocketName, MeshData->Mesh);
+		}
+	}
+}
+
+const void UCTTDatatableManager::GetNPCSpringArmDataMap(TMap<FName, FCTTSpringArmData>& OutNPCSpringArmDataMap) const
+{
+	if (!NPCCameraSpringArmDataTable)
+	{
+		UE_LOG(LogTemp, Error, TEXT("NPCCameraSpringArmDataTable is not assigned!"));
+		return;
+	}
+
+	TArray<FName> RowNames = NPCCameraSpringArmDataTable->GetRowNames();
+	for (const FName& RowName : RowNames)
+	{
+		const FCTTSpringArmData* SpringArmData = NPCCameraSpringArmDataTable->FindRow<FCTTSpringArmData>(RowName, TEXT(""));
+
+		if (SpringArmData)
+		{
+			OutNPCSpringArmDataMap.Add(RowName, *SpringArmData);
 		}
 	}
 }

@@ -12,6 +12,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FCTTOnInteract);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FCTTOnExitInteract);
 
 class UWidgetComponent;
+class UCapsuleComponent;
 
 UCLASS()
 class CTTPRACTICE_API ACTTInteractableActor : public AActor
@@ -53,5 +54,8 @@ protected:
 	float MinInteractionDistance = 0.f;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-    UWidgetComponent* InteractionWidgetComponent;
+    UWidgetComponent* InteractionWidgetComponent = nullptr;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	UCapsuleComponent* CapsuleComponent = nullptr;
 };

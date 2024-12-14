@@ -25,6 +25,7 @@ protected:
 public:	
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 public:
 	void ToggleInteraction();
@@ -36,12 +37,10 @@ public:
 private:
 	bool DetectInteractable(FHitResult& OutHitResult);
 	bool FindClosestOverlap(const TArray<FOverlapResult>& OverlapResults, const FVector& Start, FHitResult& OutHitResult);
-	void AdjustCharacterPositionToInteractableActor(ACTTInteractableActor* InteractableActor);
+	void AdjustCharacterPositionToInteractableActor(TWeakObjectPtr<ACTTInteractableActor> InteractableActor);
+	void PeriodicDetectInteractable();
 
 public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    TEnumAsByte<ECollisionChannel> TraceChannel;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float CapsuleRadius = 0.f;
 
@@ -54,8 +53,13 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float DetectDistance = 0.f;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float InteractionCooldownTime = 0.f;
+
 private:
 	bool bIsInteracting = false;
 	TMap<TWeakObjectPtr<ACTTInteractableActor>, float> OverlappingInteractables;
+	TWeakObjectPtr<ACTTInteractableActor> ClosestInteractable;
 	TWeakObjectPtr<ACTTInteractableActor> PreviousClosestInteractable;
+	FTimerHandle DetectInteractableTimerHandle;
 };
