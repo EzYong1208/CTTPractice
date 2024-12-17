@@ -129,7 +129,7 @@ void ACTTItem::HandleDeath()
 		return;
 	}
 
-	FCTTItemSpawnOffsetData* SpawnOffsetData = GameInstance->GetDatatableManager()->GetItemSpawnOffsetData(ItemName);
+	const FCTTItemSpawnOffsetData* SpawnOffsetData = GameInstance->GetDatatableManager()->GetItemSpawnOffsetData(ItemName);
 	if (nullptr != SpawnOffsetData)
 	{
 		FCTTWorldItemSetupData SpawnData;

@@ -26,7 +26,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 public:
-	FName GetNPCName() const { return NPCName; }
+	const FName GetNPCName() const { return NPCName; }
 
 	void OnEnterInteract(const FCTTInteractionInfo& InteractionInfo) override;
 	void OnInteract() override;

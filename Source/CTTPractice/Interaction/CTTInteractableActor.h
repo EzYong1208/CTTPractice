@@ -41,7 +41,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	virtual void OnExitInteract();
 
-	float GetMinInteractionDistance() const { return MinInteractionDistance; }
+	const float GetMinInteractionDistance() const { return MinInteractionDistance; }
 	void SetInteractionWidgetComponentVisibility(bool bNewVisibility);
 
 public:

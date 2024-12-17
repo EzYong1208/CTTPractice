@@ -41,29 +41,47 @@ void UCTTSocketAttachmentComponent::SetMeshByName(FName RowName)
 		return;
 	}
 
-	TMap<FName, UStaticMesh*> SocketMap = *SocketMeshMap.Find(RowName);
+	TMap<FName, TWeakObjectPtr<UStaticMesh>>* SocketMapPtr = SocketMeshMap.Find(RowName);
+	if (SocketMapPtr == nullptr)
+	{
+		UE_LOG(LogTemp, Error, TEXT("RowName %s not found in SocketMeshMap"), *RowName.ToString());
+		return;
+	}
 
+	TMap<FName, TWeakObjectPtr<UStaticMesh>>& SocketMap = *SocketMapPtr;
 	TArray<UStaticMeshComponent*> StaticMeshComponents;
 	Owner->GetComponents<UStaticMeshComponent>(StaticMeshComponents);
 
-	for (int32 i = 0; i < StaticMeshComponents.Num(); ++i)
+	for (UStaticMeshComponent* StaticMeshComponent : StaticMeshComponents)
 	{
-		UStaticMeshComponent* StaticMesh = StaticMeshComponents[i];
-		if (nullptr == StaticMesh)
+		if (StaticMeshComponent == nullptr)
 		{
-			UE_LOG(LogTemp, Error, TEXT("OwnerStaticMesh is nullptr"));
-			return;
+			UE_LOG(LogTemp, Error, TEXT("StaticMeshComponent is nullptr"));
+			continue;
 		}
 
-		auto MeshToAttach = SocketMap.Find(StaticMesh->GetFName());
-		if (nullptr == MeshToAttach)
+		auto MeshToAttachPtr = SocketMap.Find(StaticMeshComponent->GetFName());
+		if (false == MeshToAttachPtr->IsValid())
 		{
-			UE_LOG(LogTemp, Error, TEXT("MeshToAttach is nullptr"));
-			return;
+			UE_LOG(LogTemp, Warning, TEXT("MeshToAttach for Socket %s is invalid"), *StaticMeshComponent->GetFName().ToString());
+			continue;
 		}
 
-		StaticMesh->SetStaticMesh(*MeshToAttach);
-		StaticMesh->AttachToComponent(SkeletalMeshComponent, FAttachmentTransformRules::SnapToTargetIncludingScale, StaticMesh->GetFName());
+		UStaticMesh* MeshToAttach = MeshToAttachPtr->Get();
+		if (MeshToAttach == nullptr)
+		{
+			UE_LOG(LogTemp, Error, TEXT("MeshToAttach is nullptr for Socket %s"), *StaticMeshComponent->GetFName().ToString());
+			continue;
+		}
+
+		StaticMeshComponent->SetStaticMesh(MeshToAttach);
+		StaticMeshComponent->AttachToComponent(
+			SkeletalMeshComponent,
+			FAttachmentTransformRules::SnapToTargetIncludingScale,
+			StaticMeshComponent->GetFName()
+		);
+
+		UE_LOG(LogTemp, Log, TEXT("Attached %s to socket %s"), *MeshToAttach->GetName(), *StaticMeshComponent->GetFName().ToString());
 	}
 }
 
@@ -76,7 +94,7 @@ void UCTTSocketAttachmentComponent::LoadSocketMeshData()
 		return;
 	}
 
-	UCTTDatatableManager* DatatableManager = GameInstance->GetDatatableManager();
+	const UCTTDatatableManager* DatatableManager = GameInstance->GetDatatableManager();
 	if (nullptr == DatatableManager)
 	{
 		UE_LOG(LogTemp, Error, TEXT("DatatableManager is nullptr"));

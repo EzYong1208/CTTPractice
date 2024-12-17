@@ -30,9 +30,9 @@ public:
 public:
 	void InitializeCollectItem(int32 CollectItemNumber, bool CollectItemInitialState);
 
-	int32 GetPlayerLifeCount() const { return PlayerLifeCount; }
-	int32 GetCoinCount() const { return CoinCount; }
-	int32 GetNextCollectItemStatusIndex() { return CurrentCollectItemStatusIndex++; };
+	const int32 GetPlayerLifeCount() const { return PlayerLifeCount; }
+	const int32 GetCoinCount() const { return CoinCount; }
+	const int32 GetNextCollectItemStatusIndex() { return CurrentCollectItemStatusIndex++; };
 
 	void SetPlayerLifeCount(int32 InPlayerLifeCount);
 	void SetCoinCount(int32 InCoinCount);
@@ -45,10 +45,10 @@ public:
 public:
 	void InitializeManagers();
 
-	UCTTCameraManager* GetCameraManager() const { return CameraManagerInstance; }
-	UCTTDatatableManager* GetDatatableManager() const { return DatatableManagerInstance; }
-	UCTTUIManager* GetUIManager() const { return UIManagerInstance; }
-	UCTTQuestManager* GetQuestManager() const { return QuestManagerInstance; }
+	UCTTCameraManager* GetCameraManager() const;
+	UCTTDatatableManager* GetDatatableManager() const;
+	UCTTUIManager* GetUIManager() const;
+	UCTTQuestManager* GetQuestManager() const;
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)

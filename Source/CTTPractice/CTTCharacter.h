@@ -35,9 +35,9 @@ public:
 
 
 public:
-	float GetCharacterSpeed() const { return Speed; }
-	bool CheckCharacterAttack() const { return bCanAttack; }
-	bool CheckCharacterInLadder() const { return bIsInLadder; }
+	const float GetCharacterSpeed() const { return Speed; }
+	const bool CheckCharacterAttack() const { return bCanAttack; }
+	const bool CheckCharacterInLadder() const { return bIsInLadder; }
 
 	void SetCharacterAttack(bool bInCanAttack);
 	void ToggleInteraction();
@@ -80,7 +80,7 @@ private:
 	bool bCanControlCamera = true;
 
 	UPROPERTY()
-	ACTTProjectile* SpawnedProjectile = nullptr;
+	TWeakObjectPtr<ACTTProjectile> SpawnedProjectile = nullptr;
 
 	UPROPERTY()
 	ACTTItem* OverlappingItem = nullptr;

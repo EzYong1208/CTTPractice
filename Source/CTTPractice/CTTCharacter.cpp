@@ -149,21 +149,21 @@ void ACTTCharacter::UpdateMoveVector(float DeltaTime)
 		return;
 	}
 
-	UCTTCameraManager* CameraManager = GameInstance->GetCameraManager();
+	const UCTTCameraManager* CameraManager = GameInstance->GetCameraManager();
 	if (nullptr == CameraManager)
 	{
 		UE_LOG(LogTemp, Error, TEXT("CameraManager is nullptr"));
 		return;
 	}
 
-	ACTTCharacterFollowCamera* FollowCamera = CameraManager->GetFollowCamera();
+	const ACTTCharacterFollowCamera* FollowCamera = CameraManager->GetCharacterFollowCamera();
 	if (nullptr == FollowCamera)
 	{
 		UE_LOG(LogTemp, Error, TEXT("FollowCamera is nullptr"));
 		return;
 	}
 
-	UCameraComponent* CameraComponent = FollowCamera->GetCameraComponent();
+	const UCameraComponent* CameraComponent = FollowCamera->GetCameraComponent();
 	if (nullptr == CameraComponent)
 	{
 		UE_LOG(LogTemp, Error, TEXT("CameraComponent is nullptr"));
@@ -208,14 +208,14 @@ void ACTTCharacter::RotateCamera(float InputValue)
 		return;
 	}
 
-	UCTTCameraManager* CameraManager = GameInstance->GetCameraManager();
+	const UCTTCameraManager* CameraManager = GameInstance->GetCameraManager();
 	if (nullptr == CameraManager)
 	{
 		UE_LOG(LogTemp, Error, TEXT("CameraManager is nullptr"));
 		return;
 	}
 
-	ACTTCharacterFollowCamera* FollowCamera = CameraManager->GetFollowCamera();
+	ACTTCharacterFollowCamera* FollowCamera = CameraManager->GetCharacterFollowCamera();
 	if (nullptr == FollowCamera)
 	{
 		UE_LOG(LogTemp, Error, TEXT("FollowCamera is nullptr"));
@@ -239,14 +239,14 @@ void ACTTCharacter::MoveCameraCloser()
 		return;
 	}
 
-	UCTTCameraManager* CameraManager = GameInstance->GetCameraManager();
+	const UCTTCameraManager* CameraManager = GameInstance->GetCameraManager();
 	if (nullptr == CameraManager)
 	{
 		UE_LOG(LogTemp, Error, TEXT("CameraManager is nullptr"));
 		return;
 	}
 
-	ACTTCharacterFollowCamera* FollowCamera = CameraManager->GetFollowCamera();
+	ACTTCharacterFollowCamera* FollowCamera = CameraManager->GetCharacterFollowCamera();
 	if (nullptr == FollowCamera)
 	{
 		UE_LOG(LogTemp, Error, TEXT("FollowCamera is nullptr"));
@@ -270,14 +270,14 @@ void ACTTCharacter::MoveCameraAway()
 		return;
 	}
 
-	UCTTCameraManager* CameraManager = GameInstance->GetCameraManager();
+	const UCTTCameraManager* CameraManager = GameInstance->GetCameraManager();
 	if (nullptr == CameraManager)
 	{
 		UE_LOG(LogTemp, Error, TEXT("CameraManager is nullptr"));
 		return;
 	}
 
-	ACTTCharacterFollowCamera* FollowCamera = CameraManager->GetFollowCamera();
+	ACTTCharacterFollowCamera* FollowCamera = CameraManager->GetCharacterFollowCamera();
 	if (nullptr == FollowCamera)
 	{
 		UE_LOG(LogTemp, Error, TEXT("FollowCamera is nullptr"));

@@ -49,6 +49,17 @@ void ACTTPracticeGameModeBase::BeginPlay()
 	}
 }
 
+const UCTTUICommonResource* ACTTPracticeGameModeBase::GetUICommonResource() const
+{
+	if (nullptr == UICommonResource)
+	{
+		UE_LOG(LogTemp, Error, TEXT("UICommonResource is nullptr"));
+		return nullptr;
+	}
+
+	return UICommonResource;
+}
+
 void ACTTPracticeGameModeBase::SpawnItem(const FCTTWorldItemSetupData& SpawnData)
 {
 	UCTTGameInstance* GameInstance = Cast<UCTTGameInstance>(UGameplayStatics::GetGameInstance(this));

@@ -35,8 +35,8 @@ public:
 	void SetTarget(AActor* NewTarget);
 
 public:
-	USpringArmComponent* GetSpringArmComponent() const { return SpringArmComponent; }
-	UCameraComponent* GetCameraComponent() const { return CameraComponent; }
+	const USpringArmComponent* GetSpringArmComponent() const;
+	const UCameraComponent* GetCameraComponent() const;
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera")

@@ -25,5 +25,5 @@ private:
 	void LoadSocketMeshData();
 
 private:
-	TMap<FName, TMap<FName, UStaticMesh*>> SocketMeshMap;
+	TMap<FName, TMap<FName, TWeakObjectPtr<UStaticMesh>>> SocketMeshMap;
 };

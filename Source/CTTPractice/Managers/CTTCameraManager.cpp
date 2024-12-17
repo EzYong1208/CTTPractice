@@ -76,6 +76,17 @@ void UCTTCameraManager::SwitchToNPCCameraByName(FName NPCName)
 	SetViewTargetToCamera(NPCFollowCamera);
 }
 
+ACTTCharacterFollowCamera* UCTTCameraManager::GetCharacterFollowCamera() const
+{
+	if (nullptr == CharacterFollowCamera)
+	{
+		UE_LOG(LogTemp, Error, TEXT("CharacterFollowCamera is nullptr"));
+		return nullptr;
+	}
+
+	return CharacterFollowCamera;
+}
+
 void UCTTCameraManager::LoadNPCActorData()
 {
 	UCTTGameInstance* GameInstance = Cast<UCTTGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
@@ -85,8 +96,8 @@ void UCTTCameraManager::LoadNPCActorData()
 		return;
 	}
 
-	UCTTDatatableManager* DatatableManager = GameInstance->GetDatatableManager();
-	if (!DatatableManager)
+	const UCTTDatatableManager* DatatableManager = GameInstance->GetDatatableManager();
+	if (nullptr == DatatableManager)
 	{
 		UE_LOG(LogTemp, Error, TEXT("DatatableManager is nullptr"));
 		return;

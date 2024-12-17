@@ -26,7 +26,7 @@ public:
 	void SwitchToFollowCamera();
 	void SwitchToNPCCameraByName(FName NPCName);
 	
-	ACTTCharacterFollowCamera* GetFollowCamera() const { return CharacterFollowCamera; }
+	ACTTCharacterFollowCamera* GetCharacterFollowCamera() const;
 
 private:
 	void LoadNPCActorData();

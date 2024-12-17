@@ -3,7 +3,7 @@
 
 #include "CTTPractice/Managers/CTTDatatableManager.h"
 
-TArray<const FCTTWorldItemSetupData*> UCTTDatatableManager::GetWorldItemSetupRows() const
+const TArray<const FCTTWorldItemSetupData*> UCTTDatatableManager::GetWorldItemSetupRows() const
 {
 	TArray<const FCTTWorldItemSetupData*> Rows;
 	if (WorldItemSetupDataTable)
@@ -21,7 +21,7 @@ TArray<const FCTTWorldItemSetupData*> UCTTDatatableManager::GetWorldItemSetupRow
 	return Rows;
 }
 
-TArray<const FCTTSwitchMovementData*> UCTTDatatableManager::GetSwitchMovementRows() const
+const TArray<const FCTTSwitchMovementData*> UCTTDatatableManager::GetSwitchMovementRows() const
 {
 	TArray<const FCTTSwitchMovementData*> Rows;
 	if (SwitchMovementDataTable)
@@ -39,7 +39,18 @@ TArray<const FCTTSwitchMovementData*> UCTTDatatableManager::GetSwitchMovementRow
 	return Rows;
 }
 
-FCTTItemSpawnOffsetData* UCTTDatatableManager::GetItemSpawnOffsetData(const FName& ItemName) const
+const UDataTable* UCTTDatatableManager::GetItemDataTable() const
+{
+	if (nullptr == ItemDataTable)
+	{
+		UE_LOG(LogTemp, Error, TEXT("ItemDataTable is nullptr"));
+		return nullptr;
+	}
+
+	return ItemDataTable;
+}
+
+const FCTTItemSpawnOffsetData* UCTTDatatableManager::GetItemSpawnOffsetData(const FName& ItemName) const
 {
 	if (!IsValid(ItemSpawnOffsetDataTable))
 	{
@@ -61,7 +72,7 @@ FCTTItemSpawnOffsetData* UCTTDatatableManager::GetItemSpawnOffsetData(const FNam
 	return nullptr;
 }
 
-const void UCTTDatatableManager::GetSocketMeshData(TMap<FName, TMap<FName, UStaticMesh*>>& OutSocketMeshMap) const
+const void UCTTDatatableManager::GetSocketMeshData(TMap<FName, TMap<FName, TWeakObjectPtr<UStaticMesh>>>& OutSocketMeshMap) const
 {
 	if (false == IsValid(SocketMeshDataTable))
 	{

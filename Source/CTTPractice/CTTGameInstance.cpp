@@ -70,6 +70,50 @@ void UCTTGameInstance::InitializeManagers()
 	}
 }
 
+UCTTCameraManager* UCTTGameInstance::GetCameraManager() const
+{
+	if (nullptr == CameraManagerInstance)
+	{
+		UE_LOG(LogTemp, Error, TEXT("CameraManagerInstance is nullptr"));
+		return nullptr;
+	}
+
+	return CameraManagerInstance;
+}
+
+UCTTDatatableManager* UCTTGameInstance::GetDatatableManager() const
+{
+	if (nullptr == DatatableManagerInstance)
+	{
+		UE_LOG(LogTemp, Error, TEXT("DatatableManagerInstance is nullptr"));
+		return nullptr;
+	}
+
+	return DatatableManagerInstance;
+}
+
+UCTTUIManager* UCTTGameInstance::GetUIManager() const
+{
+	if (nullptr == UIManagerInstance)
+	{
+		UE_LOG(LogTemp, Error, TEXT("UIManagerInstance is nullptr"));
+		return nullptr;
+	}
+
+	return UIManagerInstance;
+}
+
+UCTTQuestManager* UCTTGameInstance::GetQuestManager() const
+{
+	if (nullptr == QuestManagerInstance)
+	{
+		UE_LOG(LogTemp, Error, TEXT("QuestManagerInstance is nullptr"));
+		return nullptr;
+	}
+
+	return QuestManagerInstance;
+}
+
 void UCTTGameInstance::InitializeCollectItem(int32 CollectItemNumber, bool CollectItemInitialState)
 {
 	CollectItemStates.SetNum(CollectItemNumber);

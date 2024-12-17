@@ -20,7 +20,7 @@ class CTTPRACTICE_API ACTTPracticeGameModeBase : public AGameModeBase
 public:
 	virtual void BeginPlay() override;
 
-	const UCTTUICommonResource* GetUICommonResource() const { return UICommonResource; }
+	const UCTTUICommonResource* GetUICommonResource() const;
 	int32 GetCollectItemNumber() const { return CollectItemNumber; }
 
 	void SpawnItem(const FCTTWorldItemSetupData& SpawnData);

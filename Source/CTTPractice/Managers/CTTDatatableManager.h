@@ -16,15 +16,14 @@ class CTTPRACTICE_API UCTTDatatableManager : public UObject
 {
 	GENERATED_BODY()
 
-	// EzYong TODO : const 붙이기
 public:
 #pragma region DATATABLE_ITEM
-	TArray<const FCTTWorldItemSetupData*> GetWorldItemSetupRows() const;
-	TArray<const FCTTSwitchMovementData*> GetSwitchMovementRows() const;
-	UDataTable* GetItemDataTable() const {return ItemDataTable;}		// EzYong TODO : 수정필요(weakptr 던지기,const 붙이기)
-	FCTTItemSpawnOffsetData* GetItemSpawnOffsetData(const FName& ItemName) const;
+	const TArray<const FCTTWorldItemSetupData*> GetWorldItemSetupRows() const;
+	const TArray<const FCTTSwitchMovementData*> GetSwitchMovementRows() const;
+	const UDataTable* GetItemDataTable() const;
+	const FCTTItemSpawnOffsetData* GetItemSpawnOffsetData(const FName& ItemName) const;
 #pragma endregion
-	const void GetSocketMeshData(TMap<FName, TMap<FName, UStaticMesh*>>& OutSocketMeshMap) const;
+	const void GetSocketMeshData(TMap<FName, TMap<FName, TWeakObjectPtr<UStaticMesh>>>& OutSocketMeshMap) const;
 	const void GetNPCSpringArmDataMap(TMap<FName, FCTTSpringArmData>& OutNPCSpringArmDataMap) const;
 
 protected:

@@ -68,3 +68,25 @@ void ACTTFollowCamera::SetTarget(AActor* NewTarget)
 {
 	TargetActor = NewTarget;
 }
+
+const USpringArmComponent* ACTTFollowCamera::GetSpringArmComponent() const
+{
+	if (nullptr == SpringArmComponent)
+	{
+		UE_LOG(LogTemp, Error, TEXT("SpringArmComponent is nullptr"));
+		return nullptr;
+	}
+
+	return SpringArmComponent;
+}
+
+const UCameraComponent* ACTTFollowCamera::GetCameraComponent() const
+{
+	if (nullptr == CameraComponent)
+	{
+		UE_LOG(LogTemp, Error, TEXT("CameraComponent is nullptr"));
+		return nullptr;
+	}
+
+	return CameraComponent;
+}

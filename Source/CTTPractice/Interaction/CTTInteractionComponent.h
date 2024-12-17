@@ -32,7 +32,7 @@ public:
 	void BeginInteraction();
 	void EndInteraction();
 
-	bool GetIsInteracting() const { return bIsInteracting; }
+	const bool GetIsInteracting() const { return bIsInteracting; }
 
 private:
 	bool DetectInteractable(FHitResult& OutHitResult);
