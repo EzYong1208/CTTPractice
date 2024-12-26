@@ -30,7 +30,7 @@ public:
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	UCapsuleComponent* CapsuleComponent;
+	UCapsuleComponent* CapsuleComponent = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FName ItemName;
