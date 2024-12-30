@@ -1,9 +1,9 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "CTTProjectile.h"
-#include "CTTCharacter.h"
-#include "CTTMapObject.h"
+#include "CTTPractice/Actor/CTTProjectile.h"
+#include "CTTPractice/Actor/Character/CTTCharacter.h"
+#include "CTTPractice/Actor/CTTMapObject.h"
 #include "Components/SphereComponent.h"
 #include "Components/BoxComponent.h"
 #include "Kismet/GameplayStatics.h"

@@ -1,8 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "CTTItemAnimInstance.h"
-#include "CTTItem.h"
+#include "CTTPractice/Actor/CollectibleItem/CTTItemAnimInstance.h"
+#include "CTTPractice/Actor/CollectibleItem/CTTItem.h"
 
 void UCTTItemAnimInstance::NativeInitializeAnimation()
 {

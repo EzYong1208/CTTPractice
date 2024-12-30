@@ -1,10 +1,11 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "CTTPractice/Camera/CTTFollowCamera.h"
+#include "CTTPractice/Actor/Camera/CTTFollowCamera.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "CTTPractice/CTTDatatableHeader.h"
 
 // Sets default values
 ACTTFollowCamera::ACTTFollowCamera()

@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "CTTPractice/Camera/CTTNPCFollowCamera.h"
+#include "CTTPractice/Actor/Camera/CTTNPCFollowCamera.h"
 #include "Kismet/GameplayStatics.h"
 
 // Sets default values

@@ -3,12 +3,13 @@
 
 #include "CTTPracticeGameModeBase.h"
 #include "CTTPractice/UI/CTTUICommonResource.h"
-#include "CTTPractice/CTTItem.h"
-#include "CTTPractice/CTTCharacter.h"
+#include "CTTPractice/Actor/CollectibleItem/CTTItem.h"
+#include "CTTPractice/Actor/Character/CTTCharacter.h"
 #include "CTTPractice/CTTGameInstance.h"
 #include "CTTPractice/Managers/CTTDatatableManager.h"
 #include "EngineUtils.h" 
 #include "Kismet/GameplayStatics.h"
+#include "CTTPractice/CTTDatatableHeader.h"
 
 void ACTTPracticeGameModeBase::BeginPlay()
 {

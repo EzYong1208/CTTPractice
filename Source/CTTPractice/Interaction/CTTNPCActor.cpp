@@ -2,7 +2,7 @@
 
 
 #include "CTTPractice/Interaction/CTTNPCActor.h"
-#include "CTTPractice/Camera/CTTNPCFollowCamera.h"
+#include "CTTPractice/Actor/Camera/CTTNPCFollowCamera.h"
 
 // Sets default values
 ACTTNPCActor::ACTTNPCActor()

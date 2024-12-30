@@ -3,8 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "CTTPractice/CTTStruct.h"
 #include "GameFramework/Actor.h"
+#include "CTTPractice/CTTDatatableHeader.h"
 #include "CTTItem.generated.h"
 
 class USkeletalMesh;

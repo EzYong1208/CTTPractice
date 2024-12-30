@@ -5,12 +5,13 @@
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
 #include "Templates/SubclassOf.h"
-#include "CTTPractice/CTTStruct.h"
 #include "CTTPracticeGameModeBase.generated.h"
 
 /**
  * 
  */
+
+struct FCTTWorldItemSetupData;
 class UCTTUICommonResource;
 
 UCLASS()

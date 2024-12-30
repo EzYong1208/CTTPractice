@@ -1,8 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "CTTPractice/Camera/CTTCharacterFollowCamera.h"
-#include "CTTPractice/CTTCharacter.h"
+#include "CTTPractice/Actor/Camera/CTTCharacterFollowCamera.h"
+#include "CTTPractice/Actor/Character/CTTCharacter.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Kismet/GameplayStatics.h"
 

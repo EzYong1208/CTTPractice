@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "CTTPractice/CTTStruct.h"
 #include "CTTInteractionComponent.generated.h"
 
 class ACTTInteractableActor;

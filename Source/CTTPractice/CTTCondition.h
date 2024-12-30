@@ -16,7 +16,7 @@ class CTTPRACTICE_API UCTTCondition : public UObject
 	GENERATED_BODY()
 	
 public:
-	virtual bool CheckCondition(AActor* Actor) const = 0;
+	virtual bool CheckCondition(AActor* Actor) const { return false; }
 	bool GetConditionSatisfied() const { return bConditionSatisfied; }
 
 protected:

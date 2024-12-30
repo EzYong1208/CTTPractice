@@ -2,8 +2,8 @@
 
 
 #include "CTTPractice/Managers/CTTCameraManager.h"
-#include "CTTPractice/Camera/CTTCharacterFollowCamera.h"
-#include "CTTPractice/Camera/CTTNPCFollowCamera.h"
+#include "CTTPractice/Actor/Camera/CTTCharacterFollowCamera.h"
+#include "CTTPractice/Actor/Camera/CTTNPCFollowCamera.h"
 #include "CTTPractice/Interaction/CTTNPCActor.h"
 #include "CTTPractice/CTTPracticeGameModeBase.h"
 #include "Kismet/GameplayStatics.h"

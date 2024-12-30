@@ -1,13 +1,13 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "CTTCharacter.h"
-#include "CTTItem.h"
+#include "CTTPractice/Actor/Character/CTTCharacter.h"
+#include "CTTPractice/Actor/CollectibleItem/CTTItem.h"
 #include "CTTPractice/Managers/CTTCameraManager.h"
 #include "CTTPractice/CTTGameInstance.h"
 #include "Camera/CameraComponent.h"
-#include "CTTPractice/Camera/CTTCharacterFollowCamera.h"
-#include "CTTProjectile.h"
+#include "CTTPractice/Actor/Camera/CTTCharacterFollowCamera.h"
+#include "CTTPractice/Actor/CTTProjectile.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "CTTPractice/CTTPracticeGameModeBase.h"

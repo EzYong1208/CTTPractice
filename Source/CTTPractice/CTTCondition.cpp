@@ -2,7 +2,7 @@
 
 
 #include "CTTCondition.h"
-#include "CTTCollectibleItem.h"
+#include "CTTPractice/Actor/CollectibleItem/CTTCollectibleItem.h"
 
 bool UCTTCondition_Name::CheckCondition(AActor* Actor) const
 {

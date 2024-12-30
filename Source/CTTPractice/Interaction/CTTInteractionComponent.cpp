@@ -3,6 +3,7 @@
 
 #include "CTTPractice/Interaction/CTTInteractionComponent.h"
 #include "CTTPractice/Interaction/CTTInteractableActor.h"
+#include "CTTPractice/Interaction/CTTInteractionInfo.h"
 #include "Components/CapsuleComponent.h"
 #include "DrawDebugHelpers.h"
 

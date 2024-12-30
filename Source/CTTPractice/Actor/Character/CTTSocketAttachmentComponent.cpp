@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "CTTSocketAttachmentComponent.h"
+#include "CTTPractice/Actor/Character/CTTSocketAttachmentComponent.h"
 #include "CTTPractice/CTTGameInstance.h"
 #include "CTTPractice/Managers/CTTDatatableManager.h"
 #include "Kismet/GameplayStatics.h"

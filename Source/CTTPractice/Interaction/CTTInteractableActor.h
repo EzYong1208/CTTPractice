@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "CTTPractice/CTTStruct.h"
+#include "CTTPractice/Interaction/CTTInteractionInfo.h"
 #include "CTTInteractableActor.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCTTOnEnterInteract, const FCTTInteractionInfo&, InteractionInfo);

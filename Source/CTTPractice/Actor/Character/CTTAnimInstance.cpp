@@ -1,9 +1,9 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "CTTAnimInstance.h"
-#include "CTTCharacter.h"
-#include "CTTSocketAttachmentComponent.h"
+#include "CTTPractice/Actor/Character/CTTAnimInstance.h"
+#include "CTTPractice/Actor/Character/CTTCharacter.h"
+#include "CTTPractice/Actor/Character/CTTSocketAttachmentComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
 void UCTTAnimInstance::NativeInitializeAnimation()

@@ -4,9 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "CTTPractice/CTTStruct.h"
 #include "CTTFollowCamera.generated.h"
 
+struct FCTTSpringArmData;
 class USpringArmComponent;
 class UCameraComponent;
 class ACTTCharacter;

@@ -6,11 +6,24 @@
 #include "Engine/DataTable.h"
 #include "Components/SlateWrapperTypes.h"
 #include "CTTPractice/CTTEnum.h"
-#include "CTTStruct.generated.h"
+#include "CTTDatatableHeader.generated.h"
 
 /**
  * 
  */
+
+// EzYong TODO : CollectItem 완성 후 수정하기
+USTRUCT(BlueprintType)
+struct CTTPRACTICE_API FCTTCollectData
+{
+    GENERATED_BODY()
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	ECTTCollectType ActionType = ECTTCollectType::None;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 IncreaseAmount = 0;
+};
 
 USTRUCT(BlueprintType)
 struct CTTPRACTICE_API FCTTSocketMeshData : public FTableRowBase
@@ -25,18 +38,6 @@ struct CTTPRACTICE_API FCTTSocketMeshData : public FTableRowBase
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UStaticMesh* Mesh;
-};
-
-USTRUCT(BlueprintType)
-struct CTTPRACTICE_API FCTTCollectData
-{
-    GENERATED_BODY()
-
-    UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	ECTTCollectType ActionType = ECTTCollectType::None;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int32 IncreaseAmount = 0;
 };
 
 USTRUCT(BlueprintType)
@@ -149,34 +150,6 @@ struct CTTPRACTICE_API FCTTProjectileData : public FTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float SphereRadius = 0.f;
 
-};
-
-class UCTTInteractionComponent;
-
-USTRUCT(BlueprintType)
-struct CTTPRACTICE_API FCTTInteractionInfo
-{
-	GENERATED_BODY()
-
-	FCTTInteractionInfo()
-		: Interactor(nullptr) {}
-	FCTTInteractionInfo(UCTTInteractionComponent* Interactor)
-		: Interactor(Interactor) {}
-	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UCTTInteractionComponent* Interactor;
-};
-
-USTRUCT(BlueprintType)
-struct CTTPRACTICE_API FCTTWidgetGroup
-{
-    GENERATED_BODY()
-
-    UPROPERTY()
-    TArray<UUserWidget*> Widgets;
-
-	UPROPERTY()
-	ESlateVisibility GroupVisibility = ESlateVisibility::Collapsed;
 };
 
 USTRUCT(BlueprintType)

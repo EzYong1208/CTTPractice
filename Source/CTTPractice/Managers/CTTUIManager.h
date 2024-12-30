@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
-#include "CTTPractice/CTTStruct.h"
+#include "CTTPractice/UI/CTTWidgetStruct.h"
 #include "CTTUIManager.generated.h"
 
 /**

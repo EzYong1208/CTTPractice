@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "CTTItem.h"
+#include "CTTPractice/Actor/CollectibleItem/CTTItem.h"
 #include "Components/SphereComponent.h"
 #include "CTTPractice/CTTPracticeGameModeBase.h"
 #include "CTTPractice/CTTGameInstance.h"

@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "CTTPractice/CTTStruct.h"
+#include "CTTPractice/CTTEnum.h"
 #include "CTTProjectile.generated.h"
 
 class ACTTCharacter;

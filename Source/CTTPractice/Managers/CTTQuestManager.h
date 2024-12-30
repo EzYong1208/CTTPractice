@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
-#include "CTTPractice/CTTStruct.h"
+#include "CTTPractice/CTTDatatableHeader.h"
 #include "CTTQuestManager.generated.h"
 
 /**
