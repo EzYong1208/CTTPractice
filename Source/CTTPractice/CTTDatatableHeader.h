@@ -178,3 +178,20 @@ struct CTTPRACTICE_API FCTTSpringArmData : public FTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FRotator SpringArmRotation;
 };
+
+class UCTTActionBase;
+
+USTRUCT(BlueprintType)
+struct FCTTCollectibleActionData : public FTableRowBase
+{
+    GENERATED_BODY()
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    FName CollectibleItemName;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    TSubclassOf<UCTTActionBase> ActionClass;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    int32 Number;
+};
