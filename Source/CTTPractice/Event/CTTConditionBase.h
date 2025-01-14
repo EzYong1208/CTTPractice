@@ -4,19 +4,19 @@
 
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
-#include "CTTCondition.generated.h"
+#include "CTTConditionBase.generated.h"
 
 /**
  * 
  */
 
-UCLASS()
-class CTTPRACTICE_API UCTTCondition : public UObject
+UCLASS(Abstract)
+class CTTPRACTICE_API UCTTConditionBase : public UObject
 {
 	GENERATED_BODY()
 	
 public:
-	virtual bool CheckCondition(AActor* Actor) const { return false; }
+	virtual bool CheckCondition_Implementation(AActor* Actor) const;
 	bool GetConditionSatisfied() const { return bConditionSatisfied; }
 
 protected:
@@ -24,12 +24,12 @@ protected:
 };
 
 UCLASS()
-class CTTPRACTICE_API UCTTCondition_Name : public UCTTCondition
+class CTTPRACTICE_API UCTTConditionBase_ActorName : public UCTTConditionBase
 {
 	GENERATED_BODY()
-	
+
 public:
-	virtual bool CheckCondition(AActor* Actor) const override;
+	virtual bool CheckCondition_Implementation(AActor* Actor) const override;
 
 private:
 	FName ActorName;

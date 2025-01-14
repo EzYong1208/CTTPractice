@@ -15,6 +15,7 @@ class CTTPRACTICE_API UCTTActionBase : public UObject
 {
 	GENERATED_BODY()
 
+public:
 	void Execute() {}
 	virtual void Execute_Implementation() {}
 };
@@ -24,6 +25,7 @@ class CTTPRACTICE_API UCTTActionBase_AddCoin : public UCTTActionBase
 {
 	GENERATED_BODY()
 
+public:
 	virtual void Execute_Implementation() override;
 
 private:
