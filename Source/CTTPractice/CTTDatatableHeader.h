@@ -195,3 +195,23 @@ struct FCTTCollectibleActionData : public FTableRowBase
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     int32 Number;
 };
+
+class UCTTConditionBase;
+
+USTRUCT(BlueprintType)
+struct FCTTItemEventData : public FTableRowBase
+{
+    GENERATED_BODY()
+    
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    FName ItemName;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    FName EventName;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    TSubclassOf<UCTTConditionBase> ConditionClass;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    TArray<TSubclassOf<UCTTActionBase>> ActionClasses;
+};

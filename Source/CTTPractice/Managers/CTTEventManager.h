@@ -19,6 +19,10 @@ class CTTPRACTICE_API UCTTEventManager : public UObject
 	GENERATED_BODY()
 	
 public:
+	void Initialize();
+	void Update(float DeltaTime);
+
+
 	void HandleCollisionEvent(ACTTCharacter* Character, AActor* OtherActor);
 
 private:

@@ -7,6 +7,7 @@
 #include "CTTCollectibleItem.generated.h"
 
 class UCapsuleComponent;
+class UCTTActionBase;
 
 UCLASS()
 class CTTPRACTICE_API ACTTCollectibleItem : public AActor
@@ -27,6 +28,9 @@ public:
 
 public:
 	const FName GetItemName() const { return ItemName; }
+	const int32 GetCurrentActionIndex() const { return CurrentActionIndex; }
+
+	void AdvanceActionIndex();
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
@@ -34,4 +38,7 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FName ItemName;
+	
+	int32 CurrentActionIndex = 0;
+	TArray<TSubclassOf<UCTTActionBase>> ActionClasses;
 };

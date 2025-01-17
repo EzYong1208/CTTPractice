@@ -110,3 +110,27 @@ const void UCTTDatatableManager::GetNPCSpringArmDataMap(TMap<FName, FCTTSpringAr
 		}
 	}
 }
+
+const TArray<FCTTItemEventData> UCTTDatatableManager::GetAllItemEventData() const
+{
+	TArray<FCTTItemEventData> AllData;
+
+	if (!IsValid(ItemEventDataTable))
+	{
+		UE_LOG(LogTemp, Error, TEXT("ItemEventDataTable is not set!"));
+		return AllData;
+	}
+
+	TArray<FCTTItemEventData*> AllRows;
+	ItemEventDataTable->GetAllRows(TEXT("Load Item Event Data"), AllRows);
+
+	for (FCTTItemEventData* Row : AllRows)
+	{
+		if (Row)
+		{
+			AllData.Add(*Row);
+		}
+	}
+
+	return AllData;
+}

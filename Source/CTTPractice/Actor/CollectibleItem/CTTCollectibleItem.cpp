@@ -28,3 +28,8 @@ void ACTTCollectibleItem::Tick(float DeltaTime)
 
 }
 
+void ACTTCollectibleItem::AdvanceActionIndex()
+{
+	CurrentActionIndex++;
+}
+

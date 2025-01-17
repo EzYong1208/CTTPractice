@@ -20,6 +20,7 @@ class CTTPRACTICE_API ACTTPracticeGameModeBase : public AGameModeBase
 	GENERATED_BODY()
 public:
 	virtual void BeginPlay() override;
+	virtual void Tick(float DeltaTime) override;
 
 	const UCTTUICommonResource* GetUICommonResource() const;
 	int32 GetCollectItemNumber() const { return CollectItemNumber; }

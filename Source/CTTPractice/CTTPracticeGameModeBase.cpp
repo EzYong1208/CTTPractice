@@ -50,6 +50,13 @@ void ACTTPracticeGameModeBase::BeginPlay()
 	}
 }
 
+void ACTTPracticeGameModeBase::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+
+}
+
 const UCTTUICommonResource* ACTTPracticeGameModeBase::GetUICommonResource() const
 {
 	if (nullptr == UICommonResource)
