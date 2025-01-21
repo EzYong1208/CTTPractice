@@ -25,7 +25,7 @@ public:
 #pragma endregion
 	const void GetSocketMeshData(TMap<FName, TMap<FName, TWeakObjectPtr<UStaticMesh>>>& OutSocketMeshMap) const;
 	const void GetNPCSpringArmDataMap(TMap<FName, FCTTSpringArmData>& OutNPCSpringArmDataMap) const;
-	const TArray<FCTTItemEventData> GetAllItemEventData() const;
+	const UDataTable* GetEventActionDataTable() const;	// EzYong TODO : 임시
 
 protected:
 	// EzYong TODO : 아이템 데이터테이블들은 개편필요(아이템 클래스를 수정할 예정)
@@ -49,6 +49,6 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "NPCCameraSpringArm")
     UDataTable* NPCCameraSpringArmDataTable;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemEvent")
-    UDataTable* ItemEventDataTable;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "EventAction")
+    UDataTable* EventActionDataTable;
 };

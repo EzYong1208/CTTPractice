@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "CTTPractice/CTTDatatableHeader.h"
 #include "CTTCollectibleItem.generated.h"
 
 class UCapsuleComponent;
@@ -30,7 +31,8 @@ public:
 	const FName GetItemName() const { return ItemName; }
 	const int32 GetCurrentActionIndex() const { return CurrentActionIndex; }
 
-	void AdvanceActionIndex();
+	void StartActions(const TArray<FCTTActionData>& Actions);
+	void UpdateActions();
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
@@ -41,4 +43,8 @@ protected:
 	
 	int32 CurrentActionIndex = 0;
 	TArray<TSubclassOf<UCTTActionBase>> ActionClasses;
+
+	float CurrentTime = 0.f;
+	TArray<FCTTActionData> PendingActions;
+	FTimerHandle ActionTimerHandle;
 };

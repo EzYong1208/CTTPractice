@@ -23,10 +23,10 @@ public:
 	void Update(float DeltaTime);
 
 
-	void HandleCollisionEvent(ACTTCharacter* Character, AActor* OtherActor);
+	void HandleCollisionEvent();
 
 private:
-	void Test();
+	void StartActionsFromEvent(AActor* ItemActor, AActor* OtherActor, FName EventName);
 };
 
 /* 

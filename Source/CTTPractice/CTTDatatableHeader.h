@@ -179,39 +179,35 @@ struct CTTPRACTICE_API FCTTSpringArmData : public FTableRowBase
 	FRotator SpringArmRotation;
 };
 
-class UCTTActionBase;
-
 USTRUCT(BlueprintType)
-struct FCTTCollectibleActionData : public FTableRowBase
+struct FCTTActionData
 {
     GENERATED_BODY()
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    FName CollectibleItemName;
+    FName ActionName;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    TSubclassOf<UCTTActionBase> ActionClass;
+    float StartTime;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    int32 Number;
+    float Duration;
 };
 
-class UCTTConditionBase;
-
 USTRUCT(BlueprintType)
-struct FCTTItemEventData : public FTableRowBase
+struct FCTTEventActionData : public FTableRowBase
 {
     GENERATED_BODY()
-    
-    UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    FName ItemName;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FName ItemName;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    FName EventName;
+	FName EventClass;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    TSubclassOf<UCTTConditionBase> ConditionClass;
+	FName ConditionClass;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    TArray<TSubclassOf<UCTTActionBase>> ActionClasses;
+    TArray<FCTTActionData> Actions;
 };

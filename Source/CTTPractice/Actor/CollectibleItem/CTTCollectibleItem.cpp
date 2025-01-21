@@ -28,8 +28,17 @@ void ACTTCollectibleItem::Tick(float DeltaTime)
 
 }
 
-void ACTTCollectibleItem::AdvanceActionIndex()
+void ACTTCollectibleItem::StartActions(const TArray<FCTTActionData>& Actions)
 {
-	CurrentActionIndex++;
+	CurrentTime = 0.0f;
+	PendingActions = Actions;
+
+	GetWorld()->GetTimerManager().SetTimer(ActionTimerHandle, this, &ACTTCollectibleItem::UpdateActions, 0.1f, true);
 }
 
+void ACTTCollectibleItem::UpdateActions()
+{
+    CurrentTime += 0.1f;
+
+	// EzYong TODO : 액션들 수행
+}
