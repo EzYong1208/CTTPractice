@@ -3,6 +3,9 @@
 
 #include "CTTPractice/Actor/CollectibleItem/CTTCollectibleItem.h"
 #include "Components/CapsuleComponent.h"
+#include "Kismet/GameplayStatics.h"
+#include "CTTPractice/CTTGameInstance.h"
+#include "CTTPractice/Managers/CTTEventManager.h"
 
 // Sets default values
 ACTTCollectibleItem::ACTTCollectibleItem()
@@ -40,5 +43,35 @@ void ACTTCollectibleItem::UpdateActions()
 {
     CurrentTime += 0.1f;
 
-	// EzYong TODO : 액션들 수행
+	int32 Index = PendingActions.Num() - 1;
+
+	UCTTGameInstance* GameInstance = Cast<UCTTGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+	if (!GameInstance)
+	{
+		UE_LOG(LogTemp, Error, TEXT("GameInstance is nullptr"));
+		return;
+	}
+
+	UCTTEventManager* EventManager = GameInstance->GetEventManager();
+	if (nullptr == EventManager)
+	{
+		UE_LOG(LogTemp, Error, TEXT("EventManager is nullptr"));
+		return;
+	}
+
+	while (Index >= 0)
+	{
+		const FCTTActionData& ActionData = PendingActions[Index];
+		if (ActionData.StartTime <= CurrentTime)
+		{
+			EventManager->ExecuteAction(ActionData);
+			PendingActions.RemoveAt(Index);
+		}
+		--Index;
+	}
+
+	if (0 == PendingActions.Num())
+	{
+		GetWorld()->GetTimerManager().ClearTimer(ActionTimerHandle);
+	}
 }

@@ -57,6 +57,24 @@ void UCTTEventManager::HandleCollisionEvent()
 
 }
 
+void UCTTEventManager::ExecuteAction(const FCTTActionData& ActionData)
+{
+	if (!IsValid(ActionData.ActionClass))
+	{
+		UE_LOG(LogTemp, Error, TEXT("ActionClass is invalid"));
+		return;
+	}
+
+	UCTTActionBase* ActionInstance = NewObject<UCTTActionBase>(this, ActionData.ActionClass);
+	if (!ActionInstance)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Failed to create ActionInstance"));
+		return;
+	}
+
+	ActionInstance->Execute_Implementation();
+}
+
 void UCTTEventManager::StartActionsFromEvent(AActor* ItemActor, AActor* OtherActor, FName EventName)
 {
 	ACTTCollectibleItem* CollectibleItem = Cast<ACTTCollectibleItem>(ItemActor);

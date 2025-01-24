@@ -6,6 +6,7 @@
 #include "CTTPractice/Managers/CTTDatatableManager.h"
 #include "CTTPractice/Managers/CTTUIManager.h"
 #include "CTTPractice/Managers/CTTQuestManager.h"
+#include "CTTPractice/Managers/CTTEventManager.h"
 
 void UCTTGameInstance::Init()
 {
@@ -68,6 +69,11 @@ void UCTTGameInstance::InitializeManagers()
 	{
 		QuestManagerInstance = NewObject<UCTTQuestManager>(this, QuestManagerClass);
 	}
+
+	if (IsValid(EventManagerClass))
+	{
+		EventManagerInstance = NewObject<UCTTEventManager>(this, EventManagerClass);
+	}
 }
 
 UCTTCameraManager* UCTTGameInstance::GetCameraManager() const
@@ -112,6 +118,17 @@ UCTTQuestManager* UCTTGameInstance::GetQuestManager() const
 	}
 
 	return QuestManagerInstance;
+}
+
+UCTTEventManager* UCTTGameInstance::GetEventManager() const
+{
+	if (nullptr == EventManagerInstance)
+	{
+		UE_LOG(LogTemp, Error, TEXT("EventManagerInstance is nullptr"));
+		return nullptr;
+	}
+
+	return EventManagerInstance;
 }
 
 void UCTTGameInstance::InitializeCollectItem(int32 CollectItemNumber, bool CollectItemInitialState)

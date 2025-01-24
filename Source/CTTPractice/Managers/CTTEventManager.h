@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
+#include "CTTPractice/CTTDatatableHeader.h"
 #include "CTTEventManager.generated.h"
 
 /**
@@ -24,6 +25,7 @@ public:
 
 
 	void HandleCollisionEvent();
+	void ExecuteAction(const FCTTActionData& ActionData);
 
 private:
 	void StartActionsFromEvent(AActor* ItemActor, AActor* OtherActor, FName EventName);
