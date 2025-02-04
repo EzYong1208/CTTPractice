@@ -64,7 +64,7 @@ void ACTTCollectibleItem::UpdateActions()
 		const FCTTActionData& ActionData = PendingActions[Index];
 		if (ActionData.StartTime <= CurrentTime)
 		{
-			EventManager->ExecuteAction(ActionData);
+			EventManager->ExecuteAction(this, ActionData);
 			PendingActions.RemoveAt(Index);
 		}
 		--Index;

@@ -25,3 +25,33 @@ bool UCTTConditionBase_ActorName::CheckCondition_Implementation(AActor* Actor) c
 
 	return false;
 }
+
+bool UCTTConditionBase_Player::CheckCondition_Implementation(AActor* Actor) const
+{
+	if (nullptr == Actor)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Actor is nullptr"));
+		return false;
+	}
+
+	APawn* Pawn = Cast<APawn>(Actor);
+	if (nullptr == Pawn)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Pawn is nullptr"));
+		return false;
+	}
+
+	AController* CurrentController = Pawn->GetController();
+	if (nullptr == CurrentController)
+	{
+		UE_LOG(LogTemp, Error, TEXT("CurrentController is nullptr"));
+		return false;
+	}
+
+	if (true == CurrentController->IsPlayerController())
+	{
+		return true;
+	}
+
+	return false;
+}

@@ -55,3 +55,14 @@ enum class ECTTProjectileState : uint8
 	Destroy,
 	MAX
 };
+
+UENUM()
+enum class ECTTParameterType : uint8
+{
+	None,
+	Int,
+	Float,
+	Bool,
+	Name,
+	MAX
+};

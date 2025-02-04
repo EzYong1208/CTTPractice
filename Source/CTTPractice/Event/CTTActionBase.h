@@ -16,8 +16,7 @@ class CTTPRACTICE_API UCTTActionBase : public UObject
 	GENERATED_BODY()
 
 public:
-	void Execute() {}
-	virtual void Execute_Implementation() {}
+	virtual void Execute_Implementation(AActor* Actor) {}
 };
 
 UCLASS()
@@ -26,8 +25,17 @@ class CTTPRACTICE_API UCTTActionBase_AddCoin : public UCTTActionBase
 	GENERATED_BODY()
 
 public:
-	virtual void Execute_Implementation() override;
+	virtual void Execute_Implementation(AActor* Actor) override;
 
 private:
 	int32 CoinAmount = 0;
+};
+
+UCLASS()
+class CTTPRACTICE_API UCTTActionBase_Die : public UCTTActionBase
+{
+	GENERATED_BODY()
+
+public:
+	virtual void Execute_Implementation(AActor* Actor) override;
 };

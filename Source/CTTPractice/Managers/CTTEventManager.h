@@ -21,11 +21,10 @@ class CTTPRACTICE_API UCTTEventManager : public UObject
 	
 public:
 	void Initialize();
-	void Update(float DeltaTime);
 
 
 	void HandleCollisionEvent();
-	void ExecuteAction(const FCTTActionData& ActionData);
+	void ExecuteAction(AActor* TargetActor, const FCTTActionData& ActionData);
 
 private:
 	void StartActionsFromEvent(AActor* ItemActor, AActor* OtherActor, FName EventName);

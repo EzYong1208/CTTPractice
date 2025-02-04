@@ -42,11 +42,6 @@ void UCTTEventManager::Initialize()
 	}
 }
 
-void UCTTEventManager::Update(float DeltaTime)
-{
-
-}
-
 void UCTTEventManager::HandleCollisionEvent()
 {
 	// EzYong TODO : 데이터 테이블에서 해당 아이템 이름에 맞는 이벤트 데이터 검색
@@ -57,7 +52,7 @@ void UCTTEventManager::HandleCollisionEvent()
 
 }
 
-void UCTTEventManager::ExecuteAction(const FCTTActionData& ActionData)
+void UCTTEventManager::ExecuteAction(AActor* TargetActor, const FCTTActionData& ActionData)
 {
 	if (!IsValid(ActionData.ActionClass))
 	{
@@ -72,7 +67,7 @@ void UCTTEventManager::ExecuteAction(const FCTTActionData& ActionData)
 		return;
 	}
 
-	ActionInstance->Execute_Implementation();
+	ActionInstance->Execute_Implementation(TargetActor);
 }
 
 void UCTTEventManager::StartActionsFromEvent(AActor* ItemActor, AActor* OtherActor, FName EventName)
@@ -104,7 +99,7 @@ void UCTTEventManager::StartActionsFromEvent(AActor* ItemActor, AActor* OtherAct
 	{
 		FCTTEventActionData* EventData = EventActionDataTable->FindRow<FCTTEventActionData>(RowName, TEXT(""));
 		if (CollectibleItem->GetItemName() == EventData->ItemName &&
-			EventName == EventData->EventClass)
+			EventName == EventData->EventName)
 		{
 			CollectibleItem->StartActions(EventData->Actions);
 			break;

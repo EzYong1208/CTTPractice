@@ -35,6 +35,15 @@ private:
 	FName ActorName;
 };
 
+UCLASS()
+class CTTPRACTICE_API UCTTConditionBase_Player : public UCTTConditionBase
+{
+	GENERATED_BODY()
+
+public:
+	virtual bool CheckCondition_Implementation(AActor* Actor) const override;
+};
+
 /* 
 EzYong TODO : event - condition - action
 event							condition			action

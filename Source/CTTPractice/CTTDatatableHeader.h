@@ -180,6 +180,33 @@ struct CTTPRACTICE_API FCTTSpringArmData : public FTableRowBase
 };
 
 class UCTTActionBase;
+class UCTTConditionBase;
+
+USTRUCT(BlueprintType)
+struct FCTTParameter
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	ECTTParameterType ParameterType;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "ParameterType == ECTTParameterType::Int", EditConditionHides))
+	int32 IntValue;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "ParameterType == ECTTParameterType::Float", EditConditionHides))
+	float FloatValue;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "ParameterType == ECTTParameterType::Bool", EditConditionHides))
+	bool BoolValue;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "ParameterType == ECTTParameterType::Name"/*, EditConditionHides*/))
+	FName NameValue;
+
+	// meta = (EditCondition = "조건식")
+	// EditCondition은 특정 조건이 true 일때만 해당 프로퍼티를 활성화(편집 가능) 하거나 표시하도록 제어하는 메타 태그
+	// EditConditionHides은 EditCondition과 함께 사용, 조건이 거짓일 경우 해당 프로퍼티를 완전히 숨김
+	// EditConditionHides가 있으면 조건이 거짓일 경우 완전히 숨기고, 없으면 해당 프로퍼티가 비활성화된 상태로 보임
+};
 
 USTRUCT(BlueprintType)
 struct FCTTActionData
@@ -188,6 +215,9 @@ struct FCTTActionData
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<UCTTActionBase> ActionClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FCTTParameter ActionParameter;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     float StartTime;
@@ -205,10 +235,13 @@ struct FCTTEventActionData : public FTableRowBase
 	FName ItemName;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FName EventClass;
+	FName EventName;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FName ConditionClass;
+	TSubclassOf<UCTTConditionBase> ConditionClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FCTTParameter ConditionParameter;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     TArray<FCTTActionData> Actions;
