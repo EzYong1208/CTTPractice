@@ -34,44 +34,56 @@ void ACTTCollectibleItem::Tick(float DeltaTime)
 void ACTTCollectibleItem::StartActions(const TArray<FCTTActionData>& Actions)
 {
 	CurrentTime = 0.0f;
+
+	PendingActions.Empty();
 	PendingActions = Actions;
 
-	GetWorld()->GetTimerManager().SetTimer(ActionTimerHandle, this, &ACTTCollectibleItem::UpdateActions, 0.1f, true);
+	if (PendingActions.Num() > 0)
+	{
+		GetWorld()->GetTimerManager().SetTimer(ActionTimerHandle, this, &ACTTCollectibleItem::UpdateActions, 0.1f, true);
+	}
 }
 
 void ACTTCollectibleItem::UpdateActions()
 {
     CurrentTime += 0.1f;
 
-	int32 Index = PendingActions.Num() - 1;
+    int32 Index = PendingActions.Num() - 1;
 
-	UCTTGameInstance* GameInstance = Cast<UCTTGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
-	if (!GameInstance)
-	{
-		UE_LOG(LogTemp, Error, TEXT("GameInstance is nullptr"));
-		return;
-	}
+    UCTTGameInstance* GameInstance = Cast<UCTTGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+    if (!GameInstance)
+    {
+        UE_LOG(LogTemp, Error, TEXT("GameInstance is nullptr"));
+        return;
+    }
 
-	UCTTEventManager* EventManager = GameInstance->GetEventManager();
-	if (nullptr == EventManager)
-	{
-		UE_LOG(LogTemp, Error, TEXT("EventManager is nullptr"));
-		return;
-	}
+    UCTTEventManager* EventManager = GameInstance->GetEventManager();
+    if (!EventManager)
+    {
+        UE_LOG(LogTemp, Error, TEXT("EventManager is nullptr"));
+        return;
+    }
 
-	while (Index >= 0)
-	{
-		const FCTTActionData& ActionData = PendingActions[Index];
-		if (ActionData.StartTime <= CurrentTime)
-		{
-			EventManager->ExecuteAction(this, ActionData);
-			PendingActions.RemoveAt(Index);
-		}
-		--Index;
-	}
+    while (Index >= 0)
+    {
+        if (!PendingActions.IsValidIndex(Index))
+        {
+            UE_LOG(LogTemp, Error, TEXT("Invalid Index: %d"), Index);
+            break;
+        }
 
-	if (0 == PendingActions.Num())
-	{
-		GetWorld()->GetTimerManager().ClearTimer(ActionTimerHandle);
-	}
+        const FCTTActionData& ActionData = PendingActions[Index];
+        if (ActionData.StartTime <= CurrentTime)
+        {
+            EventManager->ExecuteAction(this, ActionData);
+            PendingActions.RemoveAt(Index);
+        }
+        --Index;
+    }
+
+    if (PendingActions.Num() == 0)
+    {
+        GetWorld()->GetTimerManager().ClearTimer(ActionTimerHandle);
+        PendingActions.Shrink();
+    }
 }
