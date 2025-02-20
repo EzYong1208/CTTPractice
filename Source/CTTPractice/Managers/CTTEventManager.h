@@ -26,8 +26,14 @@ public:
 	void HandleCollisionEvent();
 	void ExecuteAction(AActor* TargetActor, const FCTTActionData& ActionData);
 
+public:
+	void RemoveActor(AActor* ActorToRemove);
+
 private:
 	void StartActionsFromEvent(AActor* ItemActor, AActor* OtherActor, FName EventName);
+
+private:
+	TMap<FName, FCTTEventActionData> EventActionDataMap;
 };
 
 /* 

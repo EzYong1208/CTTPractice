@@ -25,20 +25,21 @@ void UCTTEventManager::Initialize()
 		return;
 	}
 
-	TArray<AActor*> FoundItems;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACTTCollectibleItem::StaticClass(), FoundItems);
-	for (AActor* Actor : FoundItems)
+	const UDataTable* EventActionDataTable = DatatableManager->GetEventActionDataTable();
+	TArray<FName> RowNames = EventActionDataTable->GetRowNames();
+	for (const FName& RowName : RowNames)
 	{
-		ACTTCollectibleItem* CollectibleItem = Cast<ACTTCollectibleItem>(Actor);
-		if (!CollectibleItem)
+		FCTTEventActionData* EventData = EventActionDataTable->FindRow<FCTTEventActionData>(RowName, TEXT(""));
+		if (!EventData)
 		{
 			continue;
 		}
 
-		FName ItemName = CollectibleItem->GetItemName();
-
-		// EzYong TODO : 이벤트 데이터에서 이름에 해당하는 데이터 찾고 매칭된 데이터가 있다면 맵에 추가하기
-
+		if (EventData->ItemName != NAME_None && 
+			EventData->EventName != NAME_None)
+		{
+			EventActionDataMap.Add(EventData->ItemName, *EventData);
+		}
 	}
 }
 
@@ -70,6 +71,27 @@ void UCTTEventManager::ExecuteAction(AActor* TargetActor, const FCTTActionData& 
 	ActionInstance->Execute_Implementation(TargetActor);
 }
 
+void UCTTEventManager::RemoveActor(AActor* ActorToRemove)
+{
+	if (!ActorToRemove)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Actor is invalid"));
+		return;
+	}
+
+	FName ActorName = ActorToRemove->GetFName();
+	if (EventActionDataMap.Contains(ActorName))
+	{
+		EventActionDataMap.Remove(ActorName);
+
+		if (IsValid(ActorToRemove))
+		{
+			ActorToRemove->Destroy();
+			UE_LOG(LogTemp, Log, TEXT("Actor %s destroyed"), *ActorToRemove->GetName());
+		}
+	}
+}
+
 void UCTTEventManager::StartActionsFromEvent(AActor* ItemActor, AActor* OtherActor, FName EventName)
 {
 	ACTTCollectibleItem* CollectibleItem = Cast<ACTTCollectibleItem>(ItemActor);
@@ -79,30 +101,16 @@ void UCTTEventManager::StartActionsFromEvent(AActor* ItemActor, AActor* OtherAct
 		return;
 	}
 
-	UCTTGameInstance* GameInstance = Cast<UCTTGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
-	if (!GameInstance)
+	if (EventActionDataMap.Contains(CollectibleItem->GetItemName()))
 	{
-		UE_LOG(LogTemp, Error, TEXT("GameInstance is nullptr"));
-		return;
-	}
-
-	const UCTTDatatableManager* DatatableManager = GameInstance->GetDatatableManager();
-	if (nullptr == DatatableManager)
-	{
-		UE_LOG(LogTemp, Error, TEXT("DatatableManager is nullptr"));
-		return;
-	}
-
-	const UDataTable* EventActionDataTable = DatatableManager->GetEventActionDataTable();
-	TArray<FName> RowNames = EventActionDataTable->GetRowNames();
-	for (const FName& RowName : RowNames)
-	{
-		FCTTEventActionData* EventData = EventActionDataTable->FindRow<FCTTEventActionData>(RowName, TEXT(""));
-		if (CollectibleItem->GetItemName() == EventData->ItemName &&
-			EventName == EventData->EventName)
+		const FCTTEventActionData& EventData = EventActionDataMap[CollectibleItem->GetItemName()];
+		if (EventData.EventName == EventName)
 		{
-			CollectibleItem->StartActions(EventData->Actions);
-			break;
+			CollectibleItem->StartActions(EventData.Actions);
 		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("No event data found for item: %s"), *CollectibleItem->GetItemName().ToString());
 	}
 }

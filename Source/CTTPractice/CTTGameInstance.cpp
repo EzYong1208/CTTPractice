@@ -73,6 +73,7 @@ void UCTTGameInstance::InitializeManagers()
 	if (IsValid(EventManagerClass))
 	{
 		EventManagerInstance = NewObject<UCTTEventManager>(this, EventManagerClass);
+		EventManagerInstance->Initialize();
 	}
 }
 
