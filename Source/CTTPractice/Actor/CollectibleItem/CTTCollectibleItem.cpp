@@ -6,6 +6,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "CTTPractice/CTTGameInstance.h"
 #include "CTTPractice/Managers/CTTEventManager.h"
+#include "CTTPractice/Event/CTTEventNames.h"
 
 // Sets default values
 ACTTCollectibleItem::ACTTCollectibleItem()
@@ -86,4 +87,29 @@ void ACTTCollectibleItem::UpdateActions()
         GetWorld()->GetTimerManager().ClearTimer(ActionTimerHandle);
         PendingActions.Shrink();
     }
+}
+
+void ACTTCollectibleItem::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+    if (!OtherActor ||
+        OtherActor == this)
+    {
+        return;
+    }
+
+    UCTTGameInstance* GameInstance = Cast<UCTTGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+    if (!GameInstance)
+    {
+        UE_LOG(LogTemp, Error, TEXT("GameInstance is nullptr"));
+        return;
+    }
+
+    UCTTEventManager* EventManager = GameInstance->GetEventManager();
+    if (!EventManager)
+    {
+        UE_LOG(LogTemp, Error, TEXT("EventManager is nullptr"));
+        return;
+    }
+
+    EventManager->HandleCollisionEvent(this, OtherActor, CTTEventNames::CollisionEvent);
 }

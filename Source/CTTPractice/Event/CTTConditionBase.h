@@ -44,6 +44,15 @@ public:
 	virtual bool CheckCondition_Implementation(AActor* Actor) const override;
 };
 
+UCLASS()
+class CTTPRACTICE_API UCTTConditionBase_CheckCharacterCollision : public UCTTConditionBase
+{
+	GENERATED_BODY()
+
+public:
+	virtual bool CheckCondition_Implementation(AActor* Actor) const override;
+};
+
 /* 
 EzYong TODO : event - condition - action
 event							condition			action

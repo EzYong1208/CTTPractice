@@ -43,14 +43,48 @@ void UCTTEventManager::Initialize()
 	}
 }
 
-void UCTTEventManager::HandleCollisionEvent()
+void UCTTEventManager::HandleCollisionEvent(AActor* Actor, AActor* CollidedActor, FName EventName)
 {
-	// EzYong TODO : 데이터 테이블에서 해당 아이템 이름에 맞는 이벤트 데이터 검색
-	// 조건 클래스 인스턴스 생성(CTTConditionBase) 후 조건검사
-	// 액션 클래스 인스턴스 생성(CTTActionBase) 후 실행
+	if (nullptr == Actor)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Actor is nullptr"));
+		return;
+	}
+	if (nullptr == CollidedActor)
+	{
+		UE_LOG(LogTemp, Error, TEXT("CollidedActor is nullptr"));
+		return;
+	}
 
-	// EzYong TODO : 우선은 ACTTCollectibleItem을 상속받은 액터들만 사용하게 설정
+	ACTTCollectibleItem* CollectibleItem = Cast<ACTTCollectibleItem>(Actor);
+	if (nullptr == CollectibleItem)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Actor is not CollectibleItem"));
+		return;
+	}
 
+	FName ItemName = CollectibleItem->GetFName();
+	bool bHasEventData = EventActionDataMap.Contains(ItemName);
+	if (false == bHasEventData)
+	{
+		return;
+	}
+
+	const FCTTEventActionData& EventData = EventActionDataMap[ItemName];
+	UCTTConditionBase* ConditionInstance = NewObject<UCTTConditionBase>(this, EventData.ConditionClass);
+	if (nullptr == ConditionInstance)
+	{
+		UE_LOG(LogTemp, Error, TEXT("ConditionInstance is nullptr"));
+		return;
+	}
+
+	bool bConditionSatisfied = ConditionInstance->CheckCondition_Implementation(CollidedActor);
+	if (!bConditionSatisfied)
+	{
+		return;
+	}
+
+	StartActionsFromEvent(Actor, CollidedActor, EventName);
 }
 
 void UCTTEventManager::ExecuteAction(AActor* TargetActor, const FCTTActionData& ActionData)

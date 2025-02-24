@@ -2,6 +2,8 @@
 
 
 #include "CTTPractice/Event/CTTConditionBase.h"
+#include "Components/CapsuleComponent.h"
+#include "GameFramework/Character.h"
 
 bool UCTTConditionBase::CheckCondition_Implementation(AActor* Actor) const
 {
@@ -54,4 +56,29 @@ bool UCTTConditionBase_Player::CheckCondition_Implementation(AActor* Actor) cons
 	}
 
 	return false;
+}
+
+bool UCTTConditionBase_CheckCharacterCollision::CheckCondition_Implementation(AActor* Actor) const
+{
+	if (nullptr == Actor)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Actor is nullptr"));
+		return false;
+	}
+
+	ACharacter* Character = Cast<ACharacter>(Actor);
+	if (nullptr == Character)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Actor is not Character"));
+		return false;
+	}
+
+	UCapsuleComponent* CharacterCapsule = Character->GetCapsuleComponent();
+	if (nullptr == CharacterCapsule)
+	{
+		UE_LOG(LogTemp, Error, TEXT("CharacterCapsule is nullptr"));
+		return false;
+	}
+
+	return true;
 }
