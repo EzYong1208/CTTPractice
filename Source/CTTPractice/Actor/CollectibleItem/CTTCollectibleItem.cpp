@@ -30,6 +30,10 @@ void ACTTCollectibleItem::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+    if (true == bActionRequired)
+    {
+        UpdateActions();
+    }
 }
 
 void ACTTCollectibleItem::StartActions(const TArray<FCTTActionData>& Actions)
@@ -41,7 +45,7 @@ void ACTTCollectibleItem::StartActions(const TArray<FCTTActionData>& Actions)
 
 	if (PendingActions.Num() > 0)
 	{
-		GetWorld()->GetTimerManager().SetTimer(ActionTimerHandle, this, &ACTTCollectibleItem::UpdateActions, 0.1f, true);
+        bActionRequired = true;
 	}
 }
 
@@ -84,7 +88,7 @@ void ACTTCollectibleItem::UpdateActions()
 
     if (PendingActions.Num() == 0)
     {
-        GetWorld()->GetTimerManager().ClearTimer(ActionTimerHandle);
+        bActionRequired = false;
         PendingActions.Shrink();
     }
 }

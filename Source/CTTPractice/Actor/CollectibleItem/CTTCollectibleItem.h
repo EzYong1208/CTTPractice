@@ -51,4 +51,6 @@ protected:
 	float CurrentTime = 0.f;
 	TArray<FCTTActionData> PendingActions;
 	FTimerHandle ActionTimerHandle;
+
+	bool bActionRequired = false;
 };

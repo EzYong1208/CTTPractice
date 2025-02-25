@@ -41,6 +41,8 @@ void UCTTEventManager::Initialize()
 			EventActionDataMap.Add(EventData->ItemName, *EventData);
 		}
 	}
+
+	GetWorld()->GetTimerManager().SetTimer(DestroyTimerHandle, this, &UCTTEventManager::CheckAndDestroyPendingActors, 0.1f, true);
 }
 
 void UCTTEventManager::HandleCollisionEvent(AActor* Actor, AActor* CollidedActor, FName EventName)
@@ -105,7 +107,7 @@ void UCTTEventManager::ExecuteAction(AActor* TargetActor, const FCTTActionData& 
 	ActionInstance->Execute_Implementation(TargetActor);
 }
 
-void UCTTEventManager::RemoveActor(AActor* ActorToRemove)
+void UCTTEventManager::AddActorToPendingKill(AActor* ActorToRemove)
 {
 	if (!ActorToRemove)
 	{
@@ -120,9 +122,27 @@ void UCTTEventManager::RemoveActor(AActor* ActorToRemove)
 
 		if (IsValid(ActorToRemove))
 		{
-			ActorToRemove->Destroy();
-			UE_LOG(LogTemp, Log, TEXT("Actor %s destroyed"), *ActorToRemove->GetName());
+			PendingKillActors.Enqueue(ActorToRemove);
+			UE_LOG(LogTemp, Log, TEXT("Actor %s moved to PendingKillActor Array"), *ActorToRemove->GetName());
 		}
+	}
+}
+
+void UCTTEventManager::CheckAndDestroyPendingActors()
+{
+	AActor* Actor = nullptr;
+	while (PendingKillActors.Dequeue(Actor))
+	{
+		ACTTCollectibleItem* CollectibleItem = Cast<ACTTCollectibleItem>(Actor);
+		if (nullptr == CollectibleItem)
+		{
+			UE_LOG(LogTemp, Error, TEXT("Actor is not CollectibleItem"));
+			continue;
+		}
+
+		FName ItemName = CollectibleItem->GetItemName();
+		CollectibleItem->Destroy();
+		UE_LOG(LogTemp, Log, TEXT("Actor %s has Destroyed"), *ItemName.ToString());
 	}
 }
 

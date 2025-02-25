@@ -35,5 +35,5 @@ void UCTTActionBase_Die::Execute_Implementation(AActor* Actor)
 		return;
 	}
 
-	EventManager->RemoveActor(Actor);
+	EventManager->AddActorToPendingKill(Actor);
 }
