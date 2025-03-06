@@ -27,6 +27,7 @@ class CTTPRACTICE_API UCTTGameInstance : public UGameInstance
 	
 public:
 	virtual void Init() override;
+	virtual void Shutdown() override;
 
 public:
 	void InitializeCollectItem(int32 CollectItemNumber, bool CollectItemInitialState);
@@ -45,6 +46,7 @@ public:
 
 public:
 	void InitializeManagers();
+	void ShutdownManagers();
 
 	UCTTCameraManager* GetCameraManager() const;
 	UCTTDatatableManager* GetDatatableManager() const;

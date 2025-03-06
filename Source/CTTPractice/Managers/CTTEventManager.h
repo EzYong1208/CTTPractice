@@ -21,6 +21,7 @@ class CTTPRACTICE_API UCTTEventManager : public UObject
 	
 public:
 	void Initialize();
+	void Shutdown();
 
 	void HandleCollisionEvent(AActor* Actor, AActor* CollidedActor, FName EventName);
 	void ExecuteAction(AActor* TargetActor, const FCTTActionData& ActionData);
@@ -29,13 +30,14 @@ public:
 	void AddActorToPendingKill(AActor* ActorToRemove);
 
 private:
+	void OnWorldPostActorTick(UWorld* World, ELevelTick TickType, float DeltaTime);
 	void CheckAndDestroyPendingActors();
 	void StartActionsFromEvent(AActor* ItemActor, AActor* OtherActor, FName EventName);
 
 private:
 	TMap<FName, FCTTEventActionData> EventActionDataMap;
 	TQueue<AActor*> PendingKillActors;
-	FTimerHandle DestroyTimerHandle;
+	FDelegateHandle OnWorldPostActorTickHandle;
 };
 
 /* 

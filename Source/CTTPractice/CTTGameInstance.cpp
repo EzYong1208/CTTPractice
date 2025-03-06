@@ -14,6 +14,13 @@ void UCTTGameInstance::Init()
     
 }
 
+void UCTTGameInstance::Shutdown()
+{
+	ShutdownManagers();
+
+	Super::Shutdown();
+}
+
 void UCTTGameInstance::SetPlayerLifeCount(int32 InPlayerLifeCount)
 {
     PlayerLifeCount = InPlayerLifeCount;
@@ -74,6 +81,35 @@ void UCTTGameInstance::InitializeManagers()
 	{
 		EventManagerInstance = NewObject<UCTTEventManager>(this, EventManagerClass);
 		EventManagerInstance->Initialize();
+	}
+}
+
+void UCTTGameInstance::ShutdownManagers()
+{
+	if (IsValid(EventManagerInstance))
+	{
+		EventManagerInstance->Shutdown();
+		EventManagerInstance = nullptr;
+	}
+
+	if (IsValid(QuestManagerInstance))
+	{
+		QuestManagerInstance = nullptr;
+	}
+
+	if (IsValid(UIManagerInstance))
+	{
+		UIManagerInstance = nullptr;
+	}
+
+	if (IsValid(CameraManagerInstance))
+	{
+		CameraManagerInstance = nullptr;
+	}
+
+	if (IsValid(DatatableManagerInstance))
+	{
+		DatatableManagerInstance = nullptr;
 	}
 }
 

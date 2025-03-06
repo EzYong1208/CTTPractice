@@ -42,7 +42,19 @@ void UCTTEventManager::Initialize()
 		}
 	}
 
-	GetWorld()->GetTimerManager().SetTimer(DestroyTimerHandle, this, &UCTTEventManager::CheckAndDestroyPendingActors, 0.1f, true);
+	OnWorldPostActorTickHandle = FWorldDelegates::OnWorldPostActorTick.AddUObject(this, &UCTTEventManager::OnWorldPostActorTick);
+}
+
+void UCTTEventManager::Shutdown()
+{
+	if (false == OnWorldPostActorTickHandle.IsValid())
+	{
+		UE_LOG(LogTemp, Error, TEXT("OnWorldPostActorTickHandle is invalid"));
+		return;
+	}
+
+	FWorldDelegates::OnWorldPostActorTick.Remove(OnWorldPostActorTickHandle);
+	OnWorldPostActorTickHandle.Reset();
 }
 
 void UCTTEventManager::HandleCollisionEvent(AActor* Actor, AActor* CollidedActor, FName EventName)
@@ -144,6 +156,17 @@ void UCTTEventManager::CheckAndDestroyPendingActors()
 		CollectibleItem->Destroy();
 		UE_LOG(LogTemp, Log, TEXT("Actor %s has Destroyed"), *ItemName.ToString());
 	}
+}
+
+void UCTTEventManager::OnWorldPostActorTick(UWorld* World, ELevelTick TickType, float DeltaTime)
+{
+	if (LEVELTICK_All != TickType)
+	{
+		UE_LOG(LogTemp, Error, TEXT("TickType is not LEVELTICK_All"));
+		return;
+	}
+
+	CheckAndDestroyPendingActors();
 }
 
 void UCTTEventManager::StartActionsFromEvent(AActor* ItemActor, AActor* OtherActor, FName EventName)
