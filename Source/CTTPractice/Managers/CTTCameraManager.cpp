@@ -50,6 +50,24 @@ void UCTTCameraManager::InitializeCameras()
 	LoadNPCActorData();
 }
 
+void UCTTCameraManager::Shutdown()
+{
+	if (CharacterFollowCamera)
+	{
+		CharacterFollowCamera->Destroy();
+		CharacterFollowCamera = nullptr;
+	}
+
+	if (NPCFollowCamera)
+	{
+		NPCFollowCamera->Destroy();
+		NPCFollowCamera = nullptr;
+	}
+
+	NPCActorMap.Empty();
+	NPCActorDataMap.Empty();
+}
+
 void UCTTCameraManager::SwitchToFollowCamera()
 {
 	SetViewTargetToCamera(CharacterFollowCamera);

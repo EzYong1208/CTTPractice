@@ -22,6 +22,7 @@ class CTTPRACTICE_API UCTTCameraManager : public UObject
 	
 public:
 	void InitializeCameras();
+	void Shutdown();
 
 	void SwitchToFollowCamera();
 	void SwitchToNPCCameraByName(FName NPCName);

@@ -19,6 +19,14 @@ void UCTTActionBase_AddCoin::Execute_Implementation(AActor* Actor)
 	GameInstance->SetCoinCount(CurrentCoinCount + CoinAmount);
 }
 
+void UCTTActionBase_AddCoin::InitializeWithActionData(const FCTTActionData& InActionData)
+{
+	ActionData = InActionData;
+	CoinAmount = InActionData.ActionParameter.IntValue;
+
+	UE_LOG(LogTemp, Warning, TEXT("UCTTActionBase_AddCoin InitializeWithActionData called"));
+}
+
 void UCTTActionBase_Die::Execute_Implementation(AActor* Actor)
 {
 	UCTTGameInstance* GameInstance = Cast<UCTTGameInstance>(UGameplayStatics::GetGameInstance(this));

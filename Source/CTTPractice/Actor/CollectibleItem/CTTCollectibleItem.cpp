@@ -23,6 +23,26 @@ void ACTTCollectibleItem::BeginPlay()
 {
 	Super::BeginPlay();
 	
+    if (nullptr == CapsuleComponent)
+    {
+        UE_LOG(LogTemp, Error, TEXT("CapsuleComponent is nullptr"));
+        return;
+    }
+
+    CapsuleComponent->OnComponentBeginOverlap.AddDynamic(this, &ACTTCollectibleItem::OnOverlapBegin);
+}
+
+void ACTTCollectibleItem::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+    Super::EndPlay(EndPlayReason);
+
+    if (nullptr == CapsuleComponent)
+    {
+        UE_LOG(LogTemp, Error, TEXT("CapsuleComponent is nullptr"));
+        return;
+    }
+
+    CapsuleComponent->OnComponentBeginOverlap.RemoveDynamic(this, &ACTTCollectibleItem::OnOverlapBegin);
 }
 
 // Called every frame

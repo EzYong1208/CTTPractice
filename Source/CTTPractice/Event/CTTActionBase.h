@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
+#include "CTTPractice/CTTDatatableHeader.h"
 #include "CTTActionBase.generated.h"
 
 /**
@@ -17,6 +18,10 @@ class CTTPRACTICE_API UCTTActionBase : public UObject
 
 public:
 	virtual void Execute_Implementation(AActor* Actor) {}
+	virtual void InitializeWithActionData(const FCTTActionData& InActionData) {}
+
+protected:
+	FCTTActionData ActionData;
 };
 
 UCLASS()
@@ -26,6 +31,7 @@ class CTTPRACTICE_API UCTTActionBase_AddCoin : public UCTTActionBase
 
 public:
 	virtual void Execute_Implementation(AActor* Actor) override;
+	virtual void InitializeWithActionData(const FCTTActionData& InActionData) override;
 
 private:
 	int32 CoinAmount = 0;

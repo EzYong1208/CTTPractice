@@ -29,6 +29,22 @@ void UCTTUIManager::InitializeUIManager()
 	ShowUIGroup(InitialUIGroupName);
 }
 
+void UCTTUIManager::Shutdown()
+{
+	for (auto& Group : UIGroups)
+	{
+		for (UUserWidget* Widget : Group.Value.Widgets)
+		{
+			if (Widget && Widget->IsInViewport())
+			{
+				Widget->RemoveFromParent();
+			}
+		}
+	}
+
+	UIGroups.Empty();
+}
+
 void UCTTUIManager::RegisterUIToGroup(UUserWidget* Widget)
 {
 	if (nullptr == Widget)

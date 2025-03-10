@@ -77,7 +77,7 @@ void UCTTEventManager::HandleCollisionEvent(AActor* Actor, AActor* CollidedActor
 		return;
 	}
 
-	FName ItemName = CollectibleItem->GetFName();
+	FName ItemName = CollectibleItem->GetItemName();
 	bool bHasEventData = EventActionDataMap.Contains(ItemName);
 	if (false == bHasEventData)
 	{
@@ -116,6 +116,7 @@ void UCTTEventManager::ExecuteAction(AActor* TargetActor, const FCTTActionData& 
 		return;
 	}
 
+	ActionInstance->InitializeWithActionData(ActionData);
 	ActionInstance->Execute_Implementation(TargetActor);
 }
 

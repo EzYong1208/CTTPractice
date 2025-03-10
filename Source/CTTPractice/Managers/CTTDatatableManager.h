@@ -17,14 +17,17 @@ class CTTPRACTICE_API UCTTDatatableManager : public UObject
 	GENERATED_BODY()
 
 public:
+	void Shutdown();
+
+public:
 #pragma region DATATABLE_ITEM
-	const TArray<const FCTTWorldItemSetupData*> GetWorldItemSetupRows() const;
-	const TArray<const FCTTSwitchMovementData*> GetSwitchMovementRows() const;
+	TArray<const FCTTWorldItemSetupData*> GetWorldItemSetupRows() const;
+	TArray<const FCTTSwitchMovementData*> GetSwitchMovementRows() const;
 	const UDataTable* GetItemDataTable() const;
 	const FCTTItemSpawnOffsetData* GetItemSpawnOffsetData(const FName& ItemName) const;
 #pragma endregion
-	const void GetSocketMeshData(TMap<FName, TMap<FName, TWeakObjectPtr<UStaticMesh>>>& OutSocketMeshMap) const;
-	const void GetNPCSpringArmDataMap(TMap<FName, FCTTSpringArmData>& OutNPCSpringArmDataMap) const;
+	void GetSocketMeshData(TMap<FName, TMap<FName, TWeakObjectPtr<UStaticMesh>>>& OutSocketMeshMap) const;
+	void GetNPCSpringArmDataMap(TMap<FName, FCTTSpringArmData>& OutNPCSpringArmDataMap) const;
 	const UDataTable* GetEventActionDataTable() const;	// EzYong TODO : юс╫ц
 
 protected:

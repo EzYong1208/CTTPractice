@@ -99,16 +99,19 @@ void UCTTGameInstance::ShutdownManagers()
 
 	if (IsValid(UIManagerInstance))
 	{
+		UIManagerInstance->Shutdown();
 		UIManagerInstance = nullptr;
 	}
 
 	if (IsValid(CameraManagerInstance))
 	{
+		CameraManagerInstance->Shutdown();
 		CameraManagerInstance = nullptr;
 	}
 
 	if (IsValid(DatatableManagerInstance))
 	{
+		DatatableManagerInstance->Shutdown();
 		DatatableManagerInstance = nullptr;
 	}
 }

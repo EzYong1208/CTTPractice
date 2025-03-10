@@ -20,6 +20,7 @@ class CTTPRACTICE_API UCTTUIManager : public UObject
 	
 public:
     void InitializeUIManager();
+    void Shutdown();
 
     void RegisterUIToGroup(UUserWidget* Widget);
     void ShowUIGroup(FName GroupName);
