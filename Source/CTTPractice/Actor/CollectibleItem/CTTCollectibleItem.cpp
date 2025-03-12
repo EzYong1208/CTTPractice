@@ -50,6 +50,9 @@ void ACTTCollectibleItem::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+    UpdateRotation(DeltaTime);
+    UpdateJump(DeltaTime);
+
     if (true == bActionRequired)
     {
         UpdateActions();
@@ -113,6 +116,27 @@ void ACTTCollectibleItem::UpdateActions()
     }
 }
 
+void ACTTCollectibleItem::SetRotation(float InRotateSpeed, float InRotateDuration)
+{
+    RotateSpeed = InRotateSpeed;
+    RotateDuration = InRotateDuration;
+}
+
+void ACTTCollectibleItem::SetJump(float InJumpSpeed)
+{
+    if (true == bIsJumping)
+    {
+        return;
+    }
+
+    JumpSpeed = InJumpSpeed;
+    ElapsedTime = 0.0f;
+    bIsJumping = true;
+    StartLocation = GetActorLocation();
+
+    UE_LOG(LogTemp, Warning, TEXT("ACTTCollectibleItem: Jump Started!"));
+}
+
 void ACTTCollectibleItem::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
     if (!OtherActor ||
@@ -136,4 +160,47 @@ void ACTTCollectibleItem::OnOverlapBegin(UPrimitiveComponent* OverlappedComponen
     }
 
     EventManager->HandleCollisionEvent(this, OtherActor, CTTEventNames::CollisionEvent);
+}
+
+void ACTTCollectibleItem::UpdateRotation(float DeltaTime)
+{
+    if (RotateSpeed <= 0.0f)
+    {
+        return;
+    }
+
+    FRotator NewRotation = GetActorRotation();
+    NewRotation.Yaw += RotateSpeed * DeltaTime;
+    SetActorRotation(NewRotation);
+
+    RotateDuration -= DeltaTime;
+    if (RotateDuration <= 0.0f)
+    {
+        RotateSpeed = 0.0f;
+        UE_LOG(LogTemp, Warning, TEXT("ACTTCollectibleItem: Rotation Stopped"));
+    }
+}
+
+void ACTTCollectibleItem::UpdateJump(float DeltaTime)
+{
+    if (false == bIsJumping)
+    {
+        return;
+    }
+
+    ElapsedTime += DeltaTime;
+
+    float NewHeight = JumpSpeed * ElapsedTime - 0.5f * Gravity * ElapsedTime * ElapsedTime;
+    FVector NewLocation = StartLocation;
+    NewLocation.Z += NewHeight;
+
+    if (NewLocation.Z <= StartLocation.Z)
+    {
+        NewLocation.Z = StartLocation.Z;
+        ElapsedTime = 0.0f;
+        bIsJumping = false;
+        UE_LOG(LogTemp, Warning, TEXT("ACTTCollectibleItem: Jump Ended!"));
+    }
+
+    SetActorLocation(NewLocation);
 }

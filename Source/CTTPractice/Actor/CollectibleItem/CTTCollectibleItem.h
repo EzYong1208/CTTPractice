@@ -35,9 +35,15 @@ public:
 	void StartActions(const TArray<FCTTActionData>& Actions);
 	void UpdateActions();
 
+	void SetRotation(float InRotateSpeed, float InRotateDuration);
+	void SetJump(float InJumpSpeed);
+
 protected:
 	   UFUNCTION()
 	   void OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	   void UpdateRotation(float DeltaTime);
+	   void UpdateJump(float DeltaTime);
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
@@ -54,4 +60,15 @@ protected:
 	FTimerHandle ActionTimerHandle;
 
 	bool bActionRequired = false;
+
+// EzYong TODO : For UCTTActionBase_Rotate
+	float RotateSpeed = 0.0f;
+	float RotateDuration = 0.0f;
+
+// EzYong TODO : For UCTTActionBase_Jump
+	float JumpSpeed = 0.0f;
+	float Gravity = 980.0f;
+	float ElapsedTime = 0.0f;
+	bool bIsJumping = false;
+	FVector StartLocation;
 };

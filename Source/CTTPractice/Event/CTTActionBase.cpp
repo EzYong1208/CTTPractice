@@ -5,6 +5,14 @@
 #include "CTTPractice/CTTGameInstance.h"
 #include "Kismet/GameplayStatics.h"
 #include "CTTPractice/Managers/CTTEventManager.h"
+#include "CTTPractice/Actor/CollectibleItem/CTTCollectibleItem.h"
+
+void UCTTActionBase_AddCoin::InitializeWithActionData(const FCTTActionData& InActionData)
+{
+	CoinAmount = InActionData.ActionParameter.IntValue;
+
+	UE_LOG(LogTemp, Warning, TEXT("UCTTActionBase_AddCoin InitializeWithActionData called"));
+}
 
 void UCTTActionBase_AddCoin::Execute_Implementation(AActor* Actor)
 {
@@ -17,14 +25,6 @@ void UCTTActionBase_AddCoin::Execute_Implementation(AActor* Actor)
 
 	int32 CurrentCoinCount = GameInstance->GetCoinCount();
 	GameInstance->SetCoinCount(CurrentCoinCount + CoinAmount);
-}
-
-void UCTTActionBase_AddCoin::InitializeWithActionData(const FCTTActionData& InActionData)
-{
-	ActionData = InActionData;
-	CoinAmount = InActionData.ActionParameter.IntValue;
-
-	UE_LOG(LogTemp, Warning, TEXT("UCTTActionBase_AddCoin InitializeWithActionData called"));
 }
 
 void UCTTActionBase_Die::Execute_Implementation(AActor* Actor)
@@ -44,4 +44,43 @@ void UCTTActionBase_Die::Execute_Implementation(AActor* Actor)
 	}
 
 	EventManager->AddActorToPendingKill(Actor);
+}
+
+void UCTTActionBase_Rotate::InitializeWithActionData(const FCTTActionData& InActionData)
+{
+	RotateSpeed = InActionData.ActionParameter.IntValue;
+	RotateDuration = InActionData.Duration;
+
+	UE_LOG(LogTemp, Warning, TEXT("UCTTActionBase_Rotate InitializeWithActionData called"));
+}
+
+void UCTTActionBase_Rotate::Execute_Implementation(AActor* Actor)
+{
+	ACTTCollectibleItem* Item = Cast<ACTTCollectibleItem>(Actor);
+	if (!Item)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("UCTTActionBase_Rotate: Actor is not a CollectibleItem"));
+		return;
+	}
+
+	Item->SetRotation(RotateSpeed, RotateDuration);
+}
+
+void UCTTActionBase_Jump::InitializeWithActionData(const FCTTActionData& InActionData)
+{
+	JumpSpeed = InActionData.ActionParameter.IntValue;
+
+	UE_LOG(LogTemp, Warning, TEXT("UCTTActionBase_Jump InitializeWithActionData called"));
+}
+
+void UCTTActionBase_Jump::Execute_Implementation(AActor* Actor)
+{
+	ACTTCollectibleItem* Item = Cast<ACTTCollectibleItem>(Actor);
+	if (!Item)
+	{
+		UE_LOG(LogTemp, Error, TEXT("UCTTActionBase_Jump: Actor is not a CollectibleItem!"));
+		return;
+	}
+
+	Item->SetJump(JumpSpeed);
 }

@@ -17,11 +17,8 @@ class CTTPRACTICE_API UCTTActionBase : public UObject
 	GENERATED_BODY()
 
 public:
-	virtual void Execute_Implementation(AActor* Actor) {}
 	virtual void InitializeWithActionData(const FCTTActionData& InActionData) {}
-
-protected:
-	FCTTActionData ActionData;
+	virtual void Execute_Implementation(AActor* Actor) {}
 };
 
 UCLASS()
@@ -30,8 +27,8 @@ class CTTPRACTICE_API UCTTActionBase_AddCoin : public UCTTActionBase
 	GENERATED_BODY()
 
 public:
-	virtual void Execute_Implementation(AActor* Actor) override;
 	virtual void InitializeWithActionData(const FCTTActionData& InActionData) override;
+	virtual void Execute_Implementation(AActor* Actor) override;
 
 private:
 	int32 CoinAmount = 0;
@@ -43,5 +40,33 @@ class CTTPRACTICE_API UCTTActionBase_Die : public UCTTActionBase
 	GENERATED_BODY()
 
 public:
+	virtual void InitializeWithActionData(const FCTTActionData& InActionData) override {};
 	virtual void Execute_Implementation(AActor* Actor) override;
+};
+
+UCLASS()
+class CTTPRACTICE_API UCTTActionBase_Rotate : public UCTTActionBase
+{
+	GENERATED_BODY()
+
+public:
+	virtual void InitializeWithActionData(const FCTTActionData& InActionData) override;
+	virtual void Execute_Implementation(AActor* Actor) override;
+
+private:
+	int32 RotateSpeed = 0;
+	int32 RotateDuration = 0;
+};
+
+UCLASS()
+class CTTPRACTICE_API UCTTActionBase_Jump : public UCTTActionBase
+{
+	GENERATED_BODY()
+
+public:
+	virtual void InitializeWithActionData(const FCTTActionData& InActionData) override;
+	virtual void Execute_Implementation(AActor* Actor) override;
+
+private:
+	float JumpSpeed = 0.f;
 };

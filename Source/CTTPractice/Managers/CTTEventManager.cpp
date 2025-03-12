@@ -128,7 +128,14 @@ void UCTTEventManager::AddActorToPendingKill(AActor* ActorToRemove)
 		return;
 	}
 
-	FName ActorName = ActorToRemove->GetFName();
+	ACTTCollectibleItem* CollectibleItem = Cast<ACTTCollectibleItem>(ActorToRemove);
+	if (nullptr == CollectibleItem)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Actor is not CollectibleItem"));
+		return;
+	}
+
+	FName ActorName = CollectibleItem->GetItemName();
 	if (EventActionDataMap.Contains(ActorName))
 	{
 		EventActionDataMap.Remove(ActorName);
