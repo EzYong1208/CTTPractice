@@ -55,7 +55,7 @@ void ACTTCollectibleItem::Tick(float DeltaTime)
 
     if (true == bActionRequired)
     {
-        UpdateActions();
+        UpdateActions(DeltaTime);
     }
 }
 
@@ -72,9 +72,9 @@ void ACTTCollectibleItem::StartActions(const TArray<FCTTActionData>& Actions)
 	}
 }
 
-void ACTTCollectibleItem::UpdateActions()
+void ACTTCollectibleItem::UpdateActions(float DeltaTime)
 {
-    CurrentTime += 0.1f;
+    CurrentTime += DeltaTime;
 
     int32 Index = PendingActions.Num() - 1;
 
@@ -199,6 +199,8 @@ void ACTTCollectibleItem::UpdateJump(float DeltaTime)
         NewLocation.Z = StartLocation.Z;
         ElapsedTime = 0.0f;
         bIsJumping = false;
+
+        StartLocation = FVector::ZeroVector;
         UE_LOG(LogTemp, Warning, TEXT("ACTTCollectibleItem: Jump Ended!"));
     }
 

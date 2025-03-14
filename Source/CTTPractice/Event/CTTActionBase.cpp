@@ -27,6 +27,25 @@ void UCTTActionBase_AddCoin::Execute_Implementation(AActor* Actor)
 	GameInstance->SetCoinCount(CurrentCoinCount + CoinAmount);
 }
 
+void UCTTActionBase_FillCollectItem::InitializeWithActionData(const FCTTActionData& InActionData)
+{
+	CollectItemIndex = InActionData.ActionParameter.IntValue;
+
+	UE_LOG(LogTemp, Warning, TEXT("UCTTActionBase_FillCollectItem InitializeWithActionData called"));
+}
+
+void UCTTActionBase_FillCollectItem::Execute_Implementation(AActor* Actor)
+{
+	UCTTGameInstance* GameInstance = Cast<UCTTGameInstance>(UGameplayStatics::GetGameInstance(this));
+	if (!IsValid(GameInstance))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("GameInstance is InValid"));
+		return;
+	}
+
+	GameInstance->SetCollectItemStatus(CollectItemIndex, true);
+}
+
 void UCTTActionBase_Die::Execute_Implementation(AActor* Actor)
 {
 	UCTTGameInstance* GameInstance = Cast<UCTTGameInstance>(UGameplayStatics::GetGameInstance(this));

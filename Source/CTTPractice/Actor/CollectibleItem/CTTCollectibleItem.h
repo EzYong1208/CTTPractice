@@ -33,7 +33,7 @@ public:
 	const int32 GetCurrentActionIndex() const { return CurrentActionIndex; }
 
 	void StartActions(const TArray<FCTTActionData>& Actions);
-	void UpdateActions();
+	void UpdateActions(float DeltaTime);
 
 	void SetRotation(float InRotateSpeed, float InRotateDuration);
 	void SetJump(float InJumpSpeed);

@@ -8,6 +8,7 @@
 #include "CTTPractice/CTTGameInstance.h"
 #include "CTTPractice/Managers/CTTDatatableManager.h"
 #include "CTTPractice/Actor/CollectibleItem/CTTCollectibleItem.h"
+#include "CTTPractice/Managers/CTTActionManager.h"
 
 void UCTTEventManager::Initialize()
 {
@@ -109,10 +110,24 @@ void UCTTEventManager::ExecuteAction(AActor* TargetActor, const FCTTActionData& 
 		return;
 	}
 
-	UCTTActionBase* ActionInstance = NewObject<UCTTActionBase>(this, ActionData.ActionClass);
-	if (!ActionInstance)
+	UCTTGameInstance* GameInstance = Cast<UCTTGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+	if (!GameInstance)
 	{
-		UE_LOG(LogTemp, Error, TEXT("Failed to create ActionInstance"));
+		UE_LOG(LogTemp, Error, TEXT("GameInstance is nullptr"));
+		return;
+	}
+
+	UCTTActionManager* ActionManager = GameInstance->GetActionManager();
+	if (nullptr == ActionManager)
+	{
+		UE_LOG(LogTemp, Error, TEXT("ActionManager is nullptr"));
+		return;
+	}
+
+	UCTTActionBase* ActionInstance = ActionManager->GetActionInstanceByClass(ActionData.ActionClass);
+	if (nullptr == ActionInstance)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Failed to retrieve action instance for class: %s"), *ActionData.ActionClass->GetName());
 		return;
 	}
 

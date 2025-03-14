@@ -66,3 +66,15 @@ enum class ECTTParameterType : uint8
 	Name,
 	MAX
 };
+
+UENUM()
+enum class ECTTActionType : uint8
+{
+	None,
+	AddCoin,
+	FillCollectItem,
+	Die,
+	Rotate,
+	Jump,
+	MAX
+};

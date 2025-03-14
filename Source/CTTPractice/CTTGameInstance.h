@@ -19,6 +19,7 @@ class UCTTDatatableManager;
 class UCTTUIManager;
 class UCTTQuestManager;
 class UCTTEventManager;
+class UCTTActionManager;
 
 UCLASS()
 class CTTPRACTICE_API UCTTGameInstance : public UGameInstance
@@ -53,6 +54,7 @@ public:
 	UCTTUIManager* GetUIManager() const;
 	UCTTQuestManager* GetQuestManager() const;
 	UCTTEventManager* GetEventManager() const;
+	UCTTActionManager* GetActionManager() const;
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -69,6 +71,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<UCTTEventManager> EventManagerClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<UCTTActionManager> ActionManagerClass;
 
 protected:
 	UPROPERTY(BlueprintReadWrite)
@@ -102,4 +107,7 @@ private:
 
 	UPROPERTY()
 	UCTTEventManager* EventManagerInstance = nullptr;
+
+	UPROPERTY()
+	UCTTActionManager* ActionManagerInstance = nullptr;
 };

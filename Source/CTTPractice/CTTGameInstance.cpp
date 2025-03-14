@@ -7,6 +7,7 @@
 #include "CTTPractice/Managers/CTTUIManager.h"
 #include "CTTPractice/Managers/CTTQuestManager.h"
 #include "CTTPractice/Managers/CTTEventManager.h"
+#include "CTTPractice/Managers/CTTActionManager.h"
 
 void UCTTGameInstance::Init()
 {
@@ -82,10 +83,22 @@ void UCTTGameInstance::InitializeManagers()
 		EventManagerInstance = NewObject<UCTTEventManager>(this, EventManagerClass);
 		EventManagerInstance->Initialize();
 	}
+
+	if (IsValid(ActionManagerClass))
+	{
+		ActionManagerInstance = NewObject<UCTTActionManager>(this, ActionManagerClass);
+		ActionManagerInstance->Initialize();
+	}
 }
 
 void UCTTGameInstance::ShutdownManagers()
 {
+	if (IsValid(ActionManagerInstance))
+	{
+		ActionManagerInstance->Shutdown();
+		ActionManagerInstance = nullptr;
+	}
+
 	if (IsValid(EventManagerInstance))
 	{
 		EventManagerInstance->Shutdown();
@@ -169,6 +182,17 @@ UCTTEventManager* UCTTGameInstance::GetEventManager() const
 	}
 
 	return EventManagerInstance;
+}
+
+UCTTActionManager* UCTTGameInstance::GetActionManager() const
+{
+	if (nullptr == ActionManagerInstance)
+	{
+		UE_LOG(LogTemp, Error, TEXT("ActionManagerInstance is nullptr"));
+		return nullptr;
+	}
+
+	return ActionManagerInstance;
 }
 
 void UCTTGameInstance::InitializeCollectItem(int32 CollectItemNumber, bool CollectItemInitialState)
