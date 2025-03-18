@@ -30,12 +30,13 @@ public:
 	void AddActorToPendingKill(AActor* ActorToRemove);
 
 private:
+	void SetIdleActionForAllCollectibleItems();
 	void OnWorldPostActorTick(UWorld* World, ELevelTick TickType, float DeltaTime);
 	void CheckAndDestroyPendingActors();
 	void StartActionsFromEvent(AActor* ItemActor, AActor* OtherActor, FName EventName);
 
 private:
-	TMap<FName, FCTTEventActionData> EventActionDataMap;
+	TMap<FName, TArray<FCTTEventActionData>> EventActionDataMap;
 	TQueue<AActor*> PendingKillActors;
 	FDelegateHandle OnWorldPostActorTickHandle;
 };

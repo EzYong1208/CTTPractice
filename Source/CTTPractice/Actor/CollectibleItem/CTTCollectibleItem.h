@@ -30,11 +30,13 @@ public:
 
 public:
 	const FName GetItemName() const { return ItemName; }
-	const int32 GetCurrentActionIndex() const { return CurrentActionIndex; }
+	const FCTTActionData GetIdleAction() const { return IdleAction; }
 
 	void StartActions(const TArray<FCTTActionData>& Actions);
 	void UpdateActions(float DeltaTime);
 
+	void SetIdleAction(const FCTTActionData& InIdleAction);
+	void StopIdleAction();
 	void SetRotation(float InRotateSpeed, float InRotateDuration);
 	void SetJump(float InJumpSpeed);
 
@@ -42,6 +44,7 @@ protected:
 	   UFUNCTION()
 	   void OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
+	   void UpdateIdleAction(float DeltaTime);
 	   void UpdateRotation(float DeltaTime);
 	   void UpdateJump(float DeltaTime);
 
@@ -52,13 +55,13 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FName ItemName;
 	
-	int32 CurrentActionIndex = 0;
-	TArray<TSubclassOf<UCTTActionBase>> ActionClasses;
-
+	UPROPERTY()
+	FCTTActionData IdleAction;
 	float CurrentTime = 0.f;
 	TArray<FCTTActionData> PendingActions;
 	FTimerHandle ActionTimerHandle;
 
+	bool bIsIdleActionActive = false;
 	bool bActionRequired = false;
 
 // EzYong TODO : For UCTTActionBase_Rotate
@@ -71,4 +74,21 @@ protected:
 	float ElapsedTime = 0.0f;
 	bool bIsJumping = false;
 	FVector StartLocation;
+};
+
+// EzYong TODO : CollectIndex를 이용하기 위해 자식클래스를 만듬
+UCLASS()
+class CTTPRACTICE_API ACTTCollectibleItem_CollectItem : public ACTTCollectibleItem
+{
+    GENERATED_BODY()
+
+public:
+	ACTTCollectibleItem_CollectItem() {};
+
+public:
+	const int32 GetCollectItemIndex() { return CollectIndex; }
+
+protected:
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    int32 CollectIndex = 0;
 };

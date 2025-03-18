@@ -7,6 +7,7 @@
 #include "CTTPractice/CTTGameInstance.h"
 #include "CTTPractice/Managers/CTTEventManager.h"
 #include "CTTPractice/Event/CTTEventNames.h"
+#include "CTTPractice/Event/CTTActionBase.h"
 
 // Sets default values
 ACTTCollectibleItem::ACTTCollectibleItem()
@@ -56,6 +57,10 @@ void ACTTCollectibleItem::Tick(float DeltaTime)
     if (true == bActionRequired)
     {
         UpdateActions(DeltaTime);
+    }
+    else
+    {
+        UpdateIdleAction(DeltaTime);
     }
 }
 
@@ -116,6 +121,29 @@ void ACTTCollectibleItem::UpdateActions(float DeltaTime)
     }
 }
 
+void ACTTCollectibleItem::SetIdleAction(const FCTTActionData& InIdleAction)
+{
+    IdleAction.ActionClass = InIdleAction.ActionClass;
+    IdleAction.ActionParameter = InIdleAction.ActionParameter;
+    IdleAction.StartTime = InIdleAction.StartTime;
+    IdleAction.Duration = InIdleAction.Duration;
+
+    if (!IsValid(IdleAction.ActionClass))
+    {
+        UE_LOG(LogTemp, Error, TEXT("SetIdleAction: IdleAction.ActionClass became invalid after assignment!"));
+    }
+    else
+    {
+        UE_LOG(LogTemp, Log, TEXT("SetIdleAction: Assigned %s"), *IdleAction.ActionClass->GetName());
+    }
+}
+
+void ACTTCollectibleItem::StopIdleAction()
+{
+    bIsIdleActionActive = false;
+    UE_LOG(LogTemp, Log, TEXT("ACTTCollectibleItem: IdleAction Stopped"));
+}
+
 void ACTTCollectibleItem::SetRotation(float InRotateSpeed, float InRotateDuration)
 {
     RotateSpeed = InRotateSpeed;
@@ -159,7 +187,58 @@ void ACTTCollectibleItem::OnOverlapBegin(UPrimitiveComponent* OverlappedComponen
         return;
     }
 
+    StopIdleAction();
     EventManager->HandleCollisionEvent(this, OtherActor, CTTEventNames::CollisionEvent);
+}
+
+void ACTTCollectibleItem::UpdateIdleAction(float DeltaTime)
+{
+    if (bIsIdleActionActive)
+    {
+        return;
+    }
+
+    CurrentTime += DeltaTime;
+
+    if (!IsValid(IdleAction.ActionClass))
+    {
+        // EzYong TODO : 수정 필요
+        //UE_LOG(LogTemp, Error, TEXT("UpdateIdleAction: IdleAction.ActionClass is invalid before execution!"));
+        return;
+    }
+
+    UE_LOG(LogTemp, Log, TEXT("UpdateIdleAction: Executing %s"), *IdleAction.ActionClass->GetName());
+
+    UCTTGameInstance* GameInstance = Cast<UCTTGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+    if (!GameInstance)
+    {
+        UE_LOG(LogTemp, Error, TEXT("GameInstance is nullptr"));
+        return;
+    }
+
+    UCTTEventManager* EventManager = GameInstance->GetEventManager();
+    if (!EventManager)
+    {
+        UE_LOG(LogTemp, Error, TEXT("EventManager is nullptr"));
+        return;
+    }
+
+    if (IdleAction.StartTime <= CurrentTime)
+    {
+        EventManager->ExecuteAction(this, IdleAction);
+        bIsIdleActionActive = true;
+
+        if (!IsValid(IdleAction.ActionClass))
+        {
+            UE_LOG(LogTemp, Error, TEXT("UpdateIdleAction: IdleAction.ActionClass became invalid after execution!"));
+        }
+        else
+        {
+            UE_LOG(LogTemp, Log, TEXT("UpdateIdleAction: IdleAction.ActionClass is still valid after execution!"));
+        }
+
+        CurrentTime = 0.0f;
+    }
 }
 
 void ACTTCollectibleItem::UpdateRotation(float DeltaTime)

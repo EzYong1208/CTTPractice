@@ -9,6 +9,7 @@
 #include "CTTPractice/Managers/CTTDatatableManager.h"
 #include "CTTPractice/Actor/CollectibleItem/CTTCollectibleItem.h"
 #include "CTTPractice/Managers/CTTActionManager.h"
+#include "EngineUtils.h"
 
 void UCTTEventManager::Initialize()
 {
@@ -20,13 +21,21 @@ void UCTTEventManager::Initialize()
 	}
 
 	const UCTTDatatableManager* DatatableManager = GameInstance->GetDatatableManager();
-	if (nullptr == DatatableManager)
+	if (!DatatableManager)
 	{
 		UE_LOG(LogTemp, Error, TEXT("DatatableManager is nullptr"));
 		return;
 	}
 
 	const UDataTable* EventActionDataTable = DatatableManager->GetEventActionDataTable();
+	if (!EventActionDataTable)
+	{
+		UE_LOG(LogTemp, Error, TEXT("EventActionDataTable is nullptr"));
+		return;
+	}
+
+	EventActionDataMap.Empty();
+
 	TArray<FName> RowNames = EventActionDataTable->GetRowNames();
 	for (const FName& RowName : RowNames)
 	{
@@ -36,12 +45,25 @@ void UCTTEventManager::Initialize()
 			continue;
 		}
 
-		if (EventData->ItemName != NAME_None && 
-			EventData->EventName != NAME_None)
+		if (EventData->ItemName != NAME_None && EventData->EventName != NAME_None)
 		{
-			EventActionDataMap.Add(EventData->ItemName, *EventData);
+			if (EventActionDataMap.Contains(EventData->ItemName))
+			{
+				EventActionDataMap[EventData->ItemName].Add(*EventData);
+			}
+			else
+			{
+				EventActionDataMap.Add(EventData->ItemName, { *EventData });
+			}
 		}
 	}
+
+	for (const auto& Entry : EventActionDataMap)
+	{
+		UE_LOG(LogTemp, Log, TEXT("ItemName: %s has %d events"), *Entry.Key.ToString(), Entry.Value.Num());
+	}
+
+	SetIdleActionForAllCollectibleItems();
 
 	OnWorldPostActorTickHandle = FWorldDelegates::OnWorldPostActorTick.AddUObject(this, &UCTTEventManager::OnWorldPostActorTick);
 }
@@ -79,14 +101,36 @@ void UCTTEventManager::HandleCollisionEvent(AActor* Actor, AActor* CollidedActor
 	}
 
 	FName ItemName = CollectibleItem->GetItemName();
-	bool bHasEventData = EventActionDataMap.Contains(ItemName);
-	if (false == bHasEventData)
+
+	TArray<FCTTEventActionData>* EventList = EventActionDataMap.Find(ItemName);
+	if (!EventList)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("No events found for item: %s"), *ItemName.ToString());
 		return;
 	}
 
-	const FCTTEventActionData& EventData = EventActionDataMap[ItemName];
-	UCTTConditionBase* ConditionInstance = NewObject<UCTTConditionBase>(this, EventData.ConditionClass);
+	const FCTTEventActionData* MatchingEvent = nullptr;
+	for (const FCTTEventActionData& EventData : *EventList)
+	{
+		if (EventData.EventName == EventName)
+		{
+			MatchingEvent = &EventData;
+			break;
+		}
+	}
+
+	if (!MatchingEvent)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("No matching event found for item: %s, Event: %s"), *ItemName.ToString(), *EventName.ToString());
+		return;
+	}
+	if (!IsValid(MatchingEvent->ConditionClass))
+	{
+		UE_LOG(LogTemp, Error, TEXT("ConditionClass is invalid for event: %s"), *EventName.ToString());
+		return;
+	}
+
+	UCTTConditionBase* ConditionInstance = NewObject<UCTTConditionBase>(this, MatchingEvent->ConditionClass);
 	if (nullptr == ConditionInstance)
 	{
 		UE_LOG(LogTemp, Error, TEXT("ConditionInstance is nullptr"));
@@ -96,6 +140,7 @@ void UCTTEventManager::HandleCollisionEvent(AActor* Actor, AActor* CollidedActor
 	bool bConditionSatisfied = ConditionInstance->CheckCondition_Implementation(CollidedActor);
 	if (!bConditionSatisfied)
 	{
+		UE_LOG(LogTemp, Log, TEXT("Condition not satisfied for event: %s"), *EventName.ToString());
 		return;
 	}
 
@@ -106,33 +151,46 @@ void UCTTEventManager::ExecuteAction(AActor* TargetActor, const FCTTActionData& 
 {
 	if (!IsValid(ActionData.ActionClass))
 	{
-		UE_LOG(LogTemp, Error, TEXT("ActionClass is invalid"));
+		UE_LOG(LogTemp, Error, TEXT("ExecuteAction: ActionClass is invalid!"));
 		return;
 	}
 
 	UCTTGameInstance* GameInstance = Cast<UCTTGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
 	if (!GameInstance)
 	{
-		UE_LOG(LogTemp, Error, TEXT("GameInstance is nullptr"));
+		UE_LOG(LogTemp, Error, TEXT("ExecuteAction: GameInstance is nullptr"));
 		return;
 	}
 
 	UCTTActionManager* ActionManager = GameInstance->GetActionManager();
-	if (nullptr == ActionManager)
+	if (!ActionManager)
 	{
-		UE_LOG(LogTemp, Error, TEXT("ActionManager is nullptr"));
+		UE_LOG(LogTemp, Error, TEXT("ExecuteAction: ActionManager is nullptr"));
 		return;
 	}
 
 	UCTTActionBase* ActionInstance = ActionManager->GetActionInstanceByClass(ActionData.ActionClass);
-	if (nullptr == ActionInstance)
+	if (!ActionInstance)
 	{
-		UE_LOG(LogTemp, Error, TEXT("Failed to retrieve action instance for class: %s"), *ActionData.ActionClass->GetName());
+		UE_LOG(LogTemp, Error, TEXT("ExecuteAction: Failed to retrieve action instance for class: %s"), *ActionData.ActionClass->GetName());
 		return;
 	}
 
 	ActionInstance->InitializeWithActionData(ActionData);
 	ActionInstance->Execute_Implementation(TargetActor);
+
+	ACTTCollectibleItem* CollectibleItem = Cast<ACTTCollectibleItem>(TargetActor);
+	if (CollectibleItem)
+	{
+		if (!IsValid(CollectibleItem->GetIdleAction().ActionClass))
+		{
+			UE_LOG(LogTemp, Error, TEXT("ExecuteAction: IdleAction.ActionClass became invalid after execution for %s"), *CollectibleItem->GetItemName().ToString());
+		}
+		else
+		{
+			UE_LOG(LogTemp, Log, TEXT("ExecuteAction: IdleAction.ActionClass is still valid after execution for %s"), *CollectibleItem->GetItemName().ToString());
+		}
+	}
 }
 
 void UCTTEventManager::AddActorToPendingKill(AActor* ActorToRemove)
@@ -181,6 +239,61 @@ void UCTTEventManager::CheckAndDestroyPendingActors()
 	}
 }
 
+void UCTTEventManager::SetIdleActionForAllCollectibleItems()
+{
+	UCTTGameInstance* GameInstance = Cast<UCTTGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+	if (!GameInstance)
+	{
+		UE_LOG(LogTemp, Error, TEXT("GameInstance is nullptr"));
+		return;
+	}
+
+	for (TActorIterator<ACTTCollectibleItem> It(GameInstance->GetWorld()); It; ++It)
+	{
+		ACTTCollectibleItem* CollectibleItem = *It;
+		if (!CollectibleItem)
+		{
+			continue;
+		}
+
+		const TArray<FCTTEventActionData>* EventDataArray = EventActionDataMap.Find(CollectibleItem->GetItemName());
+		if (!EventDataArray)
+		{
+			continue;
+		}
+
+		for (const FCTTEventActionData& EventData : *EventDataArray)
+		{
+			if (EventData.EventName == TEXT("Idle"))
+			{
+				if (EventData.Actions.Num() > 0)
+				{
+					if (!IsValid(EventData.Actions[0].ActionClass))
+					{
+						UE_LOG(LogTemp, Error, TEXT("SetIdleAction: ActionClass is nullptr for %s"), *EventData.ItemName.ToString());
+					}
+					else
+					{
+						UE_LOG(LogTemp, Log, TEXT("SetIdleAction: %s assigned to %s"), *EventData.Actions[0].ActionClass->GetName(), *EventData.ItemName.ToString());
+					}
+
+					CollectibleItem->SetIdleAction(EventData.Actions[0]);
+
+					if (!IsValid(CollectibleItem->GetIdleAction().ActionClass))
+					{
+						UE_LOG(LogTemp, Error, TEXT("SetIdleActionForAllCollectibleItems: IdleAction.ActionClass is NULL AFTER setting for %s"), *CollectibleItem->GetItemName().ToString());
+					}
+					else
+					{
+						UE_LOG(LogTemp, Log, TEXT("SetIdleActionForAllCollectibleItems: %s confirmed for %s"), *CollectibleItem->GetIdleAction().ActionClass->GetName(), *CollectibleItem->GetItemName().ToString());
+					}
+				}
+				break;
+			}
+		}
+	}
+}
+
 void UCTTEventManager::OnWorldPostActorTick(UWorld* World, ELevelTick TickType, float DeltaTime)
 {
 	if (LEVELTICK_All != TickType)
@@ -201,16 +314,36 @@ void UCTTEventManager::StartActionsFromEvent(AActor* ItemActor, AActor* OtherAct
 		return;
 	}
 
-	if (EventActionDataMap.Contains(CollectibleItem->GetItemName()))
+	TArray<FCTTEventActionData>* EventList = EventActionDataMap.Find(CollectibleItem->GetItemName());
+	if (!EventList)
 	{
-		const FCTTEventActionData& EventData = EventActionDataMap[CollectibleItem->GetItemName()];
+		UE_LOG(LogTemp, Warning, TEXT("No events found for item: %s"), *CollectibleItem->GetItemName().ToString());
+		return;
+	}
+
+	const FCTTEventActionData* MatchingEvent = nullptr;
+	for (const FCTTEventActionData& EventData : *EventList)
+	{
 		if (EventData.EventName == EventName)
 		{
-			CollectibleItem->StartActions(EventData.Actions);
+			MatchingEvent = &EventData;
+			break;
 		}
+	}
+
+	if (!MatchingEvent)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("No matching event found for item: %s, Event: %s"), *CollectibleItem->GetItemName().ToString(), *EventName.ToString());
+		return;
+	}
+
+	if (MatchingEvent->Actions.Num() > 0)
+	{
+		CollectibleItem->StartActions(MatchingEvent->Actions);
+		UE_LOG(LogTemp, Log, TEXT("Started actions for %s with event: %s"), *CollectibleItem->GetItemName().ToString(), *EventName.ToString());
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("No event data found for item: %s"), *CollectibleItem->GetItemName().ToString());
+		UE_LOG(LogTemp, Warning, TEXT("No actions found for event: %s on item: %s"), *EventName.ToString(), *CollectibleItem->GetItemName().ToString());
 	}
 }

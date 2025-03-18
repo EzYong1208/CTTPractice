@@ -26,7 +26,14 @@ public:
 	static constexpr int32 TotalActionClassCount = 5;
 	static_assert(static_cast<int32>(ECTTActionType::MAX) - 1 == TotalActionClassCount,
 		"Action class count does not match ECTTActionType enum count! Please update TotalActionClassCount!");
+
+	// EzYong TODO : 디버깅용 임시(나중에 삭제 필요)
+protected:
+	static int32 TotalExecutions;
 };
+
+// EzYong TODO : 디버깅용 임시(나중에 삭제 필요)
+int32 UCTTActionBase::TotalExecutions = 0;
 
 UCLASS()
 class CTTPRACTICE_API UCTTActionBase_AddCoin : public UCTTActionBase

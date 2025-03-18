@@ -47,21 +47,21 @@ void UCTTActionManager::Shutdown()
 
 UCTTActionBase* UCTTActionManager::GetActionInstanceByClass(TSubclassOf<UCTTActionBase> ActionClass)
 {
-    ECTTActionType ActionType = ConvertActionClassToType(ActionClass);
-    if (ActionType == ECTTActionType::None)
-    {
-        UE_LOG(LogTemp, Error, TEXT("Unknown action class: %s"), *ActionClass->GetName());
-        return nullptr;
-    }
+	ECTTActionType ActionType = ConvertActionClassToType(ActionClass);
+	if (ActionType == ECTTActionType::None)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Unknown action class: %s"), *ActionClass->GetName());
+		return nullptr;
+	}
 
-    UCTTActionBase** ActionPtr = ActionInstances.Find(ActionType);
-    if (ActionPtr)
-    {
-        return *ActionPtr;
-    }
+	UCTTActionBase** ActionPtr = ActionInstances.Find(ActionType);
+	if (ActionPtr)
+	{
+		return *ActionPtr;
+	}
 
-    UE_LOG(LogTemp, Error, TEXT("Action type not found in ActionInstances: %s"), *ActionClass->GetName());
-    return nullptr;
+	UE_LOG(LogTemp, Error, TEXT("Action type not found in ActionInstances: %s"), *ActionClass->GetName());
+	return nullptr;
 }
 
 ECTTActionType UCTTActionManager::ConvertActionClassToType(TSubclassOf<UCTTActionBase> ActionClass)

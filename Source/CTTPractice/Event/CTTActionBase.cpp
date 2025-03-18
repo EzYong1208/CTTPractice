@@ -82,6 +82,10 @@ void UCTTActionBase_Rotate::Execute_Implementation(AActor* Actor)
 		return;
 	}
 
+	TotalExecutions++;
+
+	UE_LOG(LogTemp, Log, TEXT("UCTTActionBase_Rotate: Executed %d times"), TotalExecutions);
+
 	Item->SetRotation(RotateSpeed, RotateDuration);
 }
 
