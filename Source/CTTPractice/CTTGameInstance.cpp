@@ -78,16 +78,16 @@ void UCTTGameInstance::InitializeManagers()
 		QuestManagerInstance = NewObject<UCTTQuestManager>(this, QuestManagerClass);
 	}
 
-	if (IsValid(EventManagerClass))
-	{
-		EventManagerInstance = NewObject<UCTTEventManager>(this, EventManagerClass);
-		EventManagerInstance->Initialize();
-	}
-
 	if (IsValid(ActionManagerClass))
 	{
 		ActionManagerInstance = NewObject<UCTTActionManager>(this, ActionManagerClass);
 		ActionManagerInstance->Initialize();
+	}
+
+	if (IsValid(EventManagerClass))
+	{
+		EventManagerInstance = NewObject<UCTTEventManager>(this, EventManagerClass);
+		EventManagerInstance->Initialize();
 	}
 }
 

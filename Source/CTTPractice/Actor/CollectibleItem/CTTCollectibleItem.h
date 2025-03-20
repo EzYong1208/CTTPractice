@@ -36,7 +36,8 @@ public:
 	void UpdateActions(float DeltaTime);
 
 	void SetIdleAction(const FCTTActionData& InIdleAction);
-	void StopIdleAction();
+	void PauseIdleAction();
+	void ResumeIdleAction();
 	void SetRotation(float InRotateSpeed, float InRotateDuration);
 	void SetJump(float InJumpSpeed);
 
@@ -44,7 +45,6 @@ protected:
 	   UFUNCTION()
 	   void OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
-	   void UpdateIdleAction(float DeltaTime);
 	   void UpdateRotation(float DeltaTime);
 	   void UpdateJump(float DeltaTime);
 
@@ -63,6 +63,9 @@ protected:
 
 	bool bIsIdleActionActive = false;
 	bool bActionRequired = false;
+
+	UPROPERTY()
+    UCTTActionBase* ActiveIdleActionInstance = nullptr;
 
 // EzYong TODO : For UCTTActionBase_Rotate
 	float RotateSpeed = 0.0f;

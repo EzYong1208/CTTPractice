@@ -73,6 +73,32 @@ void UCTTActionBase_Rotate::InitializeWithActionData(const FCTTActionData& InAct
 	UE_LOG(LogTemp, Warning, TEXT("UCTTActionBase_Rotate InitializeWithActionData called"));
 }
 
+void UCTTActionBase_Rotate::Pause_Implementation(AActor* Actor)
+{
+	ACTTCollectibleItem* Item = Cast<ACTTCollectibleItem>(Actor);
+	if (!Item)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("UCTTActionBase_Rotate::Stop: Invalid Actor"));
+		return;
+	}
+
+	Item->SetRotation(0.f, 0.f);
+	UE_LOG(LogTemp, Log, TEXT("UCTTActionBase_Rotate: Stopped rotation"));
+}
+
+void UCTTActionBase_Rotate::Resume_Implementation(AActor* Actor)
+{
+	ACTTCollectibleItem* Item = Cast<ACTTCollectibleItem>(Actor);
+	if (!Item)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("UCTTActionBase_Rotate::Stop: Invalid Actor"));
+		return;
+	}
+
+	Item->SetRotation(RotateSpeed, RotateDuration);
+	UE_LOG(LogTemp, Log, TEXT("Rotate Action Resumed"));
+}
+
 void UCTTActionBase_Rotate::Execute_Implementation(AActor* Actor)
 {
 	ACTTCollectibleItem* Item = Cast<ACTTCollectibleItem>(Actor);
@@ -81,10 +107,6 @@ void UCTTActionBase_Rotate::Execute_Implementation(AActor* Actor)
 		UE_LOG(LogTemp, Warning, TEXT("UCTTActionBase_Rotate: Actor is not a CollectibleItem"));
 		return;
 	}
-
-	TotalExecutions++;
-
-	UE_LOG(LogTemp, Log, TEXT("UCTTActionBase_Rotate: Executed %d times"), TotalExecutions);
 
 	Item->SetRotation(RotateSpeed, RotateDuration);
 }

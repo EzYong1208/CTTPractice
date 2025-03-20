@@ -19,6 +19,8 @@ class CTTPRACTICE_API UCTTActionBase : public UObject
 public:
 	virtual void InitializeWithActionData(const FCTTActionData& InActionData) {}
 	virtual void Execute_Implementation(AActor* Actor) {}
+	virtual void Pause_Implementation(AActor* Actor) {}
+	virtual void Resume_Implementation(AActor* Actor) {}
 
 
 	// EzYong TODO : 새로운 액션 자식 클래스 추가 시 Enum 추가 및 ActionManager의 ActionClassMap에 추가 필요함
@@ -26,14 +28,7 @@ public:
 	static constexpr int32 TotalActionClassCount = 5;
 	static_assert(static_cast<int32>(ECTTActionType::MAX) - 1 == TotalActionClassCount,
 		"Action class count does not match ECTTActionType enum count! Please update TotalActionClassCount!");
-
-	// EzYong TODO : 디버깅용 임시(나중에 삭제 필요)
-protected:
-	static int32 TotalExecutions;
 };
-
-// EzYong TODO : 디버깅용 임시(나중에 삭제 필요)
-int32 UCTTActionBase::TotalExecutions = 0;
 
 UCLASS()
 class CTTPRACTICE_API UCTTActionBase_AddCoin : public UCTTActionBase
@@ -43,6 +38,8 @@ class CTTPRACTICE_API UCTTActionBase_AddCoin : public UCTTActionBase
 public:
 	virtual void InitializeWithActionData(const FCTTActionData& InActionData) override;
 	virtual void Execute_Implementation(AActor* Actor) override;
+	virtual void Pause_Implementation(AActor* Actor) override {}
+	virtual void Resume_Implementation(AActor* Actor) override {}
 
 private:
 	int32 CoinAmount = 0;
@@ -56,6 +53,8 @@ class CTTPRACTICE_API UCTTActionBase_FillCollectItem : public UCTTActionBase
 public:
 	virtual void InitializeWithActionData(const FCTTActionData& InActionData) override;
 	virtual void Execute_Implementation(AActor* Actor) override;
+	virtual void Pause_Implementation(AActor* Actor) override {}
+	virtual void Resume_Implementation(AActor* Actor) override {}
 
 private:
 	int32 CollectItemIndex = 0;
@@ -69,6 +68,8 @@ class CTTPRACTICE_API UCTTActionBase_Die : public UCTTActionBase
 public:
 	virtual void InitializeWithActionData(const FCTTActionData& InActionData) override {};
 	virtual void Execute_Implementation(AActor* Actor) override;
+	virtual void Pause_Implementation(AActor* Actor) override {}
+	virtual void Resume_Implementation(AActor* Actor) override {}
 };
 
 UCLASS()
@@ -79,6 +80,8 @@ class CTTPRACTICE_API UCTTActionBase_Rotate : public UCTTActionBase
 public:
 	virtual void InitializeWithActionData(const FCTTActionData& InActionData) override;
 	virtual void Execute_Implementation(AActor* Actor) override;
+	virtual void Pause_Implementation(AActor* Actor) override;
+	virtual void Resume_Implementation(AActor* Actor) override;
 
 private:
 	int32 RotateSpeed = 0;
@@ -93,6 +96,8 @@ class CTTPRACTICE_API UCTTActionBase_Jump : public UCTTActionBase
 public:
 	virtual void InitializeWithActionData(const FCTTActionData& InActionData) override;
 	virtual void Execute_Implementation(AActor* Actor) override;
+	virtual void Pause_Implementation(AActor* Actor) override {}
+	virtual void Resume_Implementation(AActor* Actor) override {}
 
 private:
 	float JumpSpeed = 0.f;

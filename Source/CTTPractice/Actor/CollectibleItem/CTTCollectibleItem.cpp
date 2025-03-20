@@ -58,10 +58,6 @@ void ACTTCollectibleItem::Tick(float DeltaTime)
     {
         UpdateActions(DeltaTime);
     }
-    else
-    {
-        UpdateIdleAction(DeltaTime);
-    }
 }
 
 void ACTTCollectibleItem::StartActions(const TArray<FCTTActionData>& Actions)
@@ -118,6 +114,7 @@ void ACTTCollectibleItem::UpdateActions(float DeltaTime)
     {
         bActionRequired = false;
         PendingActions.Shrink();
+        ResumeIdleAction();
     }
 }
 
@@ -136,12 +133,48 @@ void ACTTCollectibleItem::SetIdleAction(const FCTTActionData& InIdleAction)
     {
         UE_LOG(LogTemp, Log, TEXT("SetIdleAction: Assigned %s"), *IdleAction.ActionClass->GetName());
     }
+
+    UCTTGameInstance* GameInstance = Cast<UCTTGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+    if (!GameInstance)
+    {
+        UE_LOG(LogTemp, Error, TEXT("GameInstance is nullptr"));
+        return;
+    }
+
+    UCTTEventManager* EventManager = GameInstance->GetEventManager();
+    if (!EventManager)
+    {
+        UE_LOG(LogTemp, Error, TEXT("EventManager is nullptr"));
+        return;
+    }
+
+    EventManager->ExecuteAction(this, IdleAction);
 }
 
-void ACTTCollectibleItem::StopIdleAction()
+void ACTTCollectibleItem::PauseIdleAction()
 {
-    bIsIdleActionActive = false;
-    UE_LOG(LogTemp, Log, TEXT("ACTTCollectibleItem: IdleAction Stopped"));
+    if (ActiveIdleActionInstance)
+    {
+        ActiveIdleActionInstance->Pause_Implementation(this);
+        UE_LOG(LogTemp, Log, TEXT("PauseIdleAction: Paused the idle action instance")); 
+    }
+    else
+    {
+        UE_LOG(LogTemp, Warning, TEXT("PauseIdleAction: No active idle action to pause!"));
+    }
+}
+
+void ACTTCollectibleItem::ResumeIdleAction()
+{
+    if (ActiveIdleActionInstance)
+    {
+        ActiveIdleActionInstance->Resume_Implementation(this);
+        UE_LOG(LogTemp, Log, TEXT("ResumeIdleAction: Resumed the idle action instance"));
+    }
+    else
+    {
+        UE_LOG(LogTemp, Warning, TEXT("ResumeIdleAction: No idle action instance to resume!"));
+    }
 }
 
 void ACTTCollectibleItem::SetRotation(float InRotateSpeed, float InRotateDuration)
@@ -187,58 +220,8 @@ void ACTTCollectibleItem::OnOverlapBegin(UPrimitiveComponent* OverlappedComponen
         return;
     }
 
-    StopIdleAction();
+    PauseIdleAction();
     EventManager->HandleCollisionEvent(this, OtherActor, CTTEventNames::CollisionEvent);
-}
-
-void ACTTCollectibleItem::UpdateIdleAction(float DeltaTime)
-{
-    if (bIsIdleActionActive)
-    {
-        return;
-    }
-
-    CurrentTime += DeltaTime;
-
-    if (!IsValid(IdleAction.ActionClass))
-    {
-        // EzYong TODO : 수정 필요
-        //UE_LOG(LogTemp, Error, TEXT("UpdateIdleAction: IdleAction.ActionClass is invalid before execution!"));
-        return;
-    }
-
-    UE_LOG(LogTemp, Log, TEXT("UpdateIdleAction: Executing %s"), *IdleAction.ActionClass->GetName());
-
-    UCTTGameInstance* GameInstance = Cast<UCTTGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
-    if (!GameInstance)
-    {
-        UE_LOG(LogTemp, Error, TEXT("GameInstance is nullptr"));
-        return;
-    }
-
-    UCTTEventManager* EventManager = GameInstance->GetEventManager();
-    if (!EventManager)
-    {
-        UE_LOG(LogTemp, Error, TEXT("EventManager is nullptr"));
-        return;
-    }
-
-    if (IdleAction.StartTime <= CurrentTime)
-    {
-        EventManager->ExecuteAction(this, IdleAction);
-        bIsIdleActionActive = true;
-
-        if (!IsValid(IdleAction.ActionClass))
-        {
-            UE_LOG(LogTemp, Error, TEXT("UpdateIdleAction: IdleAction.ActionClass became invalid after execution!"));
-        }
-        else
-        {
-            UE_LOG(LogTemp, Log, TEXT("UpdateIdleAction: IdleAction.ActionClass is still valid after execution!"));
-        }
-
-        CurrentTime = 0.0f;
-    }
 }
 
 void ACTTCollectibleItem::UpdateRotation(float DeltaTime)
@@ -252,11 +235,14 @@ void ACTTCollectibleItem::UpdateRotation(float DeltaTime)
     NewRotation.Yaw += RotateSpeed * DeltaTime;
     SetActorRotation(NewRotation);
 
-    RotateDuration -= DeltaTime;
-    if (RotateDuration <= 0.0f)
+    if (RotateDuration >= 0.0f)
     {
-        RotateSpeed = 0.0f;
-        UE_LOG(LogTemp, Warning, TEXT("ACTTCollectibleItem: Rotation Stopped"));
+        RotateDuration -= DeltaTime;
+        if (RotateDuration <= 0.0f)
+        {
+            RotateSpeed = 0.0f;
+            UE_LOG(LogTemp, Warning, TEXT("ACTTCollectibleItem: Rotation Stopped"));
+        }
     }
 }
 

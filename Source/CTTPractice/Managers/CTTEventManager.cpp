@@ -178,19 +178,41 @@ void UCTTEventManager::ExecuteAction(AActor* TargetActor, const FCTTActionData& 
 
 	ActionInstance->InitializeWithActionData(ActionData);
 	ActionInstance->Execute_Implementation(TargetActor);
+}
 
-	ACTTCollectibleItem* CollectibleItem = Cast<ACTTCollectibleItem>(TargetActor);
-	if (CollectibleItem)
+UCTTActionBase* UCTTEventManager::ExecuteActionAndReturn(AActor* TargetActor, const FCTTActionData& ActionData)
+{
+	if (!IsValid(ActionData.ActionClass))
 	{
-		if (!IsValid(CollectibleItem->GetIdleAction().ActionClass))
-		{
-			UE_LOG(LogTemp, Error, TEXT("ExecuteAction: IdleAction.ActionClass became invalid after execution for %s"), *CollectibleItem->GetItemName().ToString());
-		}
-		else
-		{
-			UE_LOG(LogTemp, Log, TEXT("ExecuteAction: IdleAction.ActionClass is still valid after execution for %s"), *CollectibleItem->GetItemName().ToString());
-		}
+		UE_LOG(LogTemp, Error, TEXT("ExecuteActionAndReturn: ActionClass is invalid!"));
+		return nullptr;
 	}
+
+	UCTTGameInstance* GameInstance = Cast<UCTTGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+	if (!GameInstance)
+	{
+		UE_LOG(LogTemp, Error, TEXT("ExecuteActionAndReturn: GameInstance is nullptr"));
+		return nullptr;
+	}
+
+	UCTTActionManager* ActionManager = GameInstance->GetActionManager();
+	if (!ActionManager)
+	{
+		UE_LOG(LogTemp, Error, TEXT("ExecuteActionAndReturn: ActionManager is nullptr"));
+		return nullptr;
+	}
+
+	UCTTActionBase* ActionInstance = ActionManager->GetActionInstanceByClass(ActionData.ActionClass);
+	if (!ActionInstance)
+	{
+		UE_LOG(LogTemp, Error, TEXT("ExecuteActionAndReturn: Failed to retrieve action instance for class: %s"), *ActionData.ActionClass->GetName());
+		return nullptr;
+	}
+
+	ActionInstance->InitializeWithActionData(ActionData);
+	ActionInstance->Execute_Implementation(TargetActor);
+
+	return ActionInstance;
 }
 
 void UCTTEventManager::AddActorToPendingKill(AActor* ActorToRemove)
@@ -266,28 +288,17 @@ void UCTTEventManager::SetIdleActionForAllCollectibleItems()
 		{
 			if (EventData.EventName == TEXT("Idle"))
 			{
-				if (EventData.Actions.Num() > 0)
+				if (!IsValid(EventData.Actions[0].ActionClass))
 				{
-					if (!IsValid(EventData.Actions[0].ActionClass))
-					{
-						UE_LOG(LogTemp, Error, TEXT("SetIdleAction: ActionClass is nullptr for %s"), *EventData.ItemName.ToString());
-					}
-					else
-					{
-						UE_LOG(LogTemp, Log, TEXT("SetIdleAction: %s assigned to %s"), *EventData.Actions[0].ActionClass->GetName(), *EventData.ItemName.ToString());
-					}
-
-					CollectibleItem->SetIdleAction(EventData.Actions[0]);
-
-					if (!IsValid(CollectibleItem->GetIdleAction().ActionClass))
-					{
-						UE_LOG(LogTemp, Error, TEXT("SetIdleActionForAllCollectibleItems: IdleAction.ActionClass is NULL AFTER setting for %s"), *CollectibleItem->GetItemName().ToString());
-					}
-					else
-					{
-						UE_LOG(LogTemp, Log, TEXT("SetIdleActionForAllCollectibleItems: %s confirmed for %s"), *CollectibleItem->GetIdleAction().ActionClass->GetName(), *CollectibleItem->GetItemName().ToString());
-					}
+					UE_LOG(LogTemp, Error, TEXT("SetIdleAction: ActionClass is nullptr for %s"), *EventData.ItemName.ToString());
 				}
+				else
+				{
+					UE_LOG(LogTemp, Log, TEXT("SetIdleAction: %s assigned to %s"), *EventData.Actions[0].ActionClass->GetName(), *EventData.ItemName.ToString());
+				}
+
+				CollectibleItem->SetIdleAction(EventData.Actions[0]);
+
 				break;
 			}
 		}
