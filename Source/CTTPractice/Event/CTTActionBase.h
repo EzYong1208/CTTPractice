@@ -55,9 +55,6 @@ public:
 	virtual void Execute_Implementation(AActor* Actor) override;
 	virtual void Pause_Implementation(AActor* Actor) override {}
 	virtual void Resume_Implementation(AActor* Actor) override {}
-
-private:
-	int32 CollectItemIndex = 0;
 };
 
 UCLASS()

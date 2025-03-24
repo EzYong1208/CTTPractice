@@ -29,8 +29,6 @@ void UCTTActionBase_AddCoin::Execute_Implementation(AActor* Actor)
 
 void UCTTActionBase_FillCollectItem::InitializeWithActionData(const FCTTActionData& InActionData)
 {
-	CollectItemIndex = InActionData.ActionParameter.IntValue;
-
 	UE_LOG(LogTemp, Warning, TEXT("UCTTActionBase_FillCollectItem InitializeWithActionData called"));
 }
 
@@ -42,6 +40,15 @@ void UCTTActionBase_FillCollectItem::Execute_Implementation(AActor* Actor)
 		UE_LOG(LogTemp, Warning, TEXT("GameInstance is InValid"));
 		return;
 	}
+
+	ACTTCollectibleItem_CollectItem* Item = Cast<ACTTCollectibleItem_CollectItem>(Actor);
+	if (!Item)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ACTTCollectibleItem_CollectItem: Invalid Actor"));
+		return;
+	}
+
+	int32 CollectItemIndex = Item->GetCollectItemIndex();
 
 	GameInstance->SetCollectItemStatus(CollectItemIndex, true);
 }

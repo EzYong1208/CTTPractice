@@ -30,15 +30,15 @@ void ACTTPracticeGameModeBase::BeginPlay()
 		GameInstance->InitializeCollectItem(CollectItemNumber, CollectItemInitialState);
 	}
 
-	// EzYong TODO : 아이템 스폰
-	TArray<const FCTTWorldItemSetupData*> ItemRows = GameInstance->GetDatatableManager()->GetWorldItemSetupRows();
-	for (const FCTTWorldItemSetupData* RowData : ItemRows)
-	{
-		if (RowData)
-		{
-			SpawnItem(*RowData);
-		}
-	}
+	//// EzYong TODO : 아이템 스폰
+	//TArray<const FCTTWorldItemSetupData*> ItemRows = GameInstance->GetDatatableManager()->GetWorldItemSetupRows();
+	//for (const FCTTWorldItemSetupData* RowData : ItemRows)
+	//{
+	//	if (RowData)
+	//	{
+	//		SpawnItem(*RowData);
+	//	}
+	//}
 
 	TArray<const FCTTSwitchMovementData*> SwitchRows = GameInstance->GetDatatableManager()->GetSwitchMovementRows();
 	for (const FCTTSwitchMovementData* RowData : SwitchRows)
