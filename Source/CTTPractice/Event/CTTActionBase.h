@@ -25,9 +25,24 @@ public:
 
 	// EzYong TODO : 새로운 액션 자식 클래스 추가 시 Enum 추가 및 ActionManager의 ActionClassMap에 추가 필요함
 	// EzYong TODO : 새로운 액션 자식 클래스 추가 시 수정해야하는데 빼먹을 수 있어서 강제적으로 락 걸리게 만드는 부분을 더 추가 필요
-	static constexpr int32 TotalActionClassCount = 5;
+	static constexpr int32 TotalActionClassCount = 6;
 	static_assert(static_cast<int32>(ECTTActionType::MAX) - 1 == TotalActionClassCount,
 		"Action class count does not match ECTTActionType enum count! Please update TotalActionClassCount!");
+};
+
+UCLASS()
+class CTTPRACTICE_API UCTTActionBase_SpawnActor : public UCTTActionBase
+{
+	GENERATED_BODY()
+
+public:
+	virtual void InitializeWithActionData(const FCTTActionData& InActionData) override;
+	virtual void Execute_Implementation(AActor* Actor) override;
+	virtual void Pause_Implementation(AActor* Actor) override {}
+	virtual void Resume_Implementation(AActor* Actor) override {}
+
+private:
+	TSubclassOf<AActor> ActorClassToSpawn;
 };
 
 UCLASS()

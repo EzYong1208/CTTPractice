@@ -7,6 +7,7 @@ void UCTTActionManager::Initialize()
 {
     ActionClassMap =
     {
+        { ECTTActionType::SpawnActor, UCTTActionBase_SpawnActor::StaticClass() },
         { ECTTActionType::AddCoin, UCTTActionBase_AddCoin::StaticClass() },
         { ECTTActionType::FillCollectItem, UCTTActionBase_FillCollectItem::StaticClass() },
         { ECTTActionType::Die, UCTTActionBase_Die::StaticClass() },
@@ -29,7 +30,7 @@ void UCTTActionManager::Initialize()
         }
     }
 
-    static_assert(static_cast<int32>(ECTTActionType::MAX) - 1 == 5, "The number of actions does not match the Enum count!");
+    static_assert(static_cast<int32>(ECTTActionType::MAX) - 1 == 6, "The number of actions does not match the Enum count!");
 }
 
 void UCTTActionManager::Shutdown()

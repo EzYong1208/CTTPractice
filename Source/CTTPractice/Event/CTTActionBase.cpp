@@ -136,3 +136,54 @@ void UCTTActionBase_Jump::Execute_Implementation(AActor* Actor)
 
 	Item->SetJump(JumpSpeed);
 }
+
+void UCTTActionBase_SpawnActor::InitializeWithActionData(const FCTTActionData& InActionData)
+{
+	if (InActionData.ActionParameter.ParameterType == ECTTParameterType::Actor)
+	{
+		ActorClassToSpawn = InActionData.ActionParameter.ActorClass;
+	}
+	else
+	{
+		ActorClassToSpawn = nullptr;
+		UE_LOG(LogTemp, Error, TEXT("SpawnActor: ParameterType is not Actor!"));
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("UCTTActionBase_SpawnActor InitializeWithActionData called"));
+}
+
+void UCTTActionBase_SpawnActor::Execute_Implementation(AActor* Actor)
+{
+	if (!IsValid(Actor))
+	{
+		UE_LOG(LogTemp, Error, TEXT("UCTTActionBase_SpawnActor: Invalid Actor!"));
+		return;
+	}
+
+	if (!IsValid(ActorClassToSpawn))
+	{
+		UE_LOG(LogTemp, Error, TEXT("SpawnActor: ActorClassToSpawn is invalid! Maybe not set properly?"));
+		return;
+	}
+
+	UWorld* World = Actor->GetWorld();
+	if (!World)
+	{
+		UE_LOG(LogTemp, Error, TEXT("SpawnActor: World is nullptr!"));
+		return;
+	}
+
+	FVector SpawnLocation = Actor->GetActorLocation();
+	FRotator SpawnRotation = Actor->GetActorRotation();
+
+	AActor* Spawned = World->SpawnActor<AActor>(ActorClassToSpawn, SpawnLocation, SpawnRotation);
+	if (Spawned)
+	{
+		UE_LOG(LogTemp, Log, TEXT("SpawnActor: Successfully spawned %s at %s"),
+			*Spawned->GetName(), *SpawnLocation.ToString());
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("SpawnActor: Failed to spawn actor of class %s"), *ActorClassToSpawn->GetName());
+	}
+}

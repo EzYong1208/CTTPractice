@@ -202,6 +202,9 @@ struct FCTTParameter
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "ParameterType == ECTTParameterType::Name"/*, EditConditionHides*/))
 	FName NameValue;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "ParameterType == ECTTParameterType::Actor", EditConditionHides))
+    TSubclassOf<AActor> ActorClass;
+
 	// meta = (EditCondition = "조건식")
 	// EditCondition은 특정 조건이 true 일때만 해당 프로퍼티를 활성화(편집 가능) 하거나 표시하도록 제어하는 메타 태그
 	// EditConditionHides은 EditCondition과 함께 사용, 조건이 거짓일 경우 해당 프로퍼티를 완전히 숨김

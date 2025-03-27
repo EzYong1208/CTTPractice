@@ -64,6 +64,7 @@ enum class ECTTParameterType : uint8
 	Float,
 	Bool,
 	Name,
+	Actor,
 	MAX
 };
 
@@ -71,6 +72,7 @@ UENUM()
 enum class ECTTActionType : uint8
 {
 	None,
+	SpawnActor,
 	AddCoin,
 	FillCollectItem,
 	Die,
